@@ -1,0 +1,14 @@
+{
+    "urlBackend": {
+        "Development": {
+            "HTTP": "http://localhost:5003",
+            "WS": "ws://localhost:5201/websocket"
+        },
+        "Production": {
+            "HTTP": "http://barryonweb.com/backend",
+            "WS": "ws://barryonweb.com/backend/websocket"
+        }
+    }
+}
+
+

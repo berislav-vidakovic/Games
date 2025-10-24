@@ -1,0 +1,9 @@
+frontend/node_modules
+frontend/sudoku/node_modules
+backend/obj
+backend/bin
+backend/publish
+
+Games.sln
+
+

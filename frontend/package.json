@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": [
+    "common",
+    "sudoku"
+  ],
+  "dependencies": {
+    "http-status-codes": "^2.3.0"
+  }
+}
