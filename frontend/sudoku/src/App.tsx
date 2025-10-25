@@ -1,7 +1,8 @@
 // App.tsx
 import Board from "./Board";
 import { sendGETRequest } from '../../common/restAPI';
-import { loadCommonConfig } from '../../common/config';
+import { loadCommonConfig } from '@common/config';
+
 import { useEffect, useState } from "react";
 
 
