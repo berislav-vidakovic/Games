@@ -261,3 +261,39 @@ Check site is properly linked
 ls -l /etc/nginx/sites-enabled/
 
 
+#### 9. Backend deployment
+
+dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
+
+copy files
+
+MySQL
+- current user: SELECT CURRENT_USER(), USER();
+- all users: SELECT user, host, plugin FROM mysql.user;
+- As root
+  - Create user barry75 
+  - Create DB
+  - Grant access to barry75
+
+  ```sql
+  CREATE DATABASE db_games CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  CREATE USER 'barry75'@'localhost' IDENTIFIED BY 'abc123';
+  GRANT ALL PRIVILEGES ON db_games.* TO 'barry75'@'localhost';
+  FLUSH PRIVILEGES;
+  ```
+
+
+- Login as barry75
+  - see dbs: SHOW DATABASES;
+  - Run script
+
+- Test backend
+
+  -Locally
+
+      curl http://localhost:5000/api/sudoku/board
+
+  -Remotely
+
+      Browse http://barryonweb.com/api/sudoku/board
+

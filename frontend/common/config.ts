@@ -24,7 +24,7 @@ export async function loadCommonConfig(
 
   // The URL here is relative to the frontend root
   // In dev, Vite will serve /common as ../common
-  const response = await fetch('/clientsettings.json');
+  const response = await fetch('clientsettings.json');
   if (!response.ok) {
     throw new Error('Failed to load configuration');
   }

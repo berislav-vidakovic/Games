@@ -1,5 +1,4 @@
 -- Initialize db_games MySQL Database
-
 START TRANSACTION;
 
 -- 1) Tables
