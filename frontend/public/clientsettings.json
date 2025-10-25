@@ -5,7 +5,7 @@
             "WS": "ws://localhost:5201/websocket"
         },
         "Production": {
-            "HTTP": "http://barryonweb.com/backend",
+            "HTTP": "http://barryonweb.com",
             "WS": "ws://barryonweb.com/backend/websocket"
         }
     }

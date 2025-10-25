@@ -260,6 +260,10 @@ sudo rm /etc/nginx/sites-enabled/default
 Check site is properly linked
 ls -l /etc/nginx/sites-enabled/
 
+Test Frontend: 
+
+  Browse: http://barryonweb.com/sudoku/
+
 
 #### 9. Backend deployment
 
