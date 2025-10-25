@@ -1,4 +1,3 @@
-import React from 'react';
 import sudokuImg from '../assets/sudoku.jpg';
 import connect4Img from '../assets/connect4.png';
 import battleshipImg from '../assets/battleships.gif';

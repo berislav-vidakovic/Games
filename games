@@ -1,0 +1,65 @@
+server {
+    listen 80;
+    server_name barryonweb.com www.barryonweb.com;
+
+    ##########################
+    # Main site redirect
+    ##########################
+    location = / {
+        return 302 /panel/;
+    }
+
+    ##########################
+    # Sudoku SPA
+    ##########################
+    # Redirect /sudoku → /sudoku/
+    location = /sudoku {
+        return 301 /sudoku/;
+    }
+
+    location /sudoku/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /sudoku/index.html;
+    }
+
+    ##########################
+    # Panel SPA
+    ##########################
+    # Redirect /panel → /panel/
+    location = /panel {
+        return 301 /panel/;
+    }
+
+    location /panel/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /panel/index.html;
+    }
+
+    ##########################
+    # Backend API proxy
+    ##########################
+    location /api/ {
+        proxy_pass http://localhost:5000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection keep-alive;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    ##########################
+    # Optional favicon handling
+    ##########################
+    location = /favicon.ico {
+        root /var/www/games/frontend/sudoku;
+    }
+
+    ##########################
+    # Optional robots.txt or other static files
+    ##########################
+    location = /robots.txt {
+        root /var/www/games/frontend/sudoku;
+    }
+}

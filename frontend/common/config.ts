@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 
+
 // common/config.ts
 export let URL_BACKEND_HTTP = '';
 export let URL_BACKEND_WS = '';

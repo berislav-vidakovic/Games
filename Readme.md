@@ -1,46 +1,58 @@
 ## Setup
 
-### Current configuration
+  - [Common features](#common-features) 
+  - [Backend model DB connect and GET enpoint](#backend-model-db-connect-and-get-enpoint) 
+  - [Frontent config and send GET request](#frontent-config-and-send-get-request) 
+  - [Deployment](#deployment)
+
+
+
+
+
+### Common features
+
+#### Current configuration
 
 - Frontend panel Port: 5174
 - Frontend sudoku Port: 5175
 - Backend Port: 5003 
 
+#### 1. Place clientsettings.json in root frontend/public
+#### 2. Update each game project's **vite.config.ts**:
 
-### Common features
+  - Enable access to common and root public
+  - Set local dev port explicitly 
+  - Set base for production
 
-1. Place clientsettings.json in root frontend/public
-2. Update each game project's **vite.config.ts**:
-    - Enable access to common and root public
-    - Set port explicitly 
-
-    ```ts
-    import path from 'path';
-    export default defineConfig({
-      publicDir: path.resolve(__dirname, '../public'),
-      resolve: {
-        alias: {
-          '@common': path.resolve(__dirname, '../common'),     
+      ```ts
+      import path from 'path';
+      export default defineConfig({
+        publicDir: path.resolve(__dirname, '../public'),
+        resolve: {
+          alias: {
+            '@common': path.resolve(__dirname, '../common'),     
+          },
         },
-      },
-      server: { port: 5174 }
-    });
-    ```
-3. Add common path to **tsconfig.json**:
+        server: { port: 5174 },
+        base: '/sudoku/'
+      });
+      ```
+#### 3. Add common path to **tsconfig.json**:
 
-    ```json
-    "paths": {
-      "@common/*": ["../common/*"]
-    }
-    ```
-4. Use alias when importing common component
 
-    ```ts
-    import { sendGETRequest } from '@common/restAPI';
-    import { loadCommonConfig } from '@common/config';
-    ```
+  ```json
+  "paths": {
+    "@common/*": ["../common/*"]
+  }
+  ```
+#### 4. Use alias when importing common component
 
-5. Adding new frontend project
+  ```ts
+  import { sendGETRequest } from '@common/restAPI';
+  import { loadCommonConfig } from '@common/config';
+  ```
+
+#### 5. Adding new frontend project
 
   - Run from terminal:
     ```powershell
@@ -66,7 +78,7 @@
 
   
 
-### Create Model on backend, connect to DB and expose GET endpoint
+### Backend model DB connect and GET enpoint 
 
 1. Create Model that matches table and columns, [Key] on PK column
 2. Create DbContext-based class
@@ -81,6 +93,171 @@ Sudoku:
   - GET endpoint "board"
   - URL for browser check: http://localhost:5003/api/sudoku/board
 
-### Connect Frontend to backend, initially send GET request
+### Frontent config and send GET request
+
+1. Add .env and .env.production to root folder frontend
+2. Update backend CORS policy with frontend Port defined in vite.config.ts  
+2. Add env.d.ts common folder
+2. Add config.ts common folder
+1. Add restAPI.ts to common folder
+2. Add states, Load config, send GET request and handle response in App.tsx
+
+    ```ts
+    function App() {
+    const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
+    const [areBoardsLoaded, setBoardsLoaded] = useState<boolean>(false);
+    const [board, setBoard] = useState<string>("");
+    const [solution, setSolution] = useState<string>("");
+    
+    useEffect( () => { 
+      loadCommonConfig(setConfigLoaded);     
+    }, []);
+
+    useEffect( () => { if( isConfigLoaded){
+        sendGETRequest('api/sudoku/board', handleInit );
+    }      
+    }, [isConfigLoaded]);
+
+    const handleInit = ( jsonResp: any ) => {    
+      console.log("Response to GET : ", jsonResp );
+      setBoard(jsonResp.boards[0].board);
+      setSolution(jsonResp.boards[0].solution);
+      setBoardsLoaded(true);
+    }
+    ```
+
+### Deployment
+
+Nging Linux on barryonweb.com
+
+#### 1. Access Linux server using SSH from Powershell
+  
+  ```powershell
+  ssh barry75@barryonweb.com
+  ```
+
+#### 2. Restart Linux if needed
+
+  ```bash
+  sudo reboot
+  apt list --upgradable
+  sudo apt update
+  sudo apt upgrade -y
+  ```
+
+#### 3. Install Nginx
+    
+  ```bash
+  nginx -v
+  sudo apt install nginx -y
+  sudo systemctl status nginx
+  ```
+
+Nginx welcome Page available on browse domain
+
+#### 4. Install and/or activate firewall
+
+  ```bash
+  sudo ufw status
+  ```
+
+
+#### 5. Install .Net runtime
+
+  - Ubuntu does not include the latest .NET runtime in its repositories. Microsoft maintains its own repository with up-to-date .NET versions. To install .NET, we need to tell Ubuntu about this repository.
+    - wget downloads a file from the internet.
+    - The URL points to Microsoft’s package configuration file for particular Ubuntu version
+      - $(lsb_release -rs) automatically detects Ubuntu version (e.g., 22.04) and downloads the correct file.
+    - O packages-microsoft-prod.deb saves the downloaded file with that name.
+
+    ```bash
+    wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    ```
+  
+  - dpkg -i installs the downloaded package, that adds Microsoft’s repository to the system, so **apt can now fetch .NET packages**
+    ```bash
+    sudo dpkg -i packages-microsoft-prod.deb
+    ```
+  
+  - Delete the downloaded .deb file 
+    ```bash
+    rm packages-microsoft-prod.deb
+    ```
+
+  - After this, the system knows where to get Microsoft packages to install ASP.NET Runtime and verify 
+    ```bash
+    sudo apt update
+    sudo apt install aspnetcore-runtime-8.0
+    dotnet --info
+    ```
+
+#### 6. Install MySQL
+
+  - Install, verify and login as root
+    ```bash
+    sudo apt install mysql-server -y
+    sudo mysql_secure_installation
+    sudo systemctl status mysql
+    sudo mysql -u root -p
+    ```
+
+#### 8. Install node and npm
+
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  sudo apt install -y nodejs build-essential
+  node -v
+  npm -v
+  ```
+
+#### 7. Frontend deployment
+
+- Build each frontend
+
+  ```powershell
+  npm install
+  npm run build
+  ```
+
+- Create server destination folders and set permissions
+
+  ```bash
+  sudo mkdir -p /var/www/games/frontend/sudoku
+  sudo mkdir -p /var/www/games/frontend/panel
+  sudo mkdir -p /var/www/games/backend
+  sudo chown -R www-data:www-data games
+  sudo chmod -R 755 games
+  sudo usermod -aG www-data barry75
+  groups barry75
+  sudo chmod -R 775 /var/www/games
+  ```
+
+- Copy dist source folders to destination folders 
+
+  ```powershell
+  scp -r .\panel\dist\* barry75@barryonweb.com:/var/www/games/frontend/panel/
+  ```
+
+#### 8. Nginx configuration
+
+Create /etc/nginx/sites-available/games
+ 
+1-Enable the site
+sudo ln -s /etc/nginx/sites-available/games /etc/nginx/sites-enabled/
+
+
+2-Test config
+sudo nginx -t
+
+
+3-Reload Nginx
+sudo systemctl reload nginx
+
+Disable Nginx deault site
+sudo rm /etc/nginx/sites-enabled/default
+
+
+Check site is properly linked
+ls -l /etc/nginx/sites-enabled/
 
 

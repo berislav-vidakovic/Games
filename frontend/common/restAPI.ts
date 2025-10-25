@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes"
-
 import  { URL_BACKEND_HTTP }  from './config';
 
 // Generic GET sending

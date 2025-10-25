@@ -1,10 +1,16 @@
 frontend/node_modules
+
 frontend/sudoku/node_modules
+frontend/sudoku/dist
+
 frontend/panel/node_modules
+frontend/panel/dist
+
 backend/obj
 backend/bin
 backend/publish
 
 Games.sln
+Deployment/
 
 

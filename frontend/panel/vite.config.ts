@@ -10,5 +10,6 @@ export default defineConfig({
       '@common': path.resolve(__dirname, '../common'),     
     },
   },
-  server: { port: 5174 }
+  server: { port: 5174 },
+  base: '/panel/'
 });

@@ -12,7 +12,6 @@ function App() {
   const [board, setBoard] = useState<string>("");
   const [solution, setSolution] = useState<string>("");
   
-  // Config - backend URL for HTTP and WS
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
   }, []);
