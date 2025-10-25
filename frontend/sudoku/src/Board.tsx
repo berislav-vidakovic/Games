@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../../common/style.css";
+import "@common/style.css";
 
 interface SudokuBoardProps {
   boardString: string;
