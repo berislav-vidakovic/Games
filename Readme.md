@@ -83,6 +83,7 @@
   - Update project's **vite.config.ts**
   - Add common path to **tsconfig.json** 
   - Update build and deploy workflow in **deploy-frontend.yml**
+  - Update Nginx config file **games**
   - Update .gitignore
   - Add CORS policy entry to backend
 
@@ -363,11 +364,17 @@ Move the build+deploy script from local env into a pipeline
 1. Build backend on GitHub (dotnet publish)
 
 2. Copy new backend files via scp
+
+3. Copy nginx config file games to /etc/nginx/sites-available/games
+
+4. (Re)create the symlink in /etc/nginx/sites-enabled/
+
+5. Reload Nginx to apply changes 
   
-3. Restart backend 
+6. Restart backend 
   
 
-  - Create .github/workflows/deploy-backend.yml
+#### Create .github/workflows/deploy-backend.yml
   - Restart by creating service
     - Create service file sudo nano /etc/systemd/system/games-backend.service
     - Reload systemd
