@@ -335,6 +335,9 @@ Move the build+deploy script from local env into a pipeline
   - Test connection
 
     - Create .github/workflows/test-ssh.yml
+    - GitHub Actions - Run workflow
+
+  
 
 
 
