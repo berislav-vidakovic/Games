@@ -51,6 +51,7 @@
   height: 39px;
   font-size: 32px;
   font-weight: 500;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   cursor: pointer;
   border: 1px solid #999;
   border-radius: 4px;
@@ -61,7 +62,6 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  padding-bottom: 2px;
   line-height: 1;
   user-select: none;
 
