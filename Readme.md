@@ -72,7 +72,16 @@
       }
     }
     ```
-  - Update vite.config.ts
+  - Add to App.tsx:
+    ```ts
+    const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
+    useEffect( () => { 
+      loadCommonConfig(setConfigLoaded);     
+    }, []);
+    ```
+  
+  - Update project's **vite.config.ts**
+  - Add common path to **tsconfig.json** 
   - Update .gitignore
   - Add CORS policy entry to backend
 
