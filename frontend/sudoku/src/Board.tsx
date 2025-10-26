@@ -153,7 +153,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
   return (
     <>
       {/* Timer and Mistakes */}
-      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", width: "100%", padding: "0 10px", marginBottom: "10px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", width: "90%", padding: "0 10px", marginBottom: "10px" }}>
         <div>Timer: {formatTime(time)}</div>
         <div>Mistakes: {mistakes}</div>
       </div>
@@ -207,7 +207,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
           })
         )}
       </div>
-      <div className="sudoku-numpad" style={{ display: "flex", justifyContent: "center", gap: "5px", marginTop: "20px" }}>
+      <div className="sudoku-numpad">
         {[1,2,3,4,5,6,7,8,9].map(num => (
           <button
             key={num}
