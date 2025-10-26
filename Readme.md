@@ -56,6 +56,7 @@
 
   - Run from terminal:
     ```powershell
+    cd frontend
     npm create vite@latest panel -- --template react-ts
     ```
   - Add workspace to frontend/package.json:

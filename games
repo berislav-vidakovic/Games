@@ -7,6 +7,17 @@ server {
         return 302 /panel/;
     }
 
+    # Redirect /panel → /panel/
+    location = /panel {
+        return 301 /panel/;
+    }
+
+    location /panel/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /panel/index.html;
+    }
+
     # Redirect /sudoku → /sudoku/
     location = /sudoku {
         return 301 /sudoku/;
@@ -18,15 +29,15 @@ server {
         try_files $uri /sudoku/index.html;
     }
 
-    # Redirect /panel → /panel/
-    location = /panel {
-        return 301 /panel/;
+    # Redirect /connect4 → /connect4/
+    location = /connect4 {
+        return 301 /connect4/;
     }
 
-    location /panel/ {
+    location /connect4/ {
         root /var/www/games/frontend;
         index index.html;
-        try_files $uri /panel/index.html;
+        try_files $uri /connect4/index.html;
     }
 
     # Backend API proxy

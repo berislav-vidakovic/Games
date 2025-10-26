@@ -31,6 +31,9 @@ jobs:
           cd ../sudoku
           npm install
           npm run build
+          cd ../connect4
+          npm install
+          npm run build
 
       # Start SSH agent with GitHub secret key
       - name: Setup SSH
@@ -51,3 +54,5 @@ jobs:
           scp -r frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
           ssh barry75@barryonweb.com "mkdir -p /var/www/games/frontend/sudoku"
           scp -r frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/frontend/connect4"
+          scp -r frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
