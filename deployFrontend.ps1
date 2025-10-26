@@ -15,8 +15,8 @@ Copy-Item -Path "frontend\panel\dist\*" -Destination "Deployment\frontend\panel"
 echo "...panel building - done"
 
 echo "Copy panel..."
-cd frontend
-scp -r .\panel\dist\* barry75@barryonweb.com:/var/www/games/frontend/panel/
-cd .. # back to root games
+cd Deployment\frontend
+scp -r .\panel\* barry75@barryonweb.com:/var/www/games/frontend/panel/
+cd ..\.. # back to root games
 
 echo "...Frontend deployment - done" 

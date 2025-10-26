@@ -341,6 +341,17 @@ Move the build+deploy script from local env into a pipeline
 
     - Create .github/workflows/deploy-frontend.yml
 
+### 3. Backend GitHub workflow
+
+  1️⃣ Build backend on GitHub (dotnet publish)
+
+  2️⃣ Copy new backend files via scp
+
+  3️⃣ Restart backend 
+  
+
+
+
 
 
 
