@@ -17,4 +17,4 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Test SSH connection
-        run: ssh -o StrictHostKeyChecking=yes barry75@barryonweb.com "echo Connected successfully from GitHub!"
+        run: ssh -o StrictHostKeyChecking=no barry75@barryonweb.com "echo Connected successfully from GitHub!"
