@@ -47,4 +47,4 @@ jobs:
       # 7️⃣ Restart backend via systemd
       - name: Restart backend service
         run: |
-          ssh barry75@barryonweb.com "sudo systemctl restart games-backend && sudo systemctl status games-backend --no-pager"
+          ssh barry75@barryonweb.com "sudo systemctl restart games-backend"

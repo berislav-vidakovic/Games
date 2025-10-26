@@ -359,6 +359,14 @@ Move the build+deploy script from local env into a pipeline
           sudo systemctl enable games-backend
           sudo systemctl start games-backend
       This ensures the service is registered, starts on boot, and can be restarted via systemctl.
+  - Enable no password to restart service
+
+      sudo visudo 
+      barry75 ALL=(ALL) NOPASSWD: /bin/systemctl restart games-backend
+
+  - See logs
+
+      
 
 
 
