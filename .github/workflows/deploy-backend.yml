@@ -47,6 +47,7 @@ jobs:
       # Deploy Nginx config and reload
       - name: Update Nginx config
         run: |
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
           scp games barry75@barryonweb.com:/var/www/games/nginx/
           ssh barry75@barryonweb.com "
             sudo cp /var/www/games/nginx/games /etc/nginx/sites-available/ &&
