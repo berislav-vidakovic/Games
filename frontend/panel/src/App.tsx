@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Games Panel</h1>
+      <h1>Game Panel</h1>
       <div className="buttons-container">
         <button onClick={() => {
             isConfigLoaded 

@@ -40,6 +40,18 @@ server {
         try_files $uri /connect4/index.html;
     }
 
+
+    # Redirect /battleships → /battleships/
+    location = /battleships {
+        return 301 /battleships/;
+    }
+
+    location /battleships/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /battleships/index.html;
+    }
+
     # Backend API proxy
     location /api/ {
         proxy_pass http://localhost:5000/api/;

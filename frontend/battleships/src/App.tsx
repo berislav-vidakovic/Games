@@ -1,4 +1,4 @@
-import connect4Img from '../assets/connect4.png';
+import battleshipImg from '../assets/battleships.gif';
 import './App.css';
 import "@common/style.css";
 import { loadCommonConfig } from '@common/config';
@@ -14,16 +14,16 @@ function App() {
 
   return (
     <div className="app-container">
-      <h2>Connect Four</h2>
+      <h2>Battleships</h2>
       <div className="buttons-container">
         <button onClick={() => {
             if( !isConfigLoaded )
               console.log("Config not loaded");
             else  
-              console.log("Connect 4 is under construction");
+              console.log("Battleships is under construction");
           }
         }>
-          <img src={connect4Img} alt="Connect 4" />
+          <img src={battleshipImg} alt="Battleships" />
         </button>        
       </div>
     </div>

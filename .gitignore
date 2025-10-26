@@ -9,6 +9,9 @@ frontend/sudoku/dist
 frontend/connect4/node_modules
 frontend/connect4/dist
 
+frontend/battleships/node_modules
+frontend/battleships/dist
+
 backend/obj
 backend/bin
 backend/publish
