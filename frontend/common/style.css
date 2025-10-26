@@ -24,6 +24,7 @@
   transition: background-color 0.2s;
 }
 
+
 .sudoku-cell.focused {
   border: 2px solid #444;
   background-color: #ffd;
@@ -35,6 +36,57 @@
   font-weight: 500;
   background-color: #eee;
 }
+
+/* Container */
+.sudoku-numpad {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.sudoku-numpad-button {
+  width: 40px;
+  height: 40px;
+  font-size: 32px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background-color: #ffd;
+  color: #22A;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  user-select: none;
+
+  outline: none;        /* remove old focus */
+  box-shadow: none;     /* remove old focus */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Remove browser focus rings */
+.sudoku-numpad-button:focus,
+.sudoku-numpad-button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Hover */
+.sudoku-numpad-button:hover {
+  background-color: #ffe680;
+}
+
+/* Active / clicked */
+.sudoku-numpad-button:active {
+  background-color: #ffdd55;
+  transform: scale(0.95);
+}
+
 
 
 .border-bottom {

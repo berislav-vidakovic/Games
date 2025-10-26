@@ -118,6 +118,35 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
+  const handleNumberClick = (num: string) => {
+    if (!focused) return;
+    const [r, c] = focused;
+
+    // Only accept empty or error cells
+    if (board[r][c] !== "0" && !errorCells[r][c]) return;
+
+    const newBoard = board.map(row => [...row]);
+    const newErrors = errorCells.map(row => [...row]);
+
+    if (num === solutionBoard[r][c]) {
+      newBoard[r][c] = num;
+      newErrors[r][c] = null;
+      setMessage("Good guess ✅");
+      okSound.currentTime = 0;
+      okSound.play();
+    } else {
+      newBoard[r][c] = "0";
+      newErrors[r][c] = num;
+      setMistakes(prev => prev + 1);
+      setMessage("Wrong guess ❌");
+      nokSound.currentTime = 0;
+      nokSound.play();
+    }
+
+    setBoard(newBoard);
+    setErrorCells(newErrors);
+  };
+
 
 
 
@@ -178,6 +207,18 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
           })
         )}
       </div>
+      <div className="sudoku-numpad" style={{ display: "flex", justifyContent: "center", gap: "5px", marginTop: "20px" }}>
+        {[1,2,3,4,5,6,7,8,9].map(num => (
+          <button
+            key={num}
+            className="sudoku-numpad-button"
+            onClick={() => handleNumberClick(num.toString())}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+
 
       <div style={{ marginTop: "20px", fontSize: "18px", minHeight: "24px" }}>
         {message}
