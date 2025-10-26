@@ -363,15 +363,17 @@ Move the build+deploy script from local env into a pipeline
 
 1. Build backend on GitHub (dotnet publish)
 
-2. Copy new backend files via scp
+2. Transfer new backend files via scp
 
-3. Copy nginx config file games to /etc/nginx/sites-available/games
+3. Transfer nginx config file games to /var/www/games/nginx/
 
-4. (Re)create the symlink in /etc/nginx/sites-enabled/
+4. Copy nginx config file from /var/www/games/nginx/ to /etc/nginx/sites-available/games
 
-5. Reload Nginx to apply changes 
+5. (Re)create the symlink in /etc/nginx/sites-enabled/
+
+6. Reload Nginx to apply changes 
   
-6. Restart backend 
+7. Restart backend 
   
 
 #### Create .github/workflows/deploy-backend.yml
@@ -386,7 +388,7 @@ Move the build+deploy script from local env into a pipeline
   - Enable no password to restart service
 
         sudo visudo 
-        barry75 ALL=(ALL) NOPASSWD: /bin/systemctl restart games-backend
+        barry75 ALL=(ALL) NOPASSWD: /bin/systemctl restart games-backend, /bin/systemctl reload nginx
 
   - Follow logs in realtime
 
