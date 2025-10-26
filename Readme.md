@@ -11,7 +11,7 @@
 
 ### Common features
 
-#### Current configuration
+#### Current dev configuration
 
 - Frontend panel Port: 5174
 - Frontend sudoku Port: 5175
@@ -82,6 +82,7 @@
   
   - Update project's **vite.config.ts**
   - Add common path to **tsconfig.json** 
+  - Update build and deploy workflow in **deploy-frontend.yml**
   - Update .gitignore
   - Add CORS policy entry to backend
 
