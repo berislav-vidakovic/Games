@@ -337,7 +337,12 @@ Move the build+deploy script from local env into a pipeline
     - Create .github/workflows/test-ssh.yml
     - GitHub Actions - Run workflow
 
-  
+  - Deploy frontend manually or automatically upon commit
+
+    - Create .github/workflows/deploy-frontend.yml
+
+
+
 
 
 
