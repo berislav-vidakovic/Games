@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
+const okSound = new Audio("sounds/OK.wav");  
+const nokSound = new Audio("sounds/NOK.mp3"); 
 
 interface SudokuBoardProps {
   boardString: string;
@@ -121,11 +123,15 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
             newBoard[r][c] = e.key;
             newErrors[r][c] = null;
             setMessage("Good guess ✅");
+            okSound.currentTime = 0; 
+            okSound.play(); 
           } else {
             newBoard[r][c] = "0";
             newErrors[r][c] = e.key;
             setMistakes(prev => prev + 1);
             setMessage("Wrong guess ❌");
+            nokSound.currentTime = 0; // rewind in case it's still playing
+            nokSound.play();
           }
 
           setBoard(newBoard);
