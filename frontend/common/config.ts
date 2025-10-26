@@ -4,6 +4,11 @@ import type { Dispatch, SetStateAction } from "react";
 // common/config.ts
 export let URL_BACKEND_HTTP = '';
 export let URL_BACKEND_WS = '';
+export let URL_FRONTEND_PANEL = '';
+export let URL_FRONTEND_SUDOKU = '';
+export let URL_FRONTEND_CONNECT4 = '';
+export let URL_FRONTEND_BATTLESHIP = '';
+
 
 /**
  * Detects environment without depending on Vite.

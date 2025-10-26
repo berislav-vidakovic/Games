@@ -301,3 +301,47 @@ MySQL
 
       Browse http://barryonweb.com/api/sudoku/board
 
+
+## CI/CD pipelines
+
+Move the build+deploy script from local env into a pipeline 
+
+  - runs on GitHub whenever code pushed
+  - local env and human launch is no longer required to build or copy files to the server
+
+
+### 1. Create deployment ps1 script to
+
+  - build
+  - prepare/copy artifacts
+  - transfer to server
+
+
+### 2. SSH connection GitHub - Linux server
+
+  - Create and key pair 
+
+    - ssh-keygen -t ed25519 -C "github-ci" -f github_ci
+    - copy keys to ~/.ssh/
+    - append github_ci.pub content to ~/.ssh/authorized_keys on Linux
+    - test conn: ssh -i ~/.ssh/github_ci barry75@barryonweb.com
+
+  - Add the Private Key to GitHub Secrets
+
+    - GitHub: Settings → Secrets and variables → Actions → New repository secret
+      - Paste full conetnt of private key github_ci
+    - (Optional but Recommended) Add Known Hosts Fingerprint
+
+  - Test connection
+
+    - Create .github/workflows/test-ssh.yml
+
+
+
+
+
+
+
+
+
+
