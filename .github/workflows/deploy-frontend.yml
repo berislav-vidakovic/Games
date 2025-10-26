@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy Frontends
 
 # Trigger workflow on push to main branch, or manually
 on:
@@ -12,17 +12,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js environment
+      # Setup Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      # 3️⃣ Install frontend dependencies and build
+      # Install frontend dependencies and build
       - name: Build frontend
         run: |
           cd frontend/panel
@@ -32,19 +32,19 @@ jobs:
           npm install
           npm run build
 
-      # 4️⃣ Start SSH agent with GitHub secret key
+      # Start SSH agent with GitHub secret key
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 5️⃣ Add server to known_hosts to avoid verification errors
+      # Add server to known_hosts to avoid verification errors
       - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan barryonweb.com >> ~/.ssh/known_hosts
 
-      # 6️⃣ Deploy frontend to server via SCP
+      # Deploy frontend to server via SCP
       - name: Deploy frontend via SSH
         run: |
           scp -r frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/

@@ -11,40 +11,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup .NET SDK
+      # Setup .NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x  # or whatever version your app uses
+          dotnet-version: 8.0.x 
 
-      # 3️⃣ Build backend
+      # Build backend
       - name: Build backend
         run: |
           cd backend
           dotnet publish -c Release -o ./publish
 
-      # 4️⃣ Setup SSH (using your existing secret)
+      # Setup SSH
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 5️⃣ Add server to known_hosts
+      # Add server to known_hosts
       - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan barryonweb.com >> ~/.ssh/known_hosts
 
-      # 6️⃣ Copy published files to server
+      # Copy published files to server
       - name: Deploy backend files
         run: |
           scp -r backend/publish/* barry75@barryonweb.com:/var/www/games/backend/
 
-      # 7️⃣ Restart backend via systemd
+      # Restart backend via systemd
       - name: Restart backend service
         run: |
           ssh barry75@barryonweb.com "sudo systemctl restart games-backend"
@@ -53,4 +53,3 @@ jobs:
       - name: Show backend logs
         run: |
           ssh barry75@barryonweb.com "journalctl -u games-backend -n 50 --no-pager"
-          

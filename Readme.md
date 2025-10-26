@@ -319,18 +319,25 @@ Move the build+deploy script from local env into a pipeline
 
 ### 2. SSH connection GitHub - Linux server
 
-  - Create and key pair 
+  - Create and update key pair 
 
-    - ssh-keygen -t ed25519 -C "github-ci" -f github_ci
+        ssh-keygen -t ed25519 -C "github-ci" -f github_ci
+    
     - copy keys to ~/.ssh/
+  
+  - Add the Public key to Linux server
+
     - append github_ci.pub content to ~/.ssh/authorized_keys on Linux
-    - test conn: ssh -i ~/.ssh/github_ci barry75@barryonweb.com
+  
+  - Test local to Linux connection: 
+  
+        ssh -i ~/.ssh/github_ci barry75@barryonweb.com
 
   - Add the Private Key to GitHub Secrets
 
     - GitHub: Settings → Secrets and variables → Actions → New repository secret
       - Paste full conetnt of private key github_ci
-    - (Optional but Recommended) Add Known Hosts Fingerprint
+    - (Optional TODO) Add Known Hosts Fingerprint
 
   - Test connection
 
@@ -343,11 +350,11 @@ Move the build+deploy script from local env into a pipeline
 
 ### 3. Backend GitHub workflow
 
-  1️⃣ Build backend on GitHub (dotnet publish)
+1. Build backend on GitHub (dotnet publish)
 
-  2️⃣ Copy new backend files via scp
+2. Copy new backend files via scp
   
-  3️⃣ Restart backend 
+3. Restart backend 
   
 
   - Create .github/workflows/deploy-backend.yml
