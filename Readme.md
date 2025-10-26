@@ -388,7 +388,9 @@ Move the build+deploy script from local env into a pipeline
   - Enable no password to restart service
 
         sudo visudo 
-        barry75 ALL=(ALL) NOPASSWD: /bin/systemctl restart games-backend, /bin/systemctl reload nginx
+        barry75 ALL=(ALL) NOPASSWD: /bin/systemctl restart games-backend
+        barry75 ALL=(ALL) NOPASSWD: /bin/systemctl reload nginx
+        barry75 ALL=(ALL) NOPASSWD: /bin/cp, /bin/ln, /usr/sbin/nginx
 
   - Follow logs in realtime
 
