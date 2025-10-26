@@ -315,7 +315,19 @@ MySQL
 
 ## CI/CD pipelines
 
-Move the build+deploy script from local env into a pipeline 
+### Github workflow for frontend yml
+
+  - GitHub creates a fresh, isolated virtual machine (Ubuntu runner). It starts empty — the repo is cloned, but nothing else exists
+
+  - Inside that environment, npm install creates a node_modules folder which lives inside the ephemeral runner’s filesystem
+
+  - After npm run build, the dist folder is generated
+
+  - The next step (scp) transfers only the dist folder to the server
+
+  - After the workflow completes VM is destroyed and he temporary node_modules folder is deleted automatically when the runner finishes
+
+### Move the build+deploy script from local env into a pipeline 
 
   - runs on GitHub whenever code pushed
   - local env and human launch is no longer required to build or copy files to the server

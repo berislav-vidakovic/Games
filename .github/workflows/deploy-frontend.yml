@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 20
 
-      # Install frontend dependencies and build
+      # GitHub - Install frontend dependencies and build
       - name: Build frontend
         run: |
           cd frontend/panel
@@ -44,8 +44,10 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan barryonweb.com >> ~/.ssh/known_hosts
 
-      # Deploy frontend to server via SCP
+      # Transfer frontend from GitHub Repo to Ubuntu server via SCP
       - name: Deploy frontend via SSH
         run: |
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/frontend/panel"
           scp -r frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/frontend/sudoku"
           scp -r frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
