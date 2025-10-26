@@ -48,3 +48,9 @@ jobs:
       - name: Restart backend service
         run: |
           ssh barry75@barryonweb.com "sudo systemctl restart games-backend"
+
+      # See logs after restart
+      - name: Show backend logs
+        run: |
+          ssh barry75@barryonweb.com "journalctl -u games-backend -n 50 --no-pager"
+          
