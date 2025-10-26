@@ -21,7 +21,14 @@
   font-weight: 500;
   color: #22A;
   background-color: #ffd;
+  transition: background-color 0.2s;
 }
+
+.sudoku-cell.focused {
+  border: 2px solid #444;
+  background-color: #ffd;
+}
+
 
 .sudoku-cell.error {
   color: red;         /* number will appear red if you choose to render it */
@@ -38,10 +45,12 @@
   border-right: 3px solid #000;
 }
 
-.sudoku-cell.focused {
-  background-color: #e0f7fa;
-  outline: 2px solid #00acc1;
+/* Highlight row or column */
+.sudoku-cell.highlight {
+  background-color: #d0f0ff;
 }
+
+
 
 
 .app-container {

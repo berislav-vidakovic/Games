@@ -59,38 +59,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
     if (!focused) return;
     const [r0, c0] = focused;
 
-    if (dr !== 0) {
-      for (let step = 1; step <= 9; step++) {
-        const newR = (r0 + dr * step + 9) % 9;
-        if (board[newR][c0] === "0" || errorCells[newR][c0]) {
-          setFocused([newR, c0]);
-          return;
-        }
-      }
-    } else if (dc !== 0) {
-      for (let step = 1; step <= 9; step++) {
-        const newC = (c0 + dc * step + 9) % 9;
-        if (board[r0][newC] === "0" || errorCells[r0][newC]) {
-          setFocused([r0, newC]);
-          return;
-        }
-      }
-    }
+    const newR = (r0 + dr + 9) % 9;
+    const newC = (c0 + dc + 9) % 9;
 
-    let nearestCell: [number, number] | null = null;
-    let minDist = Infinity;
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
-        if (board[r][c] === "0" || errorCells[r][c]) {
-          const dist = Math.abs(r - r0) + Math.abs(c - c0);
-          if (dist < minDist) {
-            minDist = dist;
-            nearestCell = [r, c];
-          }
-        }
-      }
-    }
-    if (nearestCell) setFocused(nearestCell);
+    setFocused([newR, newC]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -168,15 +140,30 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
             const isFocused = focused?.[0] === r && focused?.[1] === c;
             const wrongNumber = errorCells[r][c];
 
+            // Highlight row, column, or box
+            const inSameRow = focused?.[0] === r;
+            const inSameCol = focused?.[1] === c;
+            const inSameBox =
+              focused &&
+              Math.floor(focused[0] / 3) === Math.floor(r / 3) &&
+              Math.floor(focused[1] / 3) === Math.floor(c / 3);
+
+            const classes = [
+              "sudoku-cell",
+              (inSameRow || inSameCol || inSameBox) && !isFocused ? "highlight" : "",
+              wrongNumber ? "error" : "",
+              isFocused ? "focused" : "",
+              (r + 1) % 3 === 0 && r !== 8 ? "border-bottom" : "",
+              (c + 1) % 3 === 0 && c !== 8 ? "border-right" : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
+
+
             return (
               <div
                 key={`${r}-${c}`}
-                className={`sudoku-cell${
-                  ((r + 1) % 3 === 0 && r !== 8 ? " border-bottom" : "") +
-                  ((c + 1) % 3 === 0 && c !== 8 ? " border-right" : "") +
-                  (isFocused ? " focused" : "") +
-                  (wrongNumber ? " error" : "")
-                }`}
+                className={classes}
                 onClick={() => {
                   // Allow focusing only empty or error cells
                   if (board[r][c] === "0" || errorCells[r][c]) {
