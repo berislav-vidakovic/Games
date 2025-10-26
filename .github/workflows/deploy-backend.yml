@@ -44,20 +44,7 @@ jobs:
         run: |
           scp -r backend/publish/* barry75@barryonweb.com:/var/www/games/backend/
 
-      # 7️⃣ Restart backend process
-      - name: Restart backend
+      # 7️⃣ Restart backend via systemd
+      - name: Restart backend service
         run: |
-          ssh barry75@barryonweb.com << 'EOF'
-          echo "Restarting backend..."
-          # Stop if running
-          pid=$(pgrep -f 'dotnet /var/www/games/backend/.*\.dll')
-          if [ -n "$pid" ]; then
-            echo "Stopping backend (PID $pid)..."
-            kill $pid
-            sleep 2
-          fi
-          # Start new version
-          echo "Starting backend..."
-          nohup dotnet /var/www/games/backend/backend.dll > /var/www/games/backend/log.txt 2>&1 &
-          echo "Backend restarted."
-          EOF
+          ssh barry75@barryonweb.com "sudo systemctl restart games-backend && sudo systemctl status games-backend --no-pager"

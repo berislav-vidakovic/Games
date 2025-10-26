@@ -346,9 +346,20 @@ Move the build+deploy script from local env into a pipeline
   1️⃣ Build backend on GitHub (dotnet publish)
 
   2️⃣ Copy new backend files via scp
-
+  
   3️⃣ Restart backend 
   
+
+  - Create .github/workflows/deploy-backend.yml
+  - Restart by creating service
+    - Create service file sudo nano /etc/systemd/system/games-backend.service
+    - Reload systemd
+
+          sudo systemctl daemon-reload
+          sudo systemctl enable games-backend
+          sudo systemctl start games-backend
+      This ensures the service is registered, starts on boot, and can be restarted via systemctl.
+
 
 
 

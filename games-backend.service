@@ -1,0 +1,14 @@
+[Unit]
+Description=Games Backend
+After=network.target
+
+[Service]
+WorkingDirectory=/var/www/games/backend
+ExecStart=/usr/bin/dotnet /var/www/games/backend/backend.dll
+Restart=always
+RestartSec=5
+User=barry75
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target
