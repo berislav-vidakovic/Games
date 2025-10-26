@@ -13,7 +13,7 @@ public class SudokuController : ControllerBase
   public SudokuController(GamesContext context)
   {
     _context = context;
-    Console.WriteLine("Backend build with automated CI/CD");
+    Console.WriteLine("Backend build with automated CI/CD"); 
 
   }
 
