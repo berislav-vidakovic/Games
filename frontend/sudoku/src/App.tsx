@@ -22,7 +22,7 @@ function App() {
   }, [isConfigLoaded]);
 
   const handleInit = ( jsonResp: any ) => {    
-    console.log("Response to GET : ", jsonResp );
+    console.log("Response (CI/CD) to GET  : ", jsonResp );
     setBoard(jsonResp.boards[0].board);
     setSolution(jsonResp.boards[0].solution);
     setBoardsLoaded(true);

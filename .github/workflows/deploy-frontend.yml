@@ -28,6 +28,9 @@ jobs:
           cd frontend/panel
           npm install
           npm run build
+          cd ../sudoku
+          npm install
+          npm run build
 
       # 4️⃣ Start SSH agent with GitHub secret key
       - name: Setup SSH
@@ -45,3 +48,4 @@ jobs:
       - name: Deploy frontend via SSH
         run: |
           scp -r frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
+          scp -r frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
