@@ -151,3 +151,47 @@ button img {
 button img:hover {
   transform: scale(1.1);
 }
+
+/* Connect4 classes  */
+.connect4-board {
+  display: grid;
+  grid-template-columns: repeat(7, 88px);
+  grid-template-rows: repeat(6, 88px);
+  border: 2px solid #000;
+  gap: 0;
+  background-color: #00F;
+  /* Add these */
+  margin: 20px auto;     /* horizontally centered */
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.conn4cell {
+  background-color: #00F; /* Blue board cell */
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;    /* Centers vertically */
+  justify-content: center; /* Centers horizontally */
+  margin: 4px;
+}
+
+/* Circle (the hole or piece) */
+.conn4cell::before {
+  content: "";
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: white; /* Empty slot */
+  display: block;
+}
+
+/* Chip colors */
+.conn4cell.yellow::before {
+  background-color: yellow;
+}
+
+.conn4cell.red::before {
+  background-color: red;
+}

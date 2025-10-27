@@ -1,31 +1,42 @@
-import connect4Img from '../assets/connect4.png';
-import './App.css';
-import "@common/style.css";
+// App.tsx
+import Board from "./Board";
+import { sendGETRequest } from '@common/restAPI';
 import { loadCommonConfig } from '@common/config';
-import { useState, useEffect } from 'react';
+
+import { useEffect, useState } from "react";
+
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
+  const [board, setBoard] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [level, setLevel] = useState<number>(0);
   
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
   }, []);
 
+  const boardString="YR-R--RY---RRYYR-R--RY---RRYYR-R--RY---RRY";
 
   return (
-    <div className="app-container">
+    <div 
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f8f9fa",
+      }}>
+       
       <h2>Connect Four</h2>
-      <div className="buttons-container">
-        <button onClick={() => {
-            if( !isConfigLoaded )
-              console.log("Config not loaded");
-            else  
-              console.log("Connect 4 is under construction");
-          }
-        }>
-          <img src={connect4Img} alt="Connect 4" />
-        </button>        
-      </div>
+     
+      {<Board 
+        boardString={boardString} 
+        name={name}
+        level={level}
+      />
+      }
     </div>
   );
 }
