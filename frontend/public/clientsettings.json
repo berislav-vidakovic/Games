@@ -5,7 +5,7 @@
             "WS": "ws://localhost:5201/websocket"
         },
         "Production": {
-            "HTTP": "http://barryonweb.com",
+            "HTTP": "https://barryonweb.com",
             "WS": "ws://barryonweb.com/backend/websocket"
         }
     },
@@ -17,10 +17,10 @@
           "battleship": "http://localhost:5177/"
       },
       "Production": {
-          "panel": "http://barryonweb.com/panel/",
-          "sudoku": "http://barryonweb.com/sudoku/",
-          "connect4": "http://barryonweb.com/connect4/",
-          "battleship": "http://barryonweb.com/battleships/"
+          "panel": "https://barryonweb.com/panel/",
+          "sudoku": "https://barryonweb.com/sudoku/",
+          "connect4": "https://barryonweb.com/connect4/",
+          "battleship": "https://barryonweb.com/battleships/"
       }
     }
 }

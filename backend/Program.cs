@@ -31,6 +31,17 @@ if( allowedOrigins != null )
         });
   });
 
+// TLS (https)
+var env = builder.Environment;
+builder.Services.ConfigureApplicationCookie(options => 
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = env.IsDevelopment() 
+                                 ? CookieSecurePolicy.None 
+                                 : CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax; 
+});
+
 
 var app = builder.Build(); 
 
