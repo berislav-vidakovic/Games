@@ -167,6 +167,18 @@ button img:hover {
   border-radius: 8px;
 }
 
+.conn4top {
+  display: grid;
+  grid-template-columns: repeat(7, 88px);
+  width: 100%;
+  height: 80;
+  padding-left: 16px;
+}
+
+.conn4inactivecol {
+  background-color: none;
+}
+
 .conn4cell {
   background-color: #00F; /* Blue board cell */
   width: 80px;
@@ -193,5 +205,33 @@ button img:hover {
 }
 
 .conn4cell.red::before {
+  background-color: red;
+}
+
+.conn4cellNew {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;    /* Centers vertically */
+  justify-content: center; /* Centers horizontally */
+  margin: 4px;
+}
+
+/* Circle (the hole or piece) */
+.conn4cellNew::before {
+  content: "";
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: white; /* Empty slot */
+  display: block;
+}
+
+/* Chip colors */
+.conn4cellNew.yellow::before {
+  background-color: yellow;
+}
+
+.conn4cellNew.red::before {
   background-color: red;
 }

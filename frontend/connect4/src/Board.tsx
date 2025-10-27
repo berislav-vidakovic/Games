@@ -13,9 +13,9 @@ interface Connect4BoardProps {
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, name, level }) => {
   
-
-
   const [time, setTime] = useState<number>(0); // seconds
+  const [activeCol, setActiveCol] = useState<number>(0); 
+
 
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +39,24 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, name, level 
     return `${m}:${s}`;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        break;
+      case "ArrowLeft":
+        e.preventDefault();
+        if( activeCol == 0 ) return;
+        setActiveCol(activeCol-1);
+        break;
+      case "ArrowRight":
+        e.preventDefault();
+        if( activeCol == 6 ) return;
+        setActiveCol(activeCol+1);
+        break;    
+    }
+  };
+
   return (
     <>
       {/* Name and level */}
@@ -52,9 +70,23 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, name, level 
         <div>Timer: {formatTime(time)}</div>
       </div>
 
+        <div className='conn4top'>
+          {[0,1,2,3,4,5,6].map(col=>
+            <div className={
+              col==activeCol ? "conn4cellNew red" : "conn4inactivecol"}
+            >
+            </div>
+          )}
+        </div>
+
+
       <div
         className="connect4-board"
+        tabIndex={0}  
+        ref={boardRef}
+        onKeyDown={handleKeyDown}
       >
+       
         {boardString.split('').map((c,i)=>{
           const classes = [
               "conn4cell",
