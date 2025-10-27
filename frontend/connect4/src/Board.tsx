@@ -1,28 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
-const okSound = new Audio("sounds/OK.wav");  
-const nokSound = new Audio("sounds/NOK.mp3"); 
+//const okSound = new Audio("sounds/OK.wav");  
+//const nokSound = new Audio("sounds/NOK.mp3"); 
 
-interface SudokuBoardProps {
+interface Connect4BoardProps {
   boardString: string;
   name: string;
   level: number;
 }
 
-type BoardArray = string[][];
+//type BoardArray = string[][];
 
-const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, name, level }) => {
+const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, name, level }) => {
   
 
-  const initialBoard: BoardArray = Array.from({ length: 9 }, (_, row) =>
-    Array.from({ length: 9 }, (_, col) => boardString[row * 9 + col])
-  );
 
-  const [board, setBoard] = useState<BoardArray>(initialBoard);
-  const [focused, setFocused] = useState<[number, number] | null>(null);
-  const [message, setMessage] = useState<string>("");
   const [time, setTime] = useState<number>(0); // seconds
-  const [mistakes, setMistakes] = useState<number>(0);
 
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -37,17 +30,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, name, level }) =
     return () => clearInterval(timer);
   }, []);
 
-  // Focus first empty cell
-  useEffect(() => {
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
-        if (board[r][c] === "0") {
-          setFocused([r, c]);
-          return;
-        }
-      }
-    }
-  }, []);
+
 
   // Format time mm:ss
   const formatTime = (seconds: number) => {
@@ -64,10 +47,9 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, name, level }) =
         <div>Level: {level == 2 ? "Medium" : "Easy"}</div>
       </div>
       
-      {/* Timer and Mistakes */}
+      {/* Timer  */}
       <div className={"sudokuinfobox"} style={{fontWeight:"600"}}>
         <div>Timer: {formatTime(time)}</div>
-        <div>Mistakes: {mistakes}</div>
       </div>
 
       <div
@@ -89,11 +71,8 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, name, level }) =
         })}
       </div>
 
-      <div style={{ marginTop: "20px", fontSize: "18px", minHeight: "24px" }}>
-        {message}
-      </div>
     </>
   );
 };
 
-export default SudokuBoard;
+export default Connect4Board;
