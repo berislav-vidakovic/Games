@@ -10,8 +10,12 @@ public class SudokuBoard
   [Column("board_id")]
   public int BoardId { get; set; }
   [Column("board")]
-  public string Board { get; set; }
+  public required string Board { get; set; }
   [Column("solution")]
-  public string Solution { get; set; }
+  public required string Solution { get; set; }
+  [Column("name")]
+  public required string Name { get; set; }
+  [Column("level")]
+  public int Level { get; set; }
 }
 

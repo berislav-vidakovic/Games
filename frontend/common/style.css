@@ -88,6 +88,15 @@
   transform: scale(0.95);
 }
 
+.sudokuinfobox {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 90%;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
 
 
 .border-bottom {

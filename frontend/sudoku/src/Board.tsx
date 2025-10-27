@@ -6,11 +6,13 @@ const nokSound = new Audio("sounds/NOK.mp3");
 interface SudokuBoardProps {
   boardString: string;
   solutionString: string;
+  name: string;
+  level: number;
 }
 
 type BoardArray = string[][];
 
-const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }) => {
+const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString, name, level }) => {
   
 
   const initialBoard: BoardArray = Array.from({ length: 9 }, (_, row) =>
@@ -148,12 +150,16 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString }
   };
 
 
-
-
   return (
     <>
+      {/* Name and level */}
+      <div className={"sudokuinfobox"}  >
+        <div>Game: {name}</div>
+        <div>Level: {level == 2 ? "Medium" : "Easy"}</div>
+      </div>
+      
       {/* Timer and Mistakes */}
-      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", width: "90%", padding: "0 10px", marginBottom: "10px" }}>
+      <div className={"sudokuinfobox"} style={{fontWeight:"600"}}>
         <div>Timer: {formatTime(time)}</div>
         <div>Mistakes: {mistakes}</div>
       </div>

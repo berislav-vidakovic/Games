@@ -11,6 +11,8 @@ function App() {
   const [areBoardsLoaded, setBoardsLoaded] = useState<boolean>(false);
   const [board, setBoard] = useState<string>("");
   const [solution, setSolution] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [level, setLevel] = useState<number>(0);
   
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -25,6 +27,8 @@ function App() {
     console.log("Response (CI/CD) to GET  : ", jsonResp );
     setBoard(jsonResp.boards[0].board);
     setSolution(jsonResp.boards[0].solution);
+    setName(jsonResp.boards[0].name);
+    setLevel(jsonResp.boards[0].level);
     setBoardsLoaded(true);
   }
 
@@ -45,6 +49,8 @@ function App() {
       <Board 
         boardString={board} 
         solutionString={solution} 
+        name={name}
+        level={level}
       />
       }
     </div>
