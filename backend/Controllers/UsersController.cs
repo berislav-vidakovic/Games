@@ -11,10 +11,13 @@ namespace Controllers;
 public class UsersController : ControllerBase
 {
   private readonly GamesContext _context;
-    
-  public UsersController(GamesContext context)
+
+  private readonly WebSocketManager _wsManager;
+
+  public UsersController(GamesContext context, WebSocketManager wsManager)
   {
     _context = context;
+    _wsManager = wsManager;
   }
 
   // GET: /api/users/all
@@ -23,11 +26,13 @@ public class UsersController : ControllerBase
   public async Task<ActionResult<IEnumerable<User>>> GetUsers()
   {
     var users = await _context.Users.ToListAsync();
-    return Ok(users );
+    Guid id = Guid.NewGuid();
+    var response = new { id, users };
+    return Ok( response );
   }
 
-  // POST /api/users/register
-  [HttpPost("register")]
+  // POST /api/users/new
+  [HttpPost("new")]
   public async Task<IActionResult> PostUsersReceived([FromBody] JsonElement body)
   {
     try
@@ -59,7 +64,7 @@ public class UsersController : ControllerBase
 
         var wsBroadcastMsg = new { type = "userRegister", status = "WsStatus.OK", data = response };
 
-        //_clientManager.BroadcastWsMessage(wsBroadcastMsg);
+        _wsManager.BroadcastMessage(wsBroadcastMsg);
 
         return StatusCode(StatusCodes.Status201Created, response);
       }

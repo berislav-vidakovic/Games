@@ -7,12 +7,13 @@ import { URL_SUDOKU, URL_CONNECT4, URL_BATTLESHIP } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
 import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
+import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
-
+  const [isWsConnected, setWsConnected] = useState<boolean>(false);
   
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -23,9 +24,10 @@ function App() {
    }      
   }, [isConfigLoaded]);
 
+  
   const handleResponseGetAllUsers = ( jsonResp: any ) => {    
     // Map API response fields to match your User interface
-    const mappedUsers: User[] = jsonResp.map((u: any) => ({
+    const mappedUsers: User[] = jsonResp.users.map((u: any) => ({
       userId: u.userId,
       login: u.login,
       fullname: u.fullName,  
@@ -35,14 +37,50 @@ function App() {
     setUsersRegistered(mappedUsers);
     console.log("Response to GET users: ", jsonResp );
     console.log("Users: ", ...usersRegistered );
+    sessionStorage.setItem("myID", jsonResp.id );
 
   }
 
-  // Stub handlers for auth buttons (you’ll implement logic later)
+  useEffect( () => { if( isConfigLoaded){
+      connectWS( setWsConnected, handleWsMessage );
+   }      
+  }, [isConfigLoaded]);
+
+  async function handleWsMessage( jsonMsg: any ) {
+    console.log("WS conn:", isWsConnected );
+     if( jsonMsg.type== "userRegister" )
+      handleWsUserRegister(jsonMsg.data);
+  }
+
+  function handleWsUserRegister( jsonResp: any ){
+    console.log("*** Ws-HANDLE User registered: ", jsonResp);
+    if( jsonResp.acknowledged ) { 
+      // Construct the new user object
+      const newUser: User = {
+        userId: jsonResp.user.userId,
+        login: jsonResp.user.login,
+        fullname: jsonResp.user.fullName,
+        isonline: jsonResp.user.isOnline,
+      };
+      // Update frontend state (append to existing users list)    
+      setUsersRegistered(prev => {
+        const dupe = prev.some(u => u.userId === newUser.userId);
+        if( dupe ) console.log("=====================Duplicate ID found, no user appending");
+        return dupe ? prev : [...prev, newUser];
+      });
+
+      console.log("Ws-User registered: ", jsonResp.user);
+    }
+    else {
+      console.log("User NOT registered: ", jsonResp.error);
+      alert("NOT registered: User already exists");
+    }
+  }
+
   const handleSignUp = () => {
     console.log("Sign Up clicked"); 
-    const body = JSON.stringify({ register: { login:"penny", fullname:"Penny" } } );
-    sendPOSTRequest('api/users/register', body, handleResponseSignUp);
+    const body = JSON.stringify({ register: { login:"penny5", fullname:"Penny5" } } );
+    sendPOSTRequest('api/users/new', body, handleResponseSignUp);
   }
 
   const handleResponseSignUp = ( jsonResp: any, status: number ) => {    

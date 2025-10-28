@@ -2,6 +2,9 @@ using Models;
 using Controllers;
 using Data;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
+using Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<GamesContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddControllers();
+
+// Web socket connection
+builder.Services.AddSingleton<WebSocketManager>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -43,8 +49,18 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-var app = builder.Build(); 
+var app = builder.Build();
 
+// Web socket connection
+var webSocketOptions = new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2),
+};
+app.UseWebSockets(webSocketOptions);
+app.UseMiddleware<WebSocketMiddleware>();
+
+
+// CORS
 app.UseCors("AllowFrontends"); 
 
 
