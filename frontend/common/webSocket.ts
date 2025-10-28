@@ -62,7 +62,3 @@ export async function sendWsMessage( strJson: string) : Promise<void> {
     ws.send(strJson);
 }
 
-function uuidv4(): string | null {
-  throw new Error('Function not implemented.');
-}
-
