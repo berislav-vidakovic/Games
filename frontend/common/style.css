@@ -1,4 +1,35 @@
 /* style.css */
+
+/* Panel*/
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: large;
+  margin: 10px 0;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 6px;
+  border: 1px solid #9e9e9e;
+}
+
+.status-online {
+  background-color: #4caf50;
+}
+
+.status-offline {
+  background-color: #fff;
+}
+
+
+
 .sudoku-board {
   display: grid;
   grid-template-columns: repeat(9, 40px);
@@ -112,23 +143,110 @@
   background-color: #d0f0ff;
 }
 
-
-
-
-.app-container {
-  text-align: center;
-  margin-top: 50px;
-  background-color: #ccF;
-  padding: 32px;
-  border-radius: 8px;
+body {
+  margin: 0;
+  padding: 0;
 }
 
+
+/* App container: two columns */
+.app-container {
+  display: flex;
+  width: 75vw;
+  max-width: 1200px;
+  height: 80vh;
+  margin: 50px auto;
+  background-color: #ccf;
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Users box (left column) */
+.users-box {
+  width: 220px;
+  background-color: #eef;
+  padding: 16px 32px;
+  border-radius: 8px 0 0 8px;
+  overflow-y: auto;
+  text-align: left; /* ensures text and list items align left */
+}
+
+/* Right main content (auth + game buttons) */
+.main-content {
+  flex: 1; /* take remaining space */
+  display: flex;
+  flex-direction: column;
+  padding: 32px 32px;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+/* Auth buttons on top */
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 32px;
+  justify-content: flex-end; 
+}
+
+.auth-buttons button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #4a69bd;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-buttons button:hover {
+  background-color: #1e3799;
+}
+
+/* Game buttons */
 .buttons-container {
   display: flex;
-  justify-content: center;
   gap: 20px;
-  margin-top: 30px;
+  flex-wrap: wrap; /* wrap on small screens */
+  margin-top: 32px;
 }
+
+.buttons-container button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.buttons-container img {
+  width: 200px; /* smaller size so it fits */
+  height: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+.buttons-container img:hover {
+  transform: scale(1.1);
+}
+
+/* Users list */
+.users-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.users-box li.online {
+  color: green;
+  font-weight: bold;
+}
+
+.users-box li.offline {
+  color: gray;
+}
+
 
 button {
   background: none;
@@ -137,9 +255,10 @@ button {
   border: solid 4px #999;
 }
 
+/*
 button:hover {
   border: solid 4px #00C;
-}
+}*/
 
 button img {
   width: 250px;

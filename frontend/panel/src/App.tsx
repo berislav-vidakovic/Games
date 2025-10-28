@@ -38,31 +38,65 @@ function App() {
 
   }
 
-
   const handleClick = (url: string) => {
     window.open(url, '_blank');
   };
 
+  // Stub handlers for auth buttons (you’ll implement logic later)
+  const handleSignUp = () => console.log("Sign Up clicked");
+  const handleSignIn = () => console.log("Sign In clicked");
+  const handleSignOut = () => console.log("Sign Out clicked");
+  const handleInvite = () => console.log("Invite User clicked");
+
   return (
-    <div className="app-container">
-      <h1>Game Panel</h1>
-      <div className="buttons-container">
-        <button onClick={() => {
-            isConfigLoaded 
-            ? handleClick(URL_SUDOKU)
-            : console.log("Config not loaded");
-          }
-        }>
-          <img src={sudokuImg} alt="Sudoku" />
-        </button>
-        <button onClick={() => handleClick(URL_CONNECT4)}>
-          <img src={connect4Img} alt="Connect 4" />
-        </button>
-        <button onClick={() => handleClick(URL_BATTLESHIP)}>
-          <img src={battleshipImg} alt="Battleship" />
-        </button>
-      </div>
+   <div className="app-container">
+  {/* --- Users Box on the left --- */}
+  <div className="users-box">
+      <h2>Users:</h2>
+      <ul>
+      { usersRegistered.map((u) => ( 
+              <li key={u.userId} className="user-item">               
+                {u.fullname} 
+                <span
+                  className={`status-dot ${
+                    u.isonline ? "status-online" : "status-offline"
+                  }`}
+                ></span>
+              </li>
+            ))
+        }        
+    </ul>
+  </div>
+
+  {/* --- Right main content --- */}
+  <div className="main-content">
+    {/* Top auth buttons */}
+    <div className="auth-buttons">
+      <button onClick={handleSignUp}>Sign Up</button>
+      <button onClick={handleSignIn}>Sign In</button>
+      <button onClick={handleSignOut}>Sign Out</button>
+      <button onClick={handleInvite}>Invite User</button>
     </div>
+
+    
+    <h1>Game Panel</h1>
+
+    {/* Game buttons */}
+    <div className="buttons-container">
+      
+      <button onClick={() => isConfigLoaded ? handleClick(URL_SUDOKU) : console.log("Config not loaded")}>
+        <img src={sudokuImg} alt="Sudoku" />
+      </button>
+      <button onClick={() => handleClick(URL_CONNECT4)}>
+        <img src={connect4Img} alt="Connect 4" />
+      </button>
+      <button onClick={() => handleClick(URL_BATTLESHIP)}>
+        <img src={battleshipImg} alt="Battleship" />
+      </button>
+    </div>
+  </div>
+</div>
+
   );
 }
 
