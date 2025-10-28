@@ -164,7 +164,7 @@ body {
 
 /* Users box (left column) */
 .users-box {
-  width: 220px;
+  flex: 0 0 20%;
   background-color: #eef;
   padding: 16px 32px;
   border-radius: 8px 0 0 8px;
