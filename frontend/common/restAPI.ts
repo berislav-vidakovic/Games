@@ -18,9 +18,6 @@ export async function sendGETRequest(endpoint: string, handleResponse: (data: an
         return res.json();
       })
       .then( (jsonResp) => {          
-        //if( isResetMessageReceived(jsonResp) )
-          //reconnectApp();
-        //else
           handleResponse( jsonResp );
       } )  // runs after parsing completes
       .catch(err => console.error("GET request failed:", err));
@@ -46,6 +43,7 @@ export async function sendPOSTRequest(
         case StatusCodes.OK: // 200
         case StatusCodes.CREATED: // 201
         case StatusCodes.RESET_CONTENT: // 205
+        case StatusCodes.CONFLICT: // 409
           handleResponse( jsonResp, res.status );
         //case StatusCodes.BAD_REQUEST: // 400
         //case StatusCodes.CONFLICT: // 409
@@ -53,13 +51,6 @@ export async function sendPOSTRequest(
         default:
           throw new Error(`HTTP error! status: ${res.status}`);
       }
-      /*
-      if( isResetMessageReceived(jsonResp) )
-        reconnectApp();
-      else
-        handleResponse( jsonResp );
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);*/
-
     })
     .catch(err => console.log("POST request failed:", err));
 }

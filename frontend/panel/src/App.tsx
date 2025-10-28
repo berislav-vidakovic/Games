@@ -6,7 +6,7 @@ import "@common/style.css";
 import { URL_SUDOKU, URL_CONNECT4, URL_BATTLESHIP } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
-import { sendGETRequest } from '@common/restAPI';
+import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
 import type { User } from '@common/interfaces';
 
 function App() {
@@ -19,11 +19,11 @@ function App() {
   }, []);
 
   useEffect( () => { if( isConfigLoaded){
-      sendGETRequest('api/users/all', handleInit );
+      sendGETRequest('api/users/all', handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]);
 
-  const handleInit = ( jsonResp: any ) => {    
+  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
     // Map API response fields to match your User interface
     const mappedUsers: User[] = jsonResp.map((u: any) => ({
       userId: u.userId,
@@ -38,15 +38,32 @@ function App() {
 
   }
 
-  const handleClick = (url: string) => {
-    window.open(url, '_blank');
-  };
-
   // Stub handlers for auth buttons (you’ll implement logic later)
-  const handleSignUp = () => console.log("Sign Up clicked");
+  const handleSignUp = () => {
+    console.log("Sign Up clicked"); 
+    const body = JSON.stringify({ register: { login:"penny", fullname:"Penny" } } );
+    sendPOSTRequest('api/users/register', body, handleResponseSignUp);
+  }
+
+  const handleResponseSignUp = ( jsonResp: any, status: number ) => {    
+    console.log("*** HANDLE User registered: ", jsonResp, "Status: ", status);
+    if( jsonResp.acknowledged ) {     
+      console.log("User registered: ", jsonResp.user);
+    }
+    else {
+      console.log("User NOT registered: ", jsonResp.error);
+      alert("NOT registered: User already exists");
+    }
+  }
+
+
   const handleSignIn = () => console.log("Sign In clicked");
   const handleSignOut = () => console.log("Sign Out clicked");
   const handleInvite = () => console.log("Invite User clicked");
+
+  const handleSelectGame = (url: string) => {
+    window.open(url, '_blank');
+  };
 
   return (
    <div className="app-container">
@@ -84,13 +101,13 @@ function App() {
     {/* Game buttons */}
     <div className="buttons-container">
       
-      <button onClick={() => isConfigLoaded ? handleClick(URL_SUDOKU) : console.log("Config not loaded")}>
+      <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}>
         <img src={sudokuImg} alt="Sudoku" />
       </button>
-      <button onClick={() => handleClick(URL_CONNECT4)}>
+      <button onClick={() => handleSelectGame(URL_CONNECT4)}>
         <img src={connect4Img} alt="Connect 4" />
       </button>
-      <button onClick={() => handleClick(URL_BATTLESHIP)}>
+      <button onClick={() => handleSelectGame(URL_BATTLESHIP)}>
         <img src={battleshipImg} alt="Battleship" />
       </button>
     </div>

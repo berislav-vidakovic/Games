@@ -23,7 +23,7 @@ public class UsersController : ControllerBase
   public async Task<ActionResult<IEnumerable<User>>> GetUsers()
   {
     var users = await _context.Users.ToListAsync();
-    return Ok( users );
+    return Ok(users );
   }
 
   // POST /api/users/register
@@ -61,7 +61,7 @@ public class UsersController : ControllerBase
 
         //_clientManager.BroadcastWsMessage(wsBroadcastMsg);
 
-        return Ok(response); 
+        return StatusCode(StatusCodes.Status201Created, response);
       }
       
     }
