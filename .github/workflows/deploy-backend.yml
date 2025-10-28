@@ -44,6 +44,11 @@ jobs:
         run: |
           scp -r backend/publish/* barry75@barryonweb.com:/var/www/games/backend/
       
+      # Copy DB scripts to server
+      - name: Copy DB scripts 
+        run: |
+          scp -r backend/Data/* barry75@barryonweb.com:/var/www/games/backend/data/
+      
       # Deploy Nginx config and reload
       - name: Update Nginx config
         run: |
