@@ -6,15 +6,35 @@ import "@common/style.css";
 import { URL_SUDOKU, URL_CONNECT4, URL_BATTLESHIP } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
-
-
+import { sendGETRequest } from '@common/restAPI';
+import type { User } from '@common/interfaces';
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
+  const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
+
   
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
   }, []);
+
+  useEffect( () => { if( isConfigLoaded){
+      sendGETRequest('api/users/all', handleInit );
+   }      
+  }, [isConfigLoaded]);
+
+  const handleInit = ( jsonResp: any ) => {    
+    // Map API response fields to match your User interface
+    const mappedUsers: User[] = jsonResp.map((u: any) => ({
+      userId: u.userId,
+      login: u.login,
+      fullname: u.fullName,  
+      isonline: u.isOnline   
+    }));
+    // Update React state - ref. to setUsersRegistered 
+    setUsersRegistered(mappedUsers);
+    console.log("Response to GET users: ", jsonResp );
+  }
 
 
   const handleClick = (url: string) => {

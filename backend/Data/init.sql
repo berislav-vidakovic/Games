@@ -1,7 +1,7 @@
 -- Initialize db_games MySQL Database
 START TRANSACTION;
 
--- 1) Tables
+
 DROP TABLE IF EXISTS sudokuboards;
 CREATE TABLE sudokuboards (
   board_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -11,5 +11,14 @@ CREATE TABLE sudokuboards (
   level TINYINT NOT NULL,
   UNIQUE (board)
 );
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  login VARCHAR(100) NOT NULL UNIQUE,
+  full_name VARCHAR(255),
+  isonline BOOLEAN DEFAULT FALSE
+);
+
 
 COMMIT;
