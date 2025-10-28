@@ -200,11 +200,11 @@ button img:hover {
 }
 
 /* Chip colors */
-.conn4cell.yellow::before {
+.conn4cell.Yellow::before {
   background-color: yellow;
 }
 
-.conn4cell.red::before {
+.conn4cell.Red::before {
   background-color: red;
 }
 
@@ -228,10 +228,10 @@ button img:hover {
 }
 
 /* Chip colors */
-.conn4cellNew.yellow::before {
+.conn4cellNew.Yellow::before {
   background-color: yellow;
 }
 
-.conn4cellNew.red::before {
+.conn4cellNew.Red::before {
   background-color: red;
 }
