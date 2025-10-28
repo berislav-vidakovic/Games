@@ -7,7 +7,7 @@ import mmImg from '../assets/mm.jpg';
 
 import './App.css';
 import "@common/style.css";
-import { URL_SUDOKU, URL_CONNECT4, URL_BATTLESHIP } from '@common/config';
+import { URL_SUDOKU, URL_CONNECT4 } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
 import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
