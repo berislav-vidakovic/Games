@@ -25,7 +25,9 @@ jobs:
       # GitHub - Install frontend dependencies and build
       - name: Build frontend
         run: |
-          cd frontend/panel
+          cd frontend
+          npm install  
+          cd ../panel
           npm install
           npm run build
           cd ../sudoku

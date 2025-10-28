@@ -34,6 +34,8 @@ function App() {
     // Update React state - ref. to setUsersRegistered 
     setUsersRegistered(mappedUsers);
     console.log("Response to GET users: ", jsonResp );
+    console.log("Users: ", ...usersRegistered );
+
   }
 
 
