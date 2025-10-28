@@ -1,6 +1,10 @@
 import sudokuImg from '../assets/sudoku.jpg';
 import connect4Img from '../assets/connect4.png';
-import battleshipImg from '../assets/battleships.gif';
+import memoryImg from '../assets/memory.png';
+import tictactoeImg from '../assets/tictactoe.png';
+import blackjackImg from '../assets/blackjack.png';
+import mmImg from '../assets/mm.jpg';
+
 import './App.css';
 import "@common/style.css";
 import { URL_SUDOKU, URL_CONNECT4, URL_BATTLESHIP } from '@common/config';
@@ -139,14 +143,28 @@ function App() {
     {/* Game buttons */}
     <div className="buttons-container">
       
-      <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}>
+      <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}
+        title="Sudoku">
         <img src={sudokuImg} alt="Sudoku" />
       </button>
-      <button onClick={() => handleSelectGame(URL_CONNECT4)}>
+      <button onClick={() => handleSelectGame(URL_CONNECT4)} title="Connect 4">
         <img src={connect4Img} alt="Connect 4" />
       </button>
-      <button onClick={() => handleSelectGame(URL_BATTLESHIP)}>
-        <img src={battleshipImg} alt="Battleship" />
+      <button onClick={() => { console.log("Memory is under construction..."); }} 
+        title="Memory">
+        <img src={memoryImg} alt="Battleship" />
+      </button>
+      <button onClick={() => { console.log("Master Mind is under construction..."); }}
+        title="Master Mind">
+        <img src={mmImg} alt="Battleship" />
+      </button>
+      <button onClick={() => { console.log("Tic Tac Toe is under construction..."); }}
+        title="Tic Tac Toe">
+        <img src={tictactoeImg} alt="Battleship" />
+      </button>
+      <button onClick={() => { console.log("Black Jack is under construction..."); }}
+        title="Black Jack">
+        <img src={blackjackImg} alt="Battleship" />
       </button>
     </div>
   </div>

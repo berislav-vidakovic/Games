@@ -186,7 +186,7 @@ body {
 .auth-buttons {
   display: flex;
   gap: 15px;
-  margin-bottom: 32px;
+  margin-bottom: 8px;
   justify-content: flex-end; 
 }
 
@@ -209,7 +209,7 @@ body {
   display: flex;
   gap: 20px;
   flex-wrap: wrap; /* wrap on small screens */
-  margin-top: 32px;
+  margin-top: 8px;
 }
 
 .buttons-container button {
