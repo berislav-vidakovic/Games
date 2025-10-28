@@ -6,7 +6,7 @@
         },
         "Production": {
             "HTTP": "https://barryonweb.com",
-            "WS": "ws://barryonweb.com/backend/websocket"
+            "WS": "wss://barryonweb.com/websocket"
         }
     },
     "urlFrontend": {
