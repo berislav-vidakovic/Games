@@ -1,19 +1,25 @@
 //import { StatusCodes } from "http-status-codes"
 import type { Dispatch, SetStateAction } from "react";
 import type { User } from '@common/interfaces';
+import { StatusCodes } from "http-status-codes";
 
 let setInitializedRef:  Dispatch<SetStateAction<boolean>>;
 let setUsersRegisteredRef:  Dispatch<SetStateAction<User[]>>;
 let setCurrentUserIdRef:  Dispatch<SetStateAction<number | null>>; 
+let setOnlineUsersRef:  Dispatch<SetStateAction<number>>;
+
+
 
 export function setStateFunctionRefs(
   setInitialized:  Dispatch<SetStateAction<boolean>>,
   setUsersRegistered:  Dispatch<SetStateAction<User[]>>,
   setCurrentUserId:  Dispatch<SetStateAction<number | null>>,
+  setOnlineUsers:  Dispatch<SetStateAction<number>>
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
     setCurrentUserIdRef = setCurrentUserId;
+    setOnlineUsersRef = setOnlineUsers;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
@@ -24,6 +30,10 @@ export  const handleResponseGetAllUsers = ( jsonResp: any ) => {
     fullname: u.fullName,  
     isonline: u.isOnline   
   }));
+  const onlineusers = mappedUsers.filter( u => u.isonline == true ).length;
+  console.log("Online user(s):", onlineusers );
+  setOnlineUsersRef( onlineusers );
+
   // Update React state - ref. to setUsersRegistered 
   setUsersRegisteredRef(mappedUsers);
   console.log("Response to GET users: ", jsonResp );
@@ -43,11 +53,28 @@ export const handleResponseSignUp = ( jsonResp: any, status: number ) => {
   }
 }
 
+export function handleUserLogin( jsonResp: any, status: number ){
+  //var response = new { userId, isOnline = true };
+  console.log("******** ****** POST response handleUserLogin received: ", 
+      jsonResp, "Status: ", status); 
+  if( status == StatusCodes.OK )
+    setCurrentUserIdRef(Number(jsonResp.userId));
+}
+
+export function handleUserLogout( jsonResp: any, status: number ){
+  console.log("Logout POST response received: ", jsonResp); 
+  //var response = new { userId, isOnline = false };  
+  if( status == StatusCodes.OK )
+    setCurrentUserIdRef(null);
+}
+
 // ws message handlers -----------------------------------
 export async function handleWsMessage( jsonMsg: any ) {
   //console.log("WS conn:", isWsConnected );
     if( jsonMsg.type== "userRegister" )
-    handleWsUserRegister(jsonMsg.data);
+      handleWsUserRegister(jsonMsg.data);
+    else if( jsonMsg.type == "userSessionUpdate" )
+      handleWsUserSessionUpdate(jsonMsg.data)
 }
 
 function handleWsUserRegister( jsonResp: any ){
@@ -74,3 +101,26 @@ function handleWsUserRegister( jsonResp: any ){
     alert("NOT registered: User already exists");
   }
 }
+
+async function handleWsUserSessionUpdate( jsonMsgData: any ) {
+  //var response = new { userId, isOnline = true };
+  //var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
+  const userId = jsonMsgData.userId;
+  const isOnline = jsonMsgData.isOnline;    
+    setUsersRegisteredRef(prev => {
+    const updated = prev.map(u =>
+      u.userId === userId
+        ? { ...u, isonline: isOnline } // update online status
+        : u
+    );
+
+    // compute online users count from the updated array
+    const onlineCount = updated.filter(u => u.isonline).length;
+    setOnlineUsersRef(onlineCount);
+
+    console.log("Online user(s):", onlineCount);
+    return updated;
+  });
+}
+
+

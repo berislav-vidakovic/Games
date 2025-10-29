@@ -13,8 +13,9 @@ import { useState, useEffect } from 'react';
 import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
 import { setStateFunctionRefs, handleResponseGetAllUsers, handleWsMessage } from './messageHandlers';
-import { getAllUsers } from './utils';
+import { getAllUsers, logoutUser } from './utils';
 import RegisterDialog from './components/RegisterDialog.tsx' 
+import LoginDialog from './components/LoginDialog.tsx' 
 
 
 function App() {
@@ -24,35 +25,28 @@ function App() {
   const [isInitialized, setInitialized] = useState<boolean>(false);
   const [isWsConnected, setWsConnected] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState<number>(0);
   const [showRegisterDialog, setShowRegisterDialog] = useState<boolean>(false);
-
+  const [showLoginDialog, setShowLoginDialog] = useState<boolean>(false);
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
   }, []);
 
   useEffect( () => { if( isConfigLoaded){
-      setStateFunctionRefs(setInitialized, setUsersRegistered, setCurrentUserId)
+      setStateFunctionRefs(setInitialized, setUsersRegistered, 
+        setCurrentUserId, setOnlineUsers );
       getAllUsers(handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]); 
-
-
-  /* handleSignUp - open Dialog pass handleResponse
-        Dialog - call sendPOST pass handleResponse
-     handleResponse   
-   */
-
-
 
   useEffect( () => { if( isConfigLoaded && isInitialized){
       connectWS( setWsConnected, handleWsMessage );
    }      
   }, [isConfigLoaded, isInitialized]);
 
-
-  const handleSignIn = () => console.log("Sign In clicked");
-  const handleSignOut = () => console.log("Sign Out clicked");
+  //const handleSignIn = () => console.log("Sign In clicked");
+  const handleSignOut = () => { logoutUser( currentUserId as number); }
   const handleInvite = () => console.log("Invite User clicked");
   const handleAccept = () => console.log("Accept User clicked");
   const handleRun = () => console.log("Run clicked");
@@ -93,7 +87,16 @@ function App() {
         >
           Sign Up
         </button>
-        <button onClick={handleSignIn}>Sign In</button>
+        <button 
+          id="btnLogin" 
+          onClick={() => setShowLoginDialog(true)}
+          disabled={
+            (currentUserId != null) || !isWsConnected || 
+            !usersRegistered.some(u=>!u.isonline)
+          }
+        >
+            Sign In
+        </button>
         <button onClick={handleSignOut}>Sign Out</button>
         <button onClick={handleInvite}>Invite </button>
         <button onClick={handleAccept}>Accept </button>
@@ -130,8 +133,13 @@ function App() {
         </button>
       </div>
       <div className='status-box'>
-        <p>Login as: Sheldon</p>
-        <p>Game selected: Connect4</p>
+        { currentUserId != null  
+           ? <p>Logged in as: {
+                usersRegistered.find(u=>u.userId==currentUserId)!.fullname
+              } [{onlineUsers} user(s) online]</p>
+           : <p>You are not logged in [{onlineUsers} user(s) online]</p>
+        }
+        {/*<p>Game selected: Connect4</p>*/}
       </div>
     </div>
     {showRegisterDialog && (
@@ -140,9 +148,15 @@ function App() {
         setShowRegisterDialog={setShowRegisterDialog}
       />
     )}
+      {showLoginDialog && usersRegistered.some(u=>!u.isonline) && (
+        <LoginDialog
+          setShowLoginDialog={setShowLoginDialog}
+          usersRegistered={usersRegistered}  
+          isWsConnected={isWsConnected}  
+        />
+      )}
+
   </div>
-
-
   );
 }
 

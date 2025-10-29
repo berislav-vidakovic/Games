@@ -1,8 +1,10 @@
 import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
-import { handleResponseSignUp } from './messageHandlers';
+import { handleResponseSignUp, handleUserLogin, handleUserLogout } from './messageHandlers';
 
 const GETusersEndpoint = 'api/users/all';
-const POSTregisterUserEndpoint = 'api/users/new';
+const POSTuserRegisterEndpoint = 'api/users/new';
+const POSTuserLoginEndpoint = 'api/users/login';
+const POSTuserLogoutEndpoint = 'api/users/logout';
 
 
 export async function getAllUsers(
@@ -15,6 +17,21 @@ export async function getAllUsers(
 export async function registerUser(login: string, fullname: string) {
   const body = JSON.stringify({ register: { login, fullname } } );
   //{ register: { login, fullname } 
-  sendPOSTRequest(POSTregisterUserEndpoint, body, handleResponseSignUp);
+  sendPOSTRequest(POSTuserRegisterEndpoint, body, handleResponseSignUp);
+  console.log("POST sending: ", body );
+}
+
+
+export async function loginUser(userId: number) {
+  const body = JSON.stringify({ userId } );
+  
+  sendPOSTRequest(POSTuserLoginEndpoint, body, handleUserLogin);
+  console.log("POST sending: ", body );
+}
+
+export async function logoutUser(userId: number) {
+  const body = JSON.stringify({ userId } );
+  
+  sendPOSTRequest(POSTuserLogoutEndpoint, body, handleUserLogout);
   console.log("POST sending: ", body );
 }

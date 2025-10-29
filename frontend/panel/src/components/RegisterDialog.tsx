@@ -47,7 +47,6 @@ function RegisterDialog({
         <h3>New user Registration</h3>
 
         <label>User login</label>
-        <br />
         <input 
           style={{marginBottom: "18px"}}
           id="inputLogin"
@@ -61,9 +60,7 @@ function RegisterDialog({
           }}
         ></input>
 
-        <br />
         <label>User Full name</label>
-        <br />
         <input 
           placeholder="Full Name"
           ref={fullnameRef}
