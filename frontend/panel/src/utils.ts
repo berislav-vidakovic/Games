@@ -6,8 +6,8 @@ const POSTuserRegisterEndpoint = 'api/users/new';
 const POSTuserLoginEndpoint = 'api/users/login';
 const POSTuserLogoutEndpoint = 'api/users/logout';
 const POSTinviteEndpoint = 'api/invitations/invite';
-const POSTacceptEndpoint = 'api/invitations/accept';
-const POSTrejectEndpoint = 'api/invitations/reject';
+//const POSTacceptEndpoint = 'api/invitations/accept';
+//const POSTrejectEndpoint = 'api/invitations/reject';
 
 
 export async function getAllUsers(

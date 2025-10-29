@@ -82,7 +82,7 @@ export function handleInvite( jsonResp: any, status: number ){
     console.log("user Invited");
     // var response = new { acknowledged = true, callerId, calleeId };
     
-    //setCallerUserIdRef( Number(jsonResp.callerId) );
+    setCallerUserIdRef( Number(jsonResp.callerId) );
     setCalleeUserIdRef( Number(jsonResp.calleeId) );
   }
 }

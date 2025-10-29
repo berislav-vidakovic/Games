@@ -67,6 +67,7 @@ function App() {
   const clearInvitations = (): void => {
     setCalleeUserId(null);  
     setCallerUserId(null);
+    console.log(callerUserId, "called ", calleeUserId);
   }
 
   return (
