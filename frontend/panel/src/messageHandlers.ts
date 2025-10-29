@@ -80,7 +80,7 @@ export function handleInvite( jsonResp: any, status: number ){
   if( status == StatusCodes.OK ){
     //setCurrentUserIdRef(Number(jsonResp.userId));
     console.log("user Invited");
-    // var response = new { acknowledged = true, callerId, calleeId };
+    // var response = new { sending = true, callerId, calleeId };
     
     setCallerUserIdRef( Number(jsonResp.callerId) );
     setCalleeUserIdRef( Number(jsonResp.calleeId) );
@@ -94,7 +94,25 @@ export async function handleWsMessage( jsonMsg: any ) {
       handleWsUserRegister(jsonMsg.data);
     else if( jsonMsg.type == "userSessionUpdate" )
       handleWsUserSessionUpdate(jsonMsg.data)
+    else if( jsonMsg.type == "invitation" )
+      handleWsInvitation(jsonMsg.data)
 }
+
+function handleWsInvitation( jsonResp: any ){
+  //var response = new { sending = true, callerId, calleeId };
+  //    var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
+  console.log("Received WS: ", jsonResp);
+  if( jsonResp.sending){
+    setCallerUserIdRef( Number(jsonResp.callerId) );
+    setCalleeUserIdRef( Number(jsonResp.calleeId) );
+  }
+  else{
+    setCallerUserIdRef( null );
+    setCalleeUserIdRef( null );
+  }
+}
+
+
 
 function handleWsUserRegister( jsonResp: any ){
   console.log("*** Ws-HANDLE User registered: ", jsonResp);

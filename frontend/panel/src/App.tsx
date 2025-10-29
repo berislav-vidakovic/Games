@@ -154,9 +154,14 @@ function App() {
               } </b>[{onlineUsers} user(s) online]</p>
            : <p>You are not logged in [{onlineUsers} user(s) online]</p>
         }
-        { calleeUserId && <p style={{fontWeight:"700", color:"#090"}}>
-            You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
-        </p> }
+        { calleeUserId && callerUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#090"}}>
+              You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+          </p> }
+          { callerUserId && calleeUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#e00"}}>
+              You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+          </p> }
         {/*<p>Game selected: Connect4</p>*/}
       </div>
     </div>

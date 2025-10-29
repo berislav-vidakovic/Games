@@ -9,8 +9,21 @@ public class WebSocketManager
   public WebSocketManager()
   {
     _wsConnections = new();
+    _onlineUsers = new();
   }
   private readonly ConcurrentDictionary<Guid, WebSocket> _wsConnections;
+
+  public IEnumerable<WebSocket> GetAllSockets() => _wsConnections.Values;
+
+  private readonly ConcurrentDictionary<Guid, int> _onlineUsers;
+
+  public void UpdateOnlineUsers(Guid clientId, int userId, bool online)
+  {
+    if (online)
+      _onlineUsers[clientId] = userId;
+    else
+      _onlineUsers.TryRemove(clientId, out _);
+  }
 
   public void AddSocket(Guid id, WebSocket ws) => _wsConnections[id] = ws;
 
@@ -29,14 +42,13 @@ public class WebSocketManager
     }
   }
 
-  public IEnumerable<WebSocket> GetAllSockets() => _wsConnections.Values;
 
-  public void BroadcastMessage( object message )
+  public void BroadcastMessage(object message)
   {
     IEnumerable<WebSocket> wsConns = GetAllSockets();
     var options = new JsonSerializerOptions
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
     foreach (WebSocket ws in wsConns)
     {
@@ -45,5 +57,24 @@ public class WebSocketManager
       ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
       ws.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
     }
+  }
+
+  public void SendMessage(int userId, object message)
+  {
+    // ConcurrentDictionary<Guid, WebSocket> _wsConnections;
+    // ConcurrentDictionary<Guid, int> _onlineUsers;
+    var options = new JsonSerializerOptions
+    {
+      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    foreach( var kvp in _onlineUsers )
+      if( kvp.Value == userId)
+      {
+        WebSocket ws = _wsConnections[kvp.Key];
+        string jsonR = JsonSerializer.Serialize(message, options);
+        byte[] bytes = Encoding.UTF8.GetBytes(jsonR);
+        ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+        ws.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+      }
   }
 }

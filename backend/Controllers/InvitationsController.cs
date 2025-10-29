@@ -19,7 +19,9 @@ public class InvitationsController : ControllerBase
     _context = context;
     _wsManager = wsManager;
   }
-
+  // POST /api/invitations/accept
+  // POST /api/invitations/reject
+  // POST /api/invitations/cancel
   // POST /api/invitations/invite
   [HttpPost("invite")]
   public async Task<IActionResult> PostInvite([FromBody] JsonElement body)
@@ -49,9 +51,10 @@ public class InvitationsController : ControllerBase
         return StatusCode(StatusCodes.Status204NoContent,
           new { acknowledged = false, error = "Callee UserID Not found or Not online" });
 
-      var response = new { acknowledged = true, callerId, calleeId };
-      //var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
+      var response = new { sending = true, callerId, calleeId };
+      var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
       //_wsManager.BroadcastMessage(msg);
+      _wsManager.SendMessage(calleeId, msg);
 
       return StatusCode(StatusCodes.Status200OK, response);
     }

@@ -105,6 +105,8 @@ public class UsersController : ControllerBase
       user!.IsOnline = true;
       await _context.SaveChangesAsync();
 
+      _wsManager.UpdateOnlineUsers(parsedClientId, userId, true);
+
       var response = new { userId, isOnline = true };
       var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
       _wsManager.BroadcastMessage(msg);
@@ -145,6 +147,9 @@ public class UsersController : ControllerBase
       // Update online status
       user!.IsOnline = false;
       await _context.SaveChangesAsync();
+
+      _wsManager.UpdateOnlineUsers(parsedClientId, userId, false);
+
 
       var response = new { userId, isOnline = false };
       var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
