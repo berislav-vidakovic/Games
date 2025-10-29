@@ -186,6 +186,7 @@ body {
   display: flex;
   margin-bottom: 8px;
   justify-content: flex-end; 
+  flex-wrap: wrap; 
 }
 
 .auth-buttons button {
@@ -197,7 +198,8 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
   width: 100px;
-  margin-left: 15px;
+  margin-left: 16px;
+  margin-top: 16px;
 }
 
 
