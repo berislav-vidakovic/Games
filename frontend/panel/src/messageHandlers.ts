@@ -3,36 +3,34 @@ import type { Dispatch, SetStateAction } from "react";
 import type { User } from '@common/interfaces';
 
 let setInitializedRef:  Dispatch<SetStateAction<boolean>>;
-let setWsConnectedRef:  Dispatch<SetStateAction<boolean>>;
 let setUsersRegisteredRef:  Dispatch<SetStateAction<User[]>>;
 let setCurrentUserIdRef:  Dispatch<SetStateAction<number | null>>; 
 
 export function setStateFunctionRefs(
   setInitialized:  Dispatch<SetStateAction<boolean>>,
-  setWsConnected:  Dispatch<SetStateAction<boolean>>,
   setUsersRegistered:  Dispatch<SetStateAction<User[]>>,
   setCurrentUserId:  Dispatch<SetStateAction<number | null>>,
 ){
     setInitializedRef = setInitialized;
-    setWsConnectedRef = setWsConnected;
     setUsersRegisteredRef = setUsersRegistered;
     setCurrentUserIdRef = setCurrentUserId;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
-    // Map API response fields to match your User interface
-    const mappedUsers: User[] = jsonResp.users.map((u: any) => ({
-      userId: u.userId,
-      login: u.login,
-      fullname: u.fullName,  
-      isonline: u.isOnline   
-    }));
-    // Update React state - ref. to setUsersRegistered 
-    setUsersRegisteredRef(mappedUsers);
-    console.log("Response to GET users: ", jsonResp );
-    sessionStorage.setItem("myID", jsonResp.id );
-    setInitializedRef(true);
-  }
+  // Map API response fields to match your User interface
+  const mappedUsers: User[] = jsonResp.users.map((u: any) => ({
+    userId: u.userId,
+    login: u.login,
+    fullname: u.fullName,  
+    isonline: u.isOnline   
+  }));
+  // Update React state - ref. to setUsersRegistered 
+  setUsersRegisteredRef(mappedUsers);
+  console.log("Response to GET users: ", jsonResp );
+  sessionStorage.setItem("myID", jsonResp.id );
+  setInitializedRef(true);
+  setCurrentUserIdRef(null);
+}
 
 export const handleResponseSignUp = ( jsonResp: any, status: number ) => {    
   console.log("*** HANDLE User registered: ", jsonResp, "Status: ", status);

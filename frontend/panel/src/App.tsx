@@ -32,7 +32,7 @@ function App() {
   }, []);
 
   useEffect( () => { if( isConfigLoaded){
-      setStateFunctionRefs(setInitialized, setWsConnected, setUsersRegistered, setCurrentUserId)
+      setStateFunctionRefs(setInitialized, setUsersRegistered, setCurrentUserId)
       getAllUsers(handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]); 

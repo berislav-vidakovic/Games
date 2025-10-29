@@ -1,6 +1,5 @@
 // RegisterDialog.tsx
 import type { Dispatch, SetStateAction } from "react";
-import type { User } from '@common/interfaces';
 import { useRef, useEffect } from "react";
 import { registerUser } from "../utils.ts";
 
