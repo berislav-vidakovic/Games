@@ -9,6 +9,8 @@ let setCurrentUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setOnlineUsersRef:  Dispatch<SetStateAction<number>>;
 let setCallerUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setCalleeUserIdRef:  Dispatch<SetStateAction<number | null>>;
+let setInvitationStateRef: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>;
+
 
 
 export function setStateFunctionRefs(
@@ -17,7 +19,9 @@ export function setStateFunctionRefs(
   setCurrentUserId:  Dispatch<SetStateAction<number | null>>,
   setOnlineUsers:  Dispatch<SetStateAction<number>>,
   setCallerUserId:  Dispatch<SetStateAction<number | null>>,
-  setCalleeUserId:  Dispatch<SetStateAction<number | null>>
+  setCalleeUserId:  Dispatch<SetStateAction<number | null>>,
+  setInvitationState: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>
+
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
@@ -25,6 +29,7 @@ export function setStateFunctionRefs(
     setOnlineUsersRef = setOnlineUsers;
     setCallerUserIdRef = setCallerUserId;
     setCalleeUserIdRef = setCalleeUserId;
+    setInvitationStateRef = setInvitationState;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
@@ -84,6 +89,7 @@ export function handleInvite( jsonResp: any, status: number ){
     
     setCallerUserIdRef( Number(jsonResp.callerId) );
     setCalleeUserIdRef( Number(jsonResp.calleeId) );
+    setInvitationStateRef( "sent" );
   }
 }
 

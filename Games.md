@@ -1,3 +1,13 @@
+FSM 2-player game states
+
+State1  Action    State2
+init    invite    sent
+sent    cancel    init
+init    receive   pending
+pending accept    paired
+pending reject    init
+sent    cancel    init
+
 ## 1. Sudoku 1
 ## 2. Connect4 2
 

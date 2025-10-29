@@ -21,7 +21,6 @@ import InviteDialog from './components/InviteDialog.tsx'
 
 function App() {
   const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
-
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   const [isInitialized, setInitialized] = useState<boolean>(false);
   const [isWsConnected, setWsConnected] = useState<boolean>(false);
@@ -32,7 +31,8 @@ function App() {
   const [showInviteDialog, setShowInviteDialog] = useState<boolean>(false);
   const [callerUserId, setCallerUserId] = useState<number | null>(null);
   const [calleeUserId, setCalleeUserId] = useState<number | null>(null);
-
+  const [invitationState, setInvitationState] = useState<"init" | "sent" | "pending" | "paired">("init");
+  const [selectedGame, setSelectedGame] = useState<"sudoku" | "connect4" | null>(null);
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -40,7 +40,8 @@ function App() {
 
   useEffect( () => { if( isConfigLoaded){
       setStateFunctionRefs(setInitialized, setUsersRegistered, 
-        setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId );
+        setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId,
+        setInvitationState );
       getAllUsers(handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]); 
@@ -112,10 +113,50 @@ function App() {
         >
             Sign In
         </button>
-        <button onClick={handleSignOut}>Sign Out</button>
-        <button onClick={handleInvite}>Invite </button>
-        <button onClick={handleRespond}>Respond </button>
-        <button onClick={handleRun}>Run</button>
+        <button 
+          onClick={handleSignOut}
+          disabled={
+            currentUserId == null
+          }          
+        >
+            Sign Out
+        </button>
+
+
+        {(invitationState == "paired" || selectedGame == "sudoku")  && 
+          currentUserId != null &&
+        <button 
+          onClick={handleRun}
+        >
+          Run
+        </button>}
+          
+        {invitationState == "init" && selectedGame == "connect4" && 
+          currentUserId != null &&
+        <button 
+          onClick={handleInvite}
+
+        >Invite 
+        </button>}
+
+        {invitationState == "sent" &&  <button 
+          onClick={handleRespond}
+        >Cancel 
+        </button>}
+
+        {invitationState == "pending" && <button 
+          onClick={handleInvite}
+          
+        >Accept 
+        </button>}
+
+        {invitationState == "pending" &&  <button 
+          onClick={handleRespond}
+        >Reject 
+        </button>}
+
+      
+      
       </div>
 
       
@@ -123,28 +164,54 @@ function App() {
 
       {/* Game buttons */}
       <div className="buttons-container">      
-        <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}
-          title="Sudoku">
+        <button 
+          onClick={() => {
+              if( !isConfigLoaded ) {
+                console.log("Config not loaded");
+                return;
+              }
+              if( selectedGame == 'sudoku') handleSelectGame(URL_SUDOKU);
+              else setSelectedGame('sudoku');
+              }
+            }
+          title="Sudoku"
+          className={selectedGame === 'sudoku' ? 'selected-button' : ''}
+        >
           <img src={sudokuImg} alt="Sudoku" />
         </button>
-        <button onClick={() => handleSelectGame(URL_CONNECT4)} title="Connect 4">
+        <button 
+          onClick={() => {
+            if( !isConfigLoaded ) {
+              console.log("Config not loaded");
+              return;
+            }
+            if( selectedGame == 'connect4') handleSelectGame(URL_CONNECT4);
+            else setSelectedGame('connect4');
+          }} 
+          title="Connect 4"
+          className={selectedGame === 'connect4' ? 'selected-button' : ''}
+
+        >
           <img src={connect4Img} alt="Connect 4" />
         </button>
-        <button onClick={() => { console.log("Memory is under construction..."); }} 
+        <button 
+          onClick={() => { console.log("Memory is under construction..."); setSelectedGame(null);}} 
           title="Memory">
-          <img src={memoryImg} alt="Battleship" />
+          <img src={memoryImg} alt="Memory" />
         </button>
-        <button onClick={() => { console.log("Master Mind is under construction..."); }}
+        <button 
+          onClick={() => { console.log("Master Mind is under construction..."); setSelectedGame(null);}}
           title="Master Mind">
-          <img src={mmImg} alt="Battleship" />
+          <img src={mmImg} alt="Master Mind" />
         </button>
-        <button onClick={() => { console.log("Tic Tac Toe is under construction..."); }}
+        <button 
+          onClick={() => { console.log("Tic Tac Toe is under construction..."); setSelectedGame(null);}}
           title="Tic Tac Toe">
-          <img src={tictactoeImg} alt="Battleship" />
+          <img src={tictactoeImg} alt="Tic Tac Toe" />
         </button>
-        <button onClick={() => { console.log("Black Jack is under construction..."); }}
+        <button onClick={() => { console.log("Black Jack is under construction..."); setSelectedGame(null);}}
           title="Black Jack">
-          <img src={blackjackImg} alt="Battleship" />
+          <img src={blackjackImg} alt="Black Jack" />
         </button>
       </div>
       <div className='status-box'>
