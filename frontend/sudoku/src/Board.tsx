@@ -61,8 +61,14 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ boardString, solutionString, 
     if (!focused) return;
     const [r0, c0] = focused;
 
-    const newR = (r0 + dr + 9) % 9;
-    const newC = (c0 + dc + 9) % 9;
+    let newR = (r0 + dr);
+    let newC = (c0 + dc);
+
+    newR = Math.min(newR, 8);
+    newC = Math.min(newC, 8);
+    
+    newR = Math.max(newR, 0);
+    newC = Math.max(newC, 0);
 
     setFocused([newR, newC]);
   };

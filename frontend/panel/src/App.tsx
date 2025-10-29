@@ -16,6 +16,7 @@ import { setStateFunctionRefs, handleResponseGetAllUsers, handleWsMessage } from
 import { getAllUsers, logoutUser } from './utils';
 import RegisterDialog from './components/RegisterDialog.tsx' 
 import LoginDialog from './components/LoginDialog.tsx' 
+import InviteDialog from './components/InviteDialog.tsx' 
 
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
   const [onlineUsers, setOnlineUsers] = useState<number>(0);
   const [showRegisterDialog, setShowRegisterDialog] = useState<boolean>(false);
   const [showLoginDialog, setShowLoginDialog] = useState<boolean>(false);
+  const [showInviteDialog, setShowInviteDialog] = useState<boolean>(false);
+  const [callerUserId, setCallerUserId] = useState<number | null>(null);
+  const [calleeUserId, setCalleeUserId] = useState<number | null>(null);
+
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -35,7 +40,7 @@ function App() {
 
   useEffect( () => { if( isConfigLoaded){
       setStateFunctionRefs(setInitialized, setUsersRegistered, 
-        setCurrentUserId, setOnlineUsers );
+        setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId );
       getAllUsers(handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]); 
@@ -46,30 +51,39 @@ function App() {
   }, [isConfigLoaded, isInitialized]);
 
   //const handleSignIn = () => console.log("Sign In clicked");
-  const handleSignOut = () => { logoutUser( currentUserId as number); }
-  const handleInvite = () => console.log("Invite User clicked");
-  const handleAccept = () => console.log("Accept User clicked");
+  const handleSignOut = () => { 
+    logoutUser( currentUserId as number); 
+    clearInvitations();
+  }
+
+  const handleInvite = () => { if( currentUserId && onlineUsers > 1) setShowInviteDialog(true); }
+  const handleRespond = () => console.log("Respond to Invitaion clicked");
   const handleRun = () => console.log("Run clicked");
 
   const handleSelectGame = (url: string) => {
     window.open(url, '_blank');
   };
 
+  const clearInvitations = (): void => {
+    setCalleeUserId(null);  
+    setCallerUserId(null);
+  }
+
   return (
    <div className="app-container">
     {/* --- Users Box on the left --- */}
     <div className="users-box">
-        <h2>Users:</h2>
+      <h2>Users:</h2>
         <ul>
         { usersRegistered.map((u) => ( 
-            <li key={u.userId} className="user-item">               
-              {u.fullname} 
-              <span
-                className={`status-dot ${
-                  u.isonline ? "status-online" : "status-offline"
-                }`}
-              ></span>
-            </li>
+          <li key={u.userId} className="user-item">               
+            {u.fullname} 
+            <span
+              className={`status-dot ${
+                u.isonline ? "status-online" : "status-offline"
+              }`}
+            ></span>
+          </li>
           ))
         }        
       </ul>
@@ -99,7 +113,7 @@ function App() {
         </button>
         <button onClick={handleSignOut}>Sign Out</button>
         <button onClick={handleInvite}>Invite </button>
-        <button onClick={handleAccept}>Accept </button>
+        <button onClick={handleRespond}>Respond </button>
         <button onClick={handleRun}>Run</button>
       </div>
 
@@ -134,11 +148,14 @@ function App() {
       </div>
       <div className='status-box'>
         { currentUserId != null  
-           ? <p>Logged in as: {
+           ? <p><b>Logged in as: {
                 usersRegistered.find(u=>u.userId==currentUserId)!.fullname
-              } [{onlineUsers} user(s) online]</p>
+              } </b>[{onlineUsers} user(s) online]</p>
            : <p>You are not logged in [{onlineUsers} user(s) online]</p>
         }
+        { calleeUserId && <p style={{fontWeight:"700", color:"#090"}}>
+            You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+        </p> }
         {/*<p>Game selected: Connect4</p>*/}
       </div>
     </div>
@@ -148,13 +165,23 @@ function App() {
         setShowRegisterDialog={setShowRegisterDialog}
       />
     )}
-      {showLoginDialog && usersRegistered.some(u=>!u.isonline) && (
-        <LoginDialog
-          setShowLoginDialog={setShowLoginDialog}
-          usersRegistered={usersRegistered}  
-          isWsConnected={isWsConnected}  
-        />
-      )}
+    {showLoginDialog && usersRegistered.some(u=>!u.isonline) && (
+      <LoginDialog
+        setShowLoginDialog={setShowLoginDialog}
+        usersRegistered={usersRegistered}  
+        isWsConnected={isWsConnected}  
+      />
+    )}
+     {showInviteDialog && onlineUsers > 1 && 
+      currentUserId != null &&
+     (
+      <InviteDialog
+        setShowInviteDialog={setShowInviteDialog}
+        usersRegistered={usersRegistered}  
+        isWsConnected={isWsConnected}  
+        currentUserId={currentUserId}
+      />
+    )}
 
   </div>
   );

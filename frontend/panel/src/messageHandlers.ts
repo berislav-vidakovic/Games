@@ -7,19 +7,24 @@ let setInitializedRef:  Dispatch<SetStateAction<boolean>>;
 let setUsersRegisteredRef:  Dispatch<SetStateAction<User[]>>;
 let setCurrentUserIdRef:  Dispatch<SetStateAction<number | null>>; 
 let setOnlineUsersRef:  Dispatch<SetStateAction<number>>;
-
+let setCallerUserIdRef:  Dispatch<SetStateAction<number | null>>;
+let setCalleeUserIdRef:  Dispatch<SetStateAction<number | null>>;
 
 
 export function setStateFunctionRefs(
   setInitialized:  Dispatch<SetStateAction<boolean>>,
   setUsersRegistered:  Dispatch<SetStateAction<User[]>>,
   setCurrentUserId:  Dispatch<SetStateAction<number | null>>,
-  setOnlineUsers:  Dispatch<SetStateAction<number>>
+  setOnlineUsers:  Dispatch<SetStateAction<number>>,
+  setCallerUserId:  Dispatch<SetStateAction<number | null>>,
+  setCalleeUserId:  Dispatch<SetStateAction<number | null>>
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
     setCurrentUserIdRef = setCurrentUserId;
     setOnlineUsersRef = setOnlineUsers;
+    setCallerUserIdRef = setCallerUserId;
+    setCalleeUserIdRef = setCalleeUserId;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
@@ -66,6 +71,20 @@ export function handleUserLogout( jsonResp: any, status: number ){
   //var response = new { userId, isOnline = false };  
   if( status == StatusCodes.OK )
     setCurrentUserIdRef(null);
+}
+
+export function handleInvite( jsonResp: any, status: number ){
+  //var response = new { userId, isOnline = true };
+  console.log("******** ****** POST response handleInvite received: ", 
+      jsonResp, "Status: ", status); 
+  if( status == StatusCodes.OK ){
+    //setCurrentUserIdRef(Number(jsonResp.userId));
+    console.log("user Invited");
+    // var response = new { acknowledged = true, callerId, calleeId };
+    
+    //setCallerUserIdRef( Number(jsonResp.callerId) );
+    setCalleeUserIdRef( Number(jsonResp.calleeId) );
+  }
 }
 
 // ws message handlers -----------------------------------
