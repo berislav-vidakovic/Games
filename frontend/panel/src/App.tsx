@@ -10,98 +10,52 @@ import "@common/style.css";
 import { URL_SUDOKU, URL_CONNECT4 } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
-import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
 import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
+import { setStateFunctionRefs, handleResponseGetAllUsers, handleWsMessage } from './messageHandlers';
+import { getAllUsers } from './utils';
+import RegisterDialog from './components/RegisterDialog.tsx' 
+
 
 function App() {
-  const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
+
+  const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
+  const [isInitialized, setInitialized] = useState<boolean>(false);
   const [isWsConnected, setWsConnected] = useState<boolean>(false);
-  
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [showRegisterDialog, setShowRegisterDialog] = useState<boolean>(false);
+
+
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
   }, []);
 
   useEffect( () => { if( isConfigLoaded){
-      sendGETRequest('api/users/all', handleResponseGetAllUsers );
+      setStateFunctionRefs(setInitialized, setWsConnected, setUsersRegistered, setCurrentUserId)
+      getAllUsers(handleResponseGetAllUsers );
    }      
-  }, [isConfigLoaded]);
+  }, [isConfigLoaded]); 
 
-  
-  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
-    // Map API response fields to match your User interface
-    const mappedUsers: User[] = jsonResp.users.map((u: any) => ({
-      userId: u.userId,
-      login: u.login,
-      fullname: u.fullName,  
-      isonline: u.isOnline   
-    }));
-    // Update React state - ref. to setUsersRegistered 
-    setUsersRegistered(mappedUsers);
-    console.log("Response to GET users: ", jsonResp );
-    console.log("Users: ", ...usersRegistered );
-    sessionStorage.setItem("myID", jsonResp.id );
 
-  }
+  /* handleSignUp - open Dialog pass handleResponse
+        Dialog - call sendPOST pass handleResponse
+     handleResponse   
+   */
 
-  useEffect( () => { if( isConfigLoaded){
+
+
+  useEffect( () => { if( isConfigLoaded && isInitialized){
       connectWS( setWsConnected, handleWsMessage );
    }      
-  }, [isConfigLoaded]);
-
-  async function handleWsMessage( jsonMsg: any ) {
-    console.log("WS conn:", isWsConnected );
-     if( jsonMsg.type== "userRegister" )
-      handleWsUserRegister(jsonMsg.data);
-  }
-
-  function handleWsUserRegister( jsonResp: any ){
-    console.log("*** Ws-HANDLE User registered: ", jsonResp);
-    if( jsonResp.acknowledged ) { 
-      // Construct the new user object
-      const newUser: User = {
-        userId: jsonResp.user.userId,
-        login: jsonResp.user.login,
-        fullname: jsonResp.user.fullName,
-        isonline: jsonResp.user.isOnline,
-      };
-      // Update frontend state (append to existing users list)    
-      setUsersRegistered(prev => {
-        const dupe = prev.some(u => u.userId === newUser.userId);
-        if( dupe ) console.log("=====================Duplicate ID found, no user appending");
-        return dupe ? prev : [...prev, newUser];
-      });
-
-      console.log("Ws-User registered: ", jsonResp.user);
-    }
-    else {
-      console.log("User NOT registered: ", jsonResp.error);
-      alert("NOT registered: User already exists");
-    }
-  }
-
-  const handleSignUp = () => {
-    console.log("Sign Up clicked"); 
-    const body = JSON.stringify({ register: { login:"penny5", fullname:"Penny5" } } );
-    sendPOSTRequest('api/users/new', body, handleResponseSignUp);
-  }
-
-  const handleResponseSignUp = ( jsonResp: any, status: number ) => {    
-    console.log("*** HANDLE User registered: ", jsonResp, "Status: ", status);
-    if( jsonResp.acknowledged ) {     
-      console.log("User registered: ", jsonResp.user);
-    }
-    else {
-      console.log("User NOT registered: ", jsonResp.error);
-      alert("NOT registered: User already exists");
-    }
-  }
+  }, [isConfigLoaded, isInitialized]);
 
 
   const handleSignIn = () => console.log("Sign In clicked");
   const handleSignOut = () => console.log("Sign Out clicked");
   const handleInvite = () => console.log("Invite User clicked");
+  const handleAccept = () => console.log("Accept User clicked");
+  const handleRun = () => console.log("Run clicked");
 
   const handleSelectGame = (url: string) => {
     window.open(url, '_blank');
@@ -109,66 +63,85 @@ function App() {
 
   return (
    <div className="app-container">
-  {/* --- Users Box on the left --- */}
-  <div className="users-box">
-      <h2>Users:</h2>
-      <ul>
-      { usersRegistered.map((u) => ( 
-              <li key={u.userId} className="user-item">               
-                {u.fullname} 
-                <span
-                  className={`status-dot ${
-                    u.isonline ? "status-online" : "status-offline"
-                  }`}
-                ></span>
-              </li>
-            ))
+    {/* --- Users Box on the left --- */}
+    <div className="users-box">
+        <h2>Users:</h2>
+        <ul>
+        { usersRegistered.map((u) => ( 
+            <li key={u.userId} className="user-item">               
+              {u.fullname} 
+              <span
+                className={`status-dot ${
+                  u.isonline ? "status-online" : "status-offline"
+                }`}
+              ></span>
+            </li>
+          ))
         }        
-    </ul>
-  </div>
-
-  {/* --- Right main content --- */}
-  <div className="main-content">
-    {/* Top auth buttons */}
-    <div className="auth-buttons">
-      <button onClick={handleSignUp}>Sign Up</button>
-      <button onClick={handleSignIn}>Sign In</button>
-      <button onClick={handleSignOut}>Sign Out</button>
-      <button onClick={handleInvite}>Invite User</button>
+      </ul>
     </div>
 
-    
-    <h1>Game Panel</h1>
+    {/* --- Right main content --- */}
+    <div className="main-content">
+      {/* Top auth buttons */}
+      <div className="auth-buttons">
+        <button 
+          //onClick={handleSignUp}
+          id="btnRegister" 
+          onClick={() => setShowRegisterDialog(true)}
+          disabled={(currentUserId != null) || !isWsConnected}
+        >
+          Sign Up
+        </button>
+        <button onClick={handleSignIn}>Sign In</button>
+        <button onClick={handleSignOut}>Sign Out</button>
+        <button onClick={handleInvite}>Invite </button>
+        <button onClick={handleAccept}>Accept </button>
+        <button onClick={handleRun}>Run</button>
+      </div>
 
-    {/* Game buttons */}
-    <div className="buttons-container">
       
-      <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}
-        title="Sudoku">
-        <img src={sudokuImg} alt="Sudoku" />
-      </button>
-      <button onClick={() => handleSelectGame(URL_CONNECT4)} title="Connect 4">
-        <img src={connect4Img} alt="Connect 4" />
-      </button>
-      <button onClick={() => { console.log("Memory is under construction..."); }} 
-        title="Memory">
-        <img src={memoryImg} alt="Battleship" />
-      </button>
-      <button onClick={() => { console.log("Master Mind is under construction..."); }}
-        title="Master Mind">
-        <img src={mmImg} alt="Battleship" />
-      </button>
-      <button onClick={() => { console.log("Tic Tac Toe is under construction..."); }}
-        title="Tic Tac Toe">
-        <img src={tictactoeImg} alt="Battleship" />
-      </button>
-      <button onClick={() => { console.log("Black Jack is under construction..."); }}
-        title="Black Jack">
-        <img src={blackjackImg} alt="Battleship" />
-      </button>
+      <h1>Game Panel</h1>
+
+      {/* Game buttons */}
+      <div className="buttons-container">      
+        <button onClick={() => isConfigLoaded ? handleSelectGame(URL_SUDOKU) : console.log("Config not loaded")}
+          title="Sudoku">
+          <img src={sudokuImg} alt="Sudoku" />
+        </button>
+        <button onClick={() => handleSelectGame(URL_CONNECT4)} title="Connect 4">
+          <img src={connect4Img} alt="Connect 4" />
+        </button>
+        <button onClick={() => { console.log("Memory is under construction..."); }} 
+          title="Memory">
+          <img src={memoryImg} alt="Battleship" />
+        </button>
+        <button onClick={() => { console.log("Master Mind is under construction..."); }}
+          title="Master Mind">
+          <img src={mmImg} alt="Battleship" />
+        </button>
+        <button onClick={() => { console.log("Tic Tac Toe is under construction..."); }}
+          title="Tic Tac Toe">
+          <img src={tictactoeImg} alt="Battleship" />
+        </button>
+        <button onClick={() => { console.log("Black Jack is under construction..."); }}
+          title="Black Jack">
+          <img src={blackjackImg} alt="Battleship" />
+        </button>
+      </div>
+      <div className='status-box'>
+        <p>Login as: Sheldon</p>
+        <p>Game selected: Connect4</p>
+      </div>
     </div>
+    {showRegisterDialog && (
+      <RegisterDialog
+        isWsConnected={isWsConnected}  
+        setShowRegisterDialog={setShowRegisterDialog}
+      />
+    )}
   </div>
-</div>
+
 
   );
 }

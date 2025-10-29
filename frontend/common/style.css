@@ -5,7 +5,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
   border-radius: 4px;
   font-size: large;
   margin: 10px 0;
@@ -185,7 +184,6 @@ body {
 /* Auth buttons on top */
 .auth-buttons {
   display: flex;
-  gap: 15px;
   margin-bottom: 8px;
   justify-content: flex-end; 
 }
@@ -198,10 +196,15 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100px;
+  margin-left: 15px;
 }
 
+
+
 .auth-buttons button:hover {
-  background-color: #1e3799;
+  background-color: #fc0;
+  color: #000
 }
 
 /* Game buttons */
@@ -220,8 +223,8 @@ body {
 }
 
 .buttons-container img {
-  width: 200px; /* smaller size so it fits */
-  height: 200px;
+  width: 110px; /* smaller size so it fits */
+  height: 110px;
   object-fit: contain;
   border-radius: 10px;
   transition: transform 0.2s;
@@ -230,6 +233,31 @@ body {
 .buttons-container img:hover {
   transform: scale(1.1);
 }
+
+/* Status box */
+.status-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* left-aligns text horizontally */
+  justify-content: flex-start;
+  
+  background-color: #eef;    /* subtle background */
+  color: #222;               /* readable text color */
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  
+  width: 100%;               /* stretch within parent */
+  box-sizing: border-box;
+  text-align: left;          /* ensures text inside <p> is left-aligned */
+  font-size: 18px;
+  line-height: 1.4;
+  margin-top: 32px;
+}
+.status-box p {
+  margin: 4px 0;
+}
+
 
 /* Users list */
 .users-box ul {
@@ -353,4 +381,42 @@ button img:hover {
 
 .conn4cellNew.Red::before {
   background-color: red;
+}
+
+
+/* Dialog classes */
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog {
+  background: white;
+  padding: 16px 32px;
+  border-radius: 10px;
+  min-width: 250px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.dialog-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dialog select,
+.dialog input {
+  width: 100%;
+  padding: 6px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
 }
