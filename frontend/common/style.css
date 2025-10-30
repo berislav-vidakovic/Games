@@ -3,7 +3,6 @@
 /* Panel*/
 .user-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   border-radius: 4px;
   font-size: large;
@@ -15,7 +14,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  margin-left: 6px;
+  margin-left: 16px;
   border: 1px solid #9e9e9e;
 }
 
