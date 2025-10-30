@@ -6,6 +6,7 @@ const POSTuserRegisterEndpoint = 'api/users/new';
 const POSTuserLoginEndpoint = 'api/users/login';
 const POSTuserLogoutEndpoint = 'api/users/logout';
 const POSTinviteEndpoint = 'api/invitations/invite';
+const POSTcancelEndpoint = 'api/invitations/cancel';
 //const POSTacceptEndpoint = 'api/invitations/accept';
 //const POSTrejectEndpoint = 'api/invitations/reject';
 
@@ -39,9 +40,15 @@ export async function logoutUser(userId: number) {
   console.log("POST sending: ", body );
 }
 
-export async function inviteUser(callerId: number, calleeId: number) {
+export async function inviteUser(callerId: number, calleeId: number, sending: boolean) {
   const body = JSON.stringify({ callerId, calleeId } );
   
-  sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);
-  console.log("POST sending: ", body );
+  if( sending){
+    sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);
+    console.log("POST invitiation sending: ", body );
+  }
+  else{
+    sendPOSTRequest(POSTcancelEndpoint, body, handleInvite);
+    console.log("POST invitiation cancelling: ", body );
+  }
 }

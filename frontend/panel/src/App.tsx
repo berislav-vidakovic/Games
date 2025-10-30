@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
 import { setStateFunctionRefs, handleResponseGetAllUsers, handleWsMessage } from './messageHandlers';
-import { getAllUsers, logoutUser } from './utils';
+import { getAllUsers, logoutUser, inviteUser } from './utils';
 import RegisterDialog from './components/RegisterDialog.tsx' 
 import LoginDialog from './components/LoginDialog.tsx' 
 import InviteDialog from './components/InviteDialog.tsx' 
@@ -32,7 +32,7 @@ function App() {
   const [callerUserId, setCallerUserId] = useState<number | null>(null);
   const [calleeUserId, setCalleeUserId] = useState<number | null>(null);
   const [invitationState, setInvitationState] = useState<"init" | "sent" | "pending" | "paired">("init");
-  const [selectedGame, setSelectedGame] = useState<"sudoku" | "connect4" | null>(null);
+  const [selectedGame, setSelectedGame] = useState<"Sudoku" | "Connect Four" | null>(null);
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -58,17 +58,50 @@ function App() {
   }
 
   const handleInvite = () => { if( currentUserId && onlineUsers > 1) setShowInviteDialog(true); }
-  const handleRespond = () => console.log("Respond to Invitaion clicked");
+  const handleRespond = () => console.log("Respond to Invitation clicked");
   const handleRun = () => console.log("Run clicked");
 
   const handleSelectGame = (url: string) => {
     window.open(url, '_blank');
   };
 
+  const handleCancelInvitation = () => {
+    inviteUser(callerUserId as number, calleeUserId as number, false);
+  };
+
+  
+
   const clearInvitations = (): void => {
     setCalleeUserId(null);  
     setCallerUserId(null);
     console.log(callerUserId, "called ", calleeUserId);
+  }
+
+  const isBtnVisibleSignIn = (): boolean => {
+    return currentUserId == null && isWsConnected && 
+      usersRegistered.some(u=>!u.isonline)
+  }
+
+  const isBtnVisibleSignUp = (): boolean => {
+    return currentUserId == null && isWsConnected;
+  }
+
+  const isBtnVisibleRun = (): boolean => {
+    return (invitationState == "paired" || selectedGame == "Sudoku")  
+      && currentUserId != null
+  }
+
+  const isBtnVisibleInvite = (): boolean => {
+    return invitationState == "init" && selectedGame == "Connect Four" && 
+          currentUserId != null
+  }
+
+  const isBtnVisibleCancel = (): boolean => {
+    return invitationState == "sent";
+  }
+
+  const isBtnVisibleResponse = (): boolean => {
+    return invitationState == "pending";
   }
 
   return (
@@ -95,72 +128,52 @@ function App() {
     <div className="main-content">
       {/* Top auth buttons */}
       <div className="auth-buttons">
-        <button 
+        {isBtnVisibleSignUp() && <button 
           //onClick={handleSignUp}
           id="btnRegister" 
           onClick={() => setShowRegisterDialog(true)}
-          disabled={(currentUserId != null) || !isWsConnected}
         >
           Sign Up
-        </button>
-        <button 
+        </button>}
+
+        {isBtnVisibleSignIn() && <button 
           id="btnLogin" 
-          onClick={() => setShowLoginDialog(true)}
-          disabled={
-            (currentUserId != null) || !isWsConnected || 
-            !usersRegistered.some(u=>!u.isonline)
-          }
-        >
-            Sign In
-        </button>
-        <button 
+          onClick={() => setShowLoginDialog(true)}          
+        > Sign In </button>}
+
+        {!isBtnVisibleSignIn() && <button 
           onClick={handleSignOut}
-          disabled={
-            currentUserId == null
-          }          
-        >
-            Sign Out
-        </button>
+        > Sign Out </button>}
 
-
-        {(invitationState == "paired" || selectedGame == "sudoku")  && 
-          currentUserId != null &&
+        {isBtnVisibleRun() &&
         <button 
           onClick={handleRun}
-        >
-          Run
-        </button>}
+        > Run </button>}
           
-        {invitationState == "init" && selectedGame == "connect4" && 
-          currentUserId != null &&
+        {isBtnVisibleInvite() &&
         <button 
           onClick={handleInvite}
+        >Invite </button>}
 
-        >Invite 
-        </button>}
+        {isBtnVisibleCancel() &&  <button 
+          onClick={handleCancelInvitation}
+        >Cancel </button>}
 
-        {invitationState == "sent" &&  <button 
-          onClick={handleRespond}
-        >Cancel 
-        </button>}
-
-        {invitationState == "pending" && <button 
+        {isBtnVisibleResponse() && <button 
           onClick={handleInvite}
-          
-        >Accept 
-        </button>}
+        >Accept </button>}
 
-        {invitationState == "pending" &&  <button 
+        {isBtnVisibleResponse() &&  <button 
           onClick={handleRespond}
-        >Reject 
-        </button>}
-
-      
-      
+        >Reject </button>}
       </div>
-
       
-      <h1>Game Panel</h1>
+      
+      
+    {selectedGame  
+     ? <h1>{selectedGame}</h1>
+     : <h1>Game Panel</h1>
+    }
 
       {/* Game buttons */}
       <div className="buttons-container">      
@@ -170,12 +183,12 @@ function App() {
                 console.log("Config not loaded");
                 return;
               }
-              if( selectedGame == 'sudoku') handleSelectGame(URL_SUDOKU);
-              else setSelectedGame('sudoku');
+              if( selectedGame == 'Sudoku') handleSelectGame(URL_SUDOKU);
+              else setSelectedGame('Sudoku');
               }
             }
           title="Sudoku"
-          className={selectedGame === 'sudoku' ? 'selected-button' : ''}
+          className={selectedGame === 'Sudoku' ? 'selected-button' : ''}
         >
           <img src={sudokuImg} alt="Sudoku" />
         </button>
@@ -185,11 +198,11 @@ function App() {
               console.log("Config not loaded");
               return;
             }
-            if( selectedGame == 'connect4') handleSelectGame(URL_CONNECT4);
-            else setSelectedGame('connect4');
+            if( selectedGame == 'Connect Four') handleSelectGame(URL_CONNECT4);
+            else setSelectedGame('Connect Four');
           }} 
           title="Connect 4"
-          className={selectedGame === 'connect4' ? 'selected-button' : ''}
+          className={selectedGame === 'Connect Four' ? 'selected-button' : ''}
 
         >
           <img src={connect4Img} alt="Connect 4" />

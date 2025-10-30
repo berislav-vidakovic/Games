@@ -79,17 +79,23 @@ export function handleUserLogout( jsonResp: any, status: number ){
 }
 
 export function handleInvite( jsonResp: any, status: number ){
-  //var response = new { userId, isOnline = true };
   console.log("******** ****** POST response handleInvite received: ", 
       jsonResp, "Status: ", status); 
   if( status == StatusCodes.OK ){
-    //setCurrentUserIdRef(Number(jsonResp.userId));
-    console.log("user Invited");
-    // var response = new { sending = true, callerId, calleeId };
-    
-    setCallerUserIdRef( Number(jsonResp.callerId) );
-    setCalleeUserIdRef( Number(jsonResp.calleeId) );
-    setInvitationStateRef( "sent" );
+    if( jsonResp.sending){
+      console.log("User",jsonResp.calleeId, "was Invited");
+      // var response = new { sending = true, callerId, calleeId };
+          setCallerUserIdRef( Number(jsonResp.callerId) );
+      setCalleeUserIdRef( Number(jsonResp.calleeId) );
+      setInvitationStateRef( "sent" );
+    }
+    else {
+      console.log("Invitation cancelled to user", jsonResp.calleeId );
+      // var response = new { sending = false, callerId, calleeId };
+      setCallerUserIdRef( null );
+      setCalleeUserIdRef( null );
+      setInvitationStateRef( "init" );
+    }
   }
 }
 
@@ -111,10 +117,13 @@ function handleWsInvitation( jsonResp: any ){
   if( jsonResp.sending){
     setCallerUserIdRef( Number(jsonResp.callerId) );
     setCalleeUserIdRef( Number(jsonResp.calleeId) );
+    setInvitationStateRef("pending");
   }
   else{
     setCallerUserIdRef( null );
     setCalleeUserIdRef( null );
+    setInvitationStateRef("init");
+    console.log("User ", jsonResp.callerId, "cancelled invitation");
   }
 }
 
