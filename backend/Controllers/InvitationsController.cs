@@ -97,7 +97,8 @@ public class InvitationsController : ControllerBase
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
       // TODO: Add new Game
-      bool bAdded = _gameManager.AddGame(res.CallerId!.Value, res.CalleeId!.Value);
+      body.TryGetProperty("selectedGame", out var selectedGame);
+      bool bAdded = _gameManager.AddGame(res.CallerId!.Value, res.CalleeId!.Value, selectedGame.ToString());
       if( !bAdded )
         res.Result = BadRequest(
             new { acknowledged = false, error = "Players already play another game" });
