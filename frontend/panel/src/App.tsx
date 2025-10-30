@@ -74,7 +74,7 @@ function App() {
     console.log("Run clicked");
     if( selectedGame == 'Connect Four')
     {
-      runGame(callerUserId as number, calleeUserId as number, selectedGame, currentUserId);
+      runGame(callerUserId as number, calleeUserId as number, selectedGame, currentUserId as number);
     }
     else if( selectedGame == 'Sudoku' )
       handleSelectGame( URL_SUDOKU);
