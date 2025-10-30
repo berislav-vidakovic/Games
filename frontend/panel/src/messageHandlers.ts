@@ -85,14 +85,28 @@ export function handleInvite( jsonResp: any, status: number ){
     switch( jsonResp.invitation ){
       case "send":
         console.log("User",jsonResp.calleeId, "was Invited");
-        // var response = new { invitation = send, callerId, calleeId };
+        // var response = new { invitatation = send, callerId, calleeId };
         setCallerUserIdRef( Number(jsonResp.callerId) );
         setCalleeUserIdRef( Number(jsonResp.calleeId) );
         setInvitationStateRef( "sent" );
         break;
       case "cancel":
         console.log("Invitation cancelled to user", jsonResp.calleeId );
-        // var response = new { invitataion = cancel, callerId, calleeId };
+        // var response = new { invitatation = cancel, callerId, calleeId };
+        setCallerUserIdRef( null );
+        setCalleeUserIdRef( null );
+        setInvitationStateRef( "init" );
+        break;
+      case "accept":
+        console.log("PAIRED: Invitation accepted from  user", jsonResp.calleeId );
+        // var response = new { invitatation = accept, callerId, calleeId };
+        setCallerUserIdRef( Number(jsonResp.callerId) );
+        setCalleeUserIdRef( Number(jsonResp.calleeId) );
+        setInvitationStateRef( "paired" );
+        break;
+      case "reject":
+        console.log("Invitation rejected from  user", jsonResp.calleeId );
+        // var response = new { invitatation = accept, callerId, calleeId };
         setCallerUserIdRef( null );
         setCalleeUserIdRef( null );
         setInvitationStateRef( "init" );
@@ -128,6 +142,20 @@ function handleWsInvitation( jsonResp: any ){
       setCalleeUserIdRef( null );
       setInvitationStateRef("init");
       console.log("User ", jsonResp.callerId, "cancelled invitation");
+      break;
+    case "accept":
+      console.log("PAIRED: Invitation accepted from  user", jsonResp.calleeId );
+      // var response = new { invitatation = accept, callerId, calleeId };
+      setCallerUserIdRef( Number(jsonResp.callerId) );
+      setCalleeUserIdRef( Number(jsonResp.calleeId) );
+      setInvitationStateRef( "paired" );
+      break;
+    case "reject":
+      console.log("Invitation rejected from  user", jsonResp.calleeId );
+      // var response = new { invitatation = accept, callerId, calleeId };
+      setCallerUserIdRef( null );
+      setCalleeUserIdRef( null );
+      setInvitationStateRef( "init" );
       break;
   }  
 }

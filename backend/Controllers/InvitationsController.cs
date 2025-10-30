@@ -51,8 +51,11 @@ public class InvitationsController : ControllerBase
 
       var response = new { invitation, callerId, calleeId };
       var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
-      //_wsManager.BroadcastMessage(msg);
-      _wsManager.SendMessage(calleeId, msg);
+
+      if (invitation == "send" | invitation == "cancel")
+        _wsManager.SendMessage(calleeId, msg);
+      else if( invitation == "accept" | invitation == "reject")
+        _wsManager.SendMessage(callerId, msg);
 
       return StatusCode(StatusCodes.Status200OK, response);
     }

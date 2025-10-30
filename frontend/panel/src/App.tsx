@@ -55,6 +55,7 @@ function App() {
   const handleSignOut = () => { 
     logoutUser( currentUserId as number); 
     clearInvitations();
+    setSelectedGame(null);
   }
 
   const handleInvite = () => { if( currentUserId && onlineUsers > 1) setShowInviteDialog(true); }
@@ -85,6 +86,7 @@ function App() {
     setCalleeUserId(null);  
     setCallerUserId(null);
     console.log(callerUserId, "called ", calleeUserId);
+    
   }
 
   const isBtnVisibleSignIn = (): boolean => {
@@ -241,13 +243,21 @@ function App() {
               } </b>[{onlineUsers} user(s) online]</p>
            : <p>You are not logged in [{onlineUsers} user(s) online]</p>
         }
-        { calleeUserId && callerUserId == currentUserId && 
+        { currentUserId && calleeUserId && callerUserId == currentUserId && 
           <p style={{fontWeight:"700", color:"#090"}}>
               You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
           </p> }
-          { callerUserId && calleeUserId == currentUserId && 
+          { currentUserId && callerUserId && calleeUserId == currentUserId && 
           <p style={{fontWeight:"700", color:"#e00"}}>
               You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+          </p> }
+          { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#00e"}}>
+              You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+          </p> }
+          { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#00e"}}>
+              Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
           </p> }
         {/*<p>Game selected: Connect4</p>*/}
       </div>
