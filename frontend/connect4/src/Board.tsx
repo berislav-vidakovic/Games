@@ -6,13 +6,11 @@ const nokSound = new Audio("sounds/NOK.mp3");
 interface Connect4BoardProps {
   boardString: string;
   setBoardString: Dispatch<SetStateAction<string>>;
-  name: string;
-  level: number;
 }
 
 //type BoardArray = string[][];
 
-const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardString, name, level }) => {
+const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardString }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);

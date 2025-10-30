@@ -8,15 +8,11 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
-  const [name, setName] = useState<string>("");
-  const [level, setLevel] = useState<number>(0);
   const [boardString, setBoardString] = useState<string>("YRY---------------------------------------");
   
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
     console.log( "Loading Config ... ", isConfigLoaded);
-    setName("");
-    setLevel(0);
   }, []);
 
 
@@ -35,8 +31,6 @@ function App() {
       {<Board 
         boardString={boardString} 
         setBoardString={setBoardString}
-        name={name}
-        level={level}
       />
       }
     </div>
