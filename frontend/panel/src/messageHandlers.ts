@@ -82,19 +82,21 @@ export function handleInvite( jsonResp: any, status: number ){
   console.log("******** ****** POST response handleInvite received: ", 
       jsonResp, "Status: ", status); 
   if( status == StatusCodes.OK ){
-    if( jsonResp.sending){
-      console.log("User",jsonResp.calleeId, "was Invited");
-      // var response = new { sending = true, callerId, calleeId };
-          setCallerUserIdRef( Number(jsonResp.callerId) );
-      setCalleeUserIdRef( Number(jsonResp.calleeId) );
-      setInvitationStateRef( "sent" );
-    }
-    else {
-      console.log("Invitation cancelled to user", jsonResp.calleeId );
-      // var response = new { sending = false, callerId, calleeId };
-      setCallerUserIdRef( null );
-      setCalleeUserIdRef( null );
-      setInvitationStateRef( "init" );
+    switch( jsonResp.invitation ){
+      case "send":
+        console.log("User",jsonResp.calleeId, "was Invited");
+        // var response = new { invitation = send, callerId, calleeId };
+        setCallerUserIdRef( Number(jsonResp.callerId) );
+        setCalleeUserIdRef( Number(jsonResp.calleeId) );
+        setInvitationStateRef( "sent" );
+        break;
+      case "cancel":
+        console.log("Invitation cancelled to user", jsonResp.calleeId );
+        // var response = new { invitataion = cancel, callerId, calleeId };
+        setCallerUserIdRef( null );
+        setCalleeUserIdRef( null );
+        setInvitationStateRef( "init" );
+        break;
     }
   }
 }
@@ -112,21 +114,23 @@ export async function handleWsMessage( jsonMsg: any ) {
 
 function handleWsInvitation( jsonResp: any ){
   //var response = new { sending = true, callerId, calleeId };
+  //var response = new { accept = true, callerId, calleeId };
   //    var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
   console.log("Received WS: ", jsonResp);
-  if( jsonResp.sending){
-    setCallerUserIdRef( Number(jsonResp.callerId) );
-    setCalleeUserIdRef( Number(jsonResp.calleeId) );
-    setInvitationStateRef("pending");
-  }
-  else{
-    setCallerUserIdRef( null );
-    setCalleeUserIdRef( null );
-    setInvitationStateRef("init");
-    console.log("User ", jsonResp.callerId, "cancelled invitation");
-  }
+  switch( jsonResp.invitation){
+    case "send":
+      setCallerUserIdRef( Number(jsonResp.callerId) );
+      setCalleeUserIdRef( Number(jsonResp.calleeId) );
+      setInvitationStateRef("pending");
+      break;
+    case "cancel":
+      setCallerUserIdRef( null );
+      setCalleeUserIdRef( null );
+      setInvitationStateRef("init");
+      console.log("User ", jsonResp.callerId, "cancelled invitation");
+      break;
+  }  
 }
-
 
 
 function handleWsUserRegister( jsonResp: any ){

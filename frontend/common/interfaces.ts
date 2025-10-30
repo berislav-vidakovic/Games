@@ -4,3 +4,4 @@ export interface User {
   fullname: string;
   isonline: boolean;
 };
+

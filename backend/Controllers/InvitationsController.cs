@@ -19,11 +19,10 @@ public class InvitationsController : ControllerBase
     _context = context;
     _wsManager = wsManager;
   }
-  // POST /api/invitations/accept
-  // POST /api/invitations/reject
+ 
 
 
-  public async Task<IActionResult> HandlePostInvite([FromBody] JsonElement body, bool isSending)
+  public async Task<IActionResult> HandleInvitationMsg([FromBody] JsonElement body, string invitation)
   {
     try
     {
@@ -50,7 +49,7 @@ public class InvitationsController : ControllerBase
         return StatusCode(StatusCodes.Status204NoContent,
           new { acknowledged = false, error = "Callee UserID Not found or Not online" });
 
-      var response = new { sending = isSending, callerId, calleeId };
+      var response = new { invitation, callerId, calleeId };
       var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
       //_wsManager.BroadcastMessage(msg);
       _wsManager.SendMessage(calleeId, msg);
@@ -68,13 +67,28 @@ public class InvitationsController : ControllerBase
   [HttpPost("invite")]
   public async Task<IActionResult> PostInvitationSend([FromBody] JsonElement body)
   {
-    return await HandlePostInvite(body, true);
+    return await HandleInvitationMsg(body, "send");
   }
-  
+
   // POST /api/invitations/cancel
   [HttpPost("cancel")]
   public async Task<IActionResult> PostInvitationCancel([FromBody] JsonElement body)
   {
-    return await HandlePostInvite(body, false);
+    return await HandleInvitationMsg(body, "cancel");
+  }
+
+
+  // POST /api/invitations/accept
+  [HttpPost("accept")]
+  public async Task<IActionResult> PostInvitationAccept([FromBody] JsonElement body)
+  {
+    return await HandleInvitationMsg(body, "accept");
+  }
+  
+  // POST /api/invitations/reject
+  [HttpPost("reject")]
+  public async Task<IActionResult> PostInvitationReject([FromBody] JsonElement body)
+  {
+    return await HandleInvitationMsg(body, "reject");
   }
 }

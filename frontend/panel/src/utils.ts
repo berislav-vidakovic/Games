@@ -1,5 +1,6 @@
 import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
-import { handleResponseSignUp, handleUserLogin, handleUserLogout, handleInvite } from './messageHandlers';
+import { handleResponseSignUp, handleUserLogin, handleUserLogout, 
+  handleInvite } from './messageHandlers';
 
 const GETusersEndpoint = 'api/users/all';
 const POSTuserRegisterEndpoint = 'api/users/new';
@@ -7,8 +8,8 @@ const POSTuserLoginEndpoint = 'api/users/login';
 const POSTuserLogoutEndpoint = 'api/users/logout';
 const POSTinviteEndpoint = 'api/invitations/invite';
 const POSTcancelEndpoint = 'api/invitations/cancel';
-//const POSTacceptEndpoint = 'api/invitations/accept';
-//const POSTrejectEndpoint = 'api/invitations/reject';
+const POSTacceptEndpoint = 'api/invitations/accept';
+const POSTrejectEndpoint = 'api/invitations/reject';
 
 
 export async function getAllUsers(
@@ -40,15 +41,25 @@ export async function logoutUser(userId: number) {
   console.log("POST sending: ", body );
 }
 
-export async function inviteUser(callerId: number, calleeId: number, sending: boolean) {
+export async function inviteUser(callerId: number, calleeId: number, 
+    invitation: "send" | "cancel" | "accept" | "reject") {
   const body = JSON.stringify({ callerId, calleeId } );
-  
-  if( sending){
-    sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);
-    console.log("POST invitiation sending: ", body );
-  }
-  else{
-    sendPOSTRequest(POSTcancelEndpoint, body, handleInvite);
-    console.log("POST invitiation cancelling: ", body );
+  switch(invitation){
+    case "send":
+      sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);
+      console.log("POST invitiation sending: ", body );
+      break;
+    case "cancel":
+      sendPOSTRequest(POSTcancelEndpoint, body, handleInvite);
+      console.log("POST invitiation CANCEL: ", body );
+      break;
+    case "accept":
+      sendPOSTRequest(POSTacceptEndpoint, body, handleInvite);
+      console.log("POST invitiation Accept: ", body );
+      break;
+    case "reject":
+      sendPOSTRequest(POSTrejectEndpoint, body, handleInvite);
+      console.log("POST invitiation Reject: ", body );
+      break;
   }
 }

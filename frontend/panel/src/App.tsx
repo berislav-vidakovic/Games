@@ -58,7 +58,17 @@ function App() {
   }
 
   const handleInvite = () => { if( currentUserId && onlineUsers > 1) setShowInviteDialog(true); }
-  const handleRespond = () => console.log("Respond to Invitation clicked");
+  
+  
+  const handleRespond = (accept: boolean) => {    
+    console.log("Respond to Invitation clicked: ", accept);
+    if( accept )
+      inviteUser( callerUserId as number, calleeUserId as number, "accept" );
+    else
+      inviteUser( callerUserId as number, calleeUserId as number, "reject" );
+  }
+
+
   const handleRun = () => console.log("Run clicked");
 
   const handleSelectGame = (url: string) => {
@@ -66,7 +76,7 @@ function App() {
   };
 
   const handleCancelInvitation = () => {
-    inviteUser(callerUserId as number, calleeUserId as number, false);
+    inviteUser(callerUserId as number, calleeUserId as number, "cancel");
   };
 
   
@@ -159,13 +169,10 @@ function App() {
           onClick={handleCancelInvitation}
         >Cancel </button>}
 
-        {isBtnVisibleResponse() && <button 
-          onClick={handleInvite}
-        >Accept </button>}
-
-        {isBtnVisibleResponse() &&  <button 
-          onClick={handleRespond}
-        >Reject </button>}
+        {isBtnVisibleResponse() && ( <>
+          <button onClick={() => handleRespond(true)}>Accept </button>
+          <button onClick={() => handleRespond(false)}>Reject </button>
+        </>)}
       </div>
       
       
