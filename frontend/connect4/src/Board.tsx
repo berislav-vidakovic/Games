@@ -120,6 +120,11 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
               key={col}   
               className={              
                 col==activeCol ? `conn4cellNew ${currentPlayer}` : "conn4inactivecol"}
+              onClick={() => {
+                console.log("Clicked column: ", col);
+                setActiveCol(col);
+                boardRef.current?.focus(); // 👈 restore keyboard focus
+              }}
             >
             </div>
           )}
@@ -131,6 +136,10 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
         tabIndex={0}  
         ref={boardRef}
         onKeyDown={handleKeyDown}
+        onClick={() => {
+          console.log("Clicked on board");
+          insertNewDisc();
+        }}
       >
        
         {boardRows.join('').split('').map((c,i)=>{
@@ -143,7 +152,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
 
           return (<div
             key={i}
-            className = {classes}
+            className = {classes}            
           >
           </div>)
         })}
