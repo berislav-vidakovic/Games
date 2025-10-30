@@ -125,7 +125,7 @@ export function handleInvite( jsonResp: any, status: number ){
 export function handleResponseRunGame( jsonResp: any, status: number ){
   if( status == StatusCodes.OK )
     if( jsonResp.game == "Connect Four" )    
-      window.open(`${URL_CONNECT4}?gameId=${jsonResp.gameid}`, '_blank');    
+      window.open(`${URL_CONNECT4}?gameId=${jsonResp.gameid}&senderId=${jsonResp.senderId}`, '_blank');    
 }
 
 

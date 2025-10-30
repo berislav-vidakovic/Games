@@ -66,9 +66,10 @@ export async function inviteUser(callerId: number, calleeId: number,
 }
 
 
-//Req: { run: "Connect Four", userId1, userId2 } Resp: { game: "Connect Four", gameid }
+//Req: { run: "Connect Four", userId1, userId2, senderId } Resp: { game: "Connect Four", gameid, senderId }
 export async function runGame(userId1: number, 
-    userId2: number, run: string | null = null) {
-  const body = JSON.stringify({ run, userId1, userId2  } );
+    userId2: number, run: string | null, senderId: number) {
+  const body = JSON.stringify({ run, userId1, userId2, senderId  } );
   sendPOSTRequest(POSTrunGame, body, handleResponseRunGame);  
+  
 }
