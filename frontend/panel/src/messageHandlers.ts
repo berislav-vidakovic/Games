@@ -2,6 +2,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { User } from '@common/interfaces';
 import { StatusCodes } from "http-status-codes";
+import { URL_CONNECT4 } from '@common/config';
+
 
 let setInitializedRef:  Dispatch<SetStateAction<boolean>>;
 let setUsersRegisteredRef:  Dispatch<SetStateAction<User[]>>;
@@ -118,6 +120,14 @@ export function handleInvite( jsonResp: any, status: number ){
   else 
     alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 }
+
+//Req: { run: "Connect Four", userId1, userId2 } Resp: { game: "Connect Four", gameid }
+export function handleResponseRunGame( jsonResp: any, status: number ){
+  if( status == StatusCodes.OK )
+    if( jsonResp.game == "Connect Four" )    
+      window.open(`${URL_CONNECT4}?gameId=${jsonResp.gameid}`, '_blank');    
+}
+
 
 // ws message handlers -----------------------------------
 export async function handleWsMessage( jsonMsg: any ) {

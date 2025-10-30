@@ -2,9 +2,7 @@
 import Board from "./Board";
 //import { sendGETRequest } from '@common/restAPI';
 import { loadCommonConfig } from '@common/config';
-
 import { useEffect, useState } from "react";
-
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
@@ -13,6 +11,9 @@ function App() {
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
     console.log( "Loading Config ... ", isConfigLoaded);
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get('gameId');
+    console.log('Game ID:', gameId);
   }, []);
 
 

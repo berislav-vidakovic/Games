@@ -1,6 +1,6 @@
 import { sendGETRequest, sendPOSTRequest } from '@common/restAPI';
 import { handleResponseSignUp, handleUserLogin, handleUserLogout, 
-  handleInvite } from './messageHandlers';
+  handleInvite, handleResponseRunGame } from './messageHandlers';
 
 const GETusersEndpoint = 'api/users/all';
 const POSTuserRegisterEndpoint = 'api/users/new';
@@ -10,7 +10,7 @@ const POSTinviteEndpoint = 'api/invitations/invite';
 const POSTcancelEndpoint = 'api/invitations/cancel';
 const POSTacceptEndpoint = 'api/invitations/accept';
 const POSTrejectEndpoint = 'api/invitations/reject';
-
+const POSTrunGame = 'api/games/run';
 
 export async function getAllUsers(
   handleGetUsers: (data: any) => void
@@ -63,4 +63,12 @@ export async function inviteUser(callerId: number, calleeId: number,
       console.log("POST invitiation Reject: ", body );
       break;
   }
+}
+
+
+//Req: { run: "Connect Four", userId1, userId2 } Resp: { game: "Connect Four", gameid }
+export async function runGame(userId1: number, 
+    userId2: number, run: string | null = null) {
+  const body = JSON.stringify({ run, userId1, userId2  } );
+  sendPOSTRequest(POSTrunGame, body, handleResponseRunGame);  
 }

@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
 import { setStateFunctionRefs, handleResponseGetAllUsers, handleWsMessage } from './messageHandlers';
-import { getAllUsers, logoutUser, inviteUser } from './utils';
+import { getAllUsers, logoutUser, inviteUser, runGame } from './utils';
 import RegisterDialog from './components/RegisterDialog.tsx' 
 import LoginDialog from './components/LoginDialog.tsx' 
 import InviteDialog from './components/InviteDialog.tsx' 
@@ -73,7 +73,11 @@ function App() {
   const handleRun = () => {
     console.log("Run clicked");
     if( selectedGame == 'Connect Four')
-      handleSelectGame(URL_CONNECT4);
+    {
+      runGame(callerUserId as number, calleeUserId as number, selectedGame);
+    }
+    else if( selectedGame == 'Sudoku' )
+      handleSelectGame( URL_SUDOKU);
   }
 
   const handleSelectGame = (url: string) => {
