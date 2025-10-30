@@ -188,7 +188,23 @@ body {
   flex-wrap: wrap; 
 }
 
-.auth-buttons button {
+.info-connect4 {
+  display: flex;
+  align-items: center;      /* vertical alignment */
+  justify-content: space-between;/* horizontal alignment to the right */
+  gap: 12px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.next-move {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-buttons button,
+.info-connect4 button {
   padding: 8px 16px;
   border: none;
   background-color: #4a69bd;
@@ -196,9 +212,13 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 100px;
+  width: 110px;
   margin-left: 16px;
   margin-top: 16px;
+}
+
+.auth-buttons button:focus {
+  outline: none;
 }
 
 .auth-buttons button:disabled {
@@ -255,7 +275,6 @@ body {
 .status-box {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;   /* left-aligns text horizontally */
   justify-content: flex-start;
   
   background-color: #eef;    /* subtle background */

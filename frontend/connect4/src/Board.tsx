@@ -14,7 +14,6 @@ interface Connect4BoardProps {
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardString, name, level }) => {
   
-  const [time, setTime] = useState<number>(0); // seconds
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
   const [currentPlayer, setCurrentPlayer] = useState<"Red" | "Yellow">("Red"); 
@@ -43,20 +42,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
     boardRef.current?.focus();
   }, []);
 
-  // Timer
-  useEffect(() => {
-    const timer = setInterval(() => setTime(prev => prev + 1), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Format time mm:ss
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
@@ -103,15 +89,19 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
 
   return (
     <>
-      {/* Name and level */}
-      <div className={"sudokuinfobox"}  >
-        <div>Game: {name}</div>
-        <div>Level: {level == 2 ? "Medium" : "Easy"}</div>
-      </div>
-      
-      {/* Timer  */}
-      <div className={"sudokuinfobox"} style={{fontWeight:"600"}}>
-        <div>Timer: {formatTime(time)}</div>
+       <div className="info-connect4">
+        <div>
+          <button
+            onClick={() => setCurrentPlayer(currentPlayer == "Red" ? "Yellow" : "Red")}
+          >
+            Your color
+          </button>
+          <button>Start</button>
+        </div>
+        <span className="next-move">
+          Next Move:
+          <span className="conn4cellNew Red"></span>
+        </span>
       </div>
 
         <div className='conn4top'>

@@ -85,13 +85,17 @@ function App() {
   const clearInvitations = (): void => {
     setCalleeUserId(null);  
     setCallerUserId(null);
+    setInvitationState("init");
     console.log(callerUserId, "called ", calleeUserId);
-    
   }
 
   const isBtnVisibleSignIn = (): boolean => {
     return currentUserId == null && isWsConnected && 
       usersRegistered.some(u=>!u.isonline)
+  }
+
+  const isBtnVisibleSignOut = (): boolean => {
+    return currentUserId != null && isWsConnected;
   }
 
   const isBtnVisibleSignUp = (): boolean => {
@@ -153,7 +157,7 @@ function App() {
           onClick={() => setShowLoginDialog(true)}          
         > Sign In </button>}
 
-        {!isBtnVisibleSignIn() && <button 
+        {isBtnVisibleSignOut() && <button 
           onClick={handleSignOut}
         > Sign Out </button>}
 
@@ -188,12 +192,15 @@ function App() {
       <div className="buttons-container">      
         <button 
           onClick={() => {
-              if( !isConfigLoaded ) {
-                console.log("Config not loaded");
+              if( !isConfigLoaded || !currentUserId ) {
+                console.log("Config not loaded (or no user logged in)");
                 return;
               }
               if( selectedGame == 'Sudoku') handleSelectGame(URL_SUDOKU);
-              else setSelectedGame('Sudoku');
+              else{
+                console.log('SELECTED Sudoku');
+                setSelectedGame('Sudoku');
+              }
               }
             }
           title="Sudoku"
@@ -203,12 +210,15 @@ function App() {
         </button>
         <button 
           onClick={() => {
-            if( !isConfigLoaded ) {
-              console.log("Config not loaded");
+            if( !isConfigLoaded || !currentUserId ) {
+              console.log("Config not loaded (or no user logged in)");
               return;
             }
             if( selectedGame == 'Connect Four') handleSelectGame(URL_CONNECT4);
-            else setSelectedGame('Connect Four');
+            else {
+              console.log('SELECTED Connect Four');
+              setSelectedGame('Connect Four');
+            }
           }} 
           title="Connect 4"
           className={selectedGame === 'Connect Four' ? 'selected-button' : ''}
