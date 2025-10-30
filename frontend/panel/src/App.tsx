@@ -41,7 +41,7 @@ function App() {
   useEffect( () => { if( isConfigLoaded){
       setStateFunctionRefs(setInitialized, setUsersRegistered, 
         setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId,
-        setInvitationState );
+        setInvitationState, setSelectedGame );
       getAllUsers(handleResponseGetAllUsers );
    }      
   }, [isConfigLoaded]); 
@@ -70,7 +70,11 @@ function App() {
   }
 
 
-  const handleRun = () => console.log("Run clicked");
+  const handleRun = () => {
+    console.log("Run clicked");
+    if( selectedGame == 'Connect Four')
+      handleSelectGame(URL_CONNECT4);
+  }
 
   const handleSelectGame = (url: string) => {
     window.open(url, '_blank');
@@ -201,8 +205,7 @@ function App() {
                 console.log('SELECTED Sudoku');
                 setSelectedGame('Sudoku');
               }
-              }
-            }
+            }}
           title="Sudoku"
           className={selectedGame === 'Sudoku' ? 'selected-button' : ''}
         >
@@ -213,8 +216,7 @@ function App() {
             if( !isConfigLoaded || !currentUserId ) {
               console.log("Config not loaded (or no user logged in)");
               return;
-            }
-            if( selectedGame == 'Connect Four') handleSelectGame(URL_CONNECT4);
+            }            
             else {
               console.log('SELECTED Connect Four');
               setSelectedGame('Connect Four');
@@ -293,6 +295,7 @@ function App() {
         usersRegistered={usersRegistered}  
         isWsConnected={isWsConnected}  
         currentUserId={currentUserId}
+        selectedGame={selectedGame}
       />
     )}
 

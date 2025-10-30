@@ -4,6 +4,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 using Middleware;
+using Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddControllers();
 
 // Web socket connection
 builder.Services.AddSingleton<WebSocketManager>();
+
+builder.Services.AddSingleton<GameManager>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

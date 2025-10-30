@@ -42,8 +42,9 @@ export async function logoutUser(userId: number) {
 }
 
 export async function inviteUser(callerId: number, calleeId: number, 
-    invitation: "send" | "cancel" | "accept" | "reject") {
-  const body = JSON.stringify({ callerId, calleeId } );
+    invitation: "send" | "cancel" | "accept" | "reject",
+    selectedGame: string | null = null) {
+  const body = JSON.stringify({ callerId, calleeId, selectedGame } );
   switch(invitation){
     case "send":
       sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);

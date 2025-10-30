@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
 using System.Text.Json;
+using Services;
 
 namespace Controllers;
 
@@ -20,12 +21,15 @@ public class InvitationsController : ControllerBase
 {
   private readonly GamesContext _context;
 
+  private readonly GameManager _gameManager;
+
   private readonly WebSocketManager _wsManager;
 
-  public InvitationsController(GamesContext context, WebSocketManager wsManager)
+  public InvitationsController(GamesContext context, WebSocketManager wsManager, GameManager gm)
   {
     _context = context;
     _wsManager = wsManager;
+    _gameManager = gm;
   } 
 
 
@@ -62,7 +66,8 @@ public class InvitationsController : ControllerBase
         return res;
       }
 
-      var response = new { invitation, callerId, calleeId };
+      body.TryGetProperty("selectedGame", out var selectedGame);
+      var response = new { invitation, callerId, calleeId, selectedGame };
       var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
 
       if (invitation == "send" || invitation == "cancel")
@@ -70,7 +75,7 @@ public class InvitationsController : ControllerBase
       else if( invitation == "accept" || invitation == "reject")
         _wsManager.SendMessage(callerId, msg);
 
-      res.Result = StatusCode(StatusCodes.Status200OK, response);
+      res.Result = Ok(response);
       res.CalleeId = calleeId;
       res.CallerId = callerId;
       return res;
@@ -91,6 +96,11 @@ public class InvitationsController : ControllerBase
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
+      // TODO: Add new Game
+      bool bAdded = _gameManager.AddGame(res.CallerId!.Value, res.CalleeId!.Value);
+      if( !bAdded )
+        res.Result = BadRequest(
+            new { acknowledged = false, error = "Players already play another game" });
     }
     return res.Result!;
   }
@@ -103,6 +113,8 @@ public class InvitationsController : ControllerBase
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
+      // TODO: Remove Game
+      _gameManager.RemoveGame(res.CallerId!.Value, res.CalleeId!.Value);
     }
     return res.Result!;
   }
@@ -115,6 +127,10 @@ public class InvitationsController : ControllerBase
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
+      // TODO: Initialize added Game
+      _gameManager.InitGame(res.CallerId!.Value, res.CalleeId!.Value);
+
+
     }
     return res.Result!;
   }
@@ -128,6 +144,8 @@ public class InvitationsController : ControllerBase
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
+      // TODO: Remove Game
+      _gameManager.RemoveGame(res.CallerId!.Value, res.CalleeId!.Value);
     }
     return res.Result!;  }
 }

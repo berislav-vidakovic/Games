@@ -6,12 +6,13 @@ import { inviteUser } from "../utils.ts";
 
 
 function InviteDialog({ 
-    setShowInviteDialog, usersRegistered, isWsConnected, currentUserId 
+    setShowInviteDialog, usersRegistered, isWsConnected, currentUserId, selectedGame 
   }: { 
     setShowInviteDialog: Dispatch<SetStateAction<boolean>>;
     usersRegistered: User[];
     isWsConnected: boolean;
     currentUserId: number;  
+    selectedGame: "Sudoku" | "Connect Four" | null;
  }
 ) {
 
@@ -26,7 +27,7 @@ function InviteDialog({
     const selectedUserId : number = Number(selectedUserRef.current!.value);
     console.log("Selected user ID:", selectedUserId);
    
-    inviteUser(currentUserId, selectedUserId, "send"); // async call
+    inviteUser(currentUserId, selectedUserId, "send", selectedGame); // async call
     setShowInviteDialog(false);    // Close dialog
   };
 

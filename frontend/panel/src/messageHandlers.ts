@@ -10,6 +10,7 @@ let setOnlineUsersRef:  Dispatch<SetStateAction<number>>;
 let setCallerUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setCalleeUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setInvitationStateRef: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>;
+let setSelectedGameRef: Dispatch<SetStateAction<"Sudoku" | "Connect Four" | null>>;
 
 
 
@@ -20,8 +21,8 @@ export function setStateFunctionRefs(
   setOnlineUsers:  Dispatch<SetStateAction<number>>,
   setCallerUserId:  Dispatch<SetStateAction<number | null>>,
   setCalleeUserId:  Dispatch<SetStateAction<number | null>>,
-  setInvitationState: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>
-
+  setInvitationState: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>,
+  setSelectedGame: Dispatch<SetStateAction<"Sudoku" | "Connect Four" | null>>
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
@@ -30,6 +31,7 @@ export function setStateFunctionRefs(
     setCallerUserIdRef = setCallerUserId;
     setCalleeUserIdRef = setCalleeUserId;
     setInvitationStateRef = setInvitationState;
+    setSelectedGameRef = setSelectedGame;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
@@ -113,6 +115,8 @@ export function handleInvite( jsonResp: any, status: number ){
         break;
     }
   }
+  else 
+    alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 }
 
 // ws message handlers -----------------------------------
@@ -136,6 +140,7 @@ function handleWsInvitation( jsonResp: any ){
       setCallerUserIdRef( Number(jsonResp.callerId) );
       setCalleeUserIdRef( Number(jsonResp.calleeId) );
       setInvitationStateRef("pending");
+      setSelectedGameRef(jsonResp.selectedGame);
       break;
     case "cancel":
       setCallerUserIdRef( null );
