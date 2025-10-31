@@ -9,6 +9,9 @@ public class Game
   protected Guid _user2Guid;
   readonly string _game;
   protected bool _gameHandshakeDone;
+
+  private readonly object _lockBase = new();
+
   public Game( int user1, int user2, string game)
   {
     _userId1 = user1;
@@ -36,17 +39,20 @@ public class Game
 
   public bool SetUserGuid(int userId, Guid id)
   {
-    if (userId == _userId1)
-      _user1Guid = id;
-    else if (userId == _userId2)
-      _user2Guid = id;
-    else
-      return false;
+    lock( _lockBase )
+    {
+      if (userId == _userId1)
+        _user1Guid = id;
+      else if (userId == _userId2)
+        _user2Guid = id;
+      else
+        return false;
 
-    Console.WriteLine($"*** Set Guid={id} for UserId={userId}");
-    return true;
+      Console.WriteLine($"*** Set Guid={id} for UserId={userId}");
+      return true;
+    }
   }
-  
+
   public Guid GetUserGuid(int userId)
   {
     if (userId == _userId1)
@@ -54,6 +60,17 @@ public class Game
 
     if (userId == _userId2)
       return _user2Guid;
+
+    return Guid.Empty;
+  }
+  
+  public Guid GetPartnerGuid(int userId)
+  {
+    if (userId == _userId1)
+      return _user2Guid;
+
+    if (userId == _userId2)
+      return _user1Guid;
 
     return Guid.Empty;
   }

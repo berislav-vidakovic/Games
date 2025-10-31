@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import "@common/style.css";
+import { swapColors } from './gameLogic'
+
+
 const okSound = new Audio("sounds/OK.wav");  
 const nokSound = new Audio("sounds/NOK.mp3"); 
 
@@ -7,12 +10,14 @@ interface Connect4BoardProps {
   boardString: string;
   setBoardString: Dispatch<SetStateAction<string>>;
   myColor: "Red" | "Yellow" | null; 
+  gameId: string | null;
+  userId: number | null;
 }
 
 //type BoardArray = string[][];
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  setBoardString, myColor  }) => {
+  setBoardString, myColor, gameId, userId  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -94,7 +99,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
         <div>
           <button
             onClick={() => {
-              setCurrentPlayer(currentPlayer == "Red" ? "Yellow" : "Red");
+              swapColors(gameId, userId);
             }}
           >
             Your color

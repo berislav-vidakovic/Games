@@ -63,18 +63,21 @@ public class WebSocketManager
   {
     // ConcurrentDictionary<Guid, WebSocket> _wsConnections;
     // ConcurrentDictionary<Guid, int> _onlineUsers;
+    foreach (var kvp in _onlineUsers) //<Guid, int> _onlineUsers
+      if (kvp.Value == userId)
+        SendMessageByGuid(kvp.Key, message);
+  }
+  
+  public void SendMessageByGuid(Guid id, object message)
+  {
     var options = new JsonSerializerOptions
     {
       PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
-    foreach( var kvp in _onlineUsers ) //<Guid, int> _onlineUsers
-      if( kvp.Value == userId)
-      {
-        WebSocket ws = _wsConnections[kvp.Key]; //<Guid, WebSocket> _wsConnections
-        string jsonR = JsonSerializer.Serialize(message, options);
-        byte[] bytes = Encoding.UTF8.GetBytes(jsonR);
-        ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
-        ws.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-      }
+    WebSocket ws = _wsConnections[id]; //<Guid, WebSocket> _wsConnections
+    string jsonR = JsonSerializer.Serialize(message, options);
+    byte[] bytes = Encoding.UTF8.GetBytes(jsonR);
+    ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+    ws.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
   }
 }

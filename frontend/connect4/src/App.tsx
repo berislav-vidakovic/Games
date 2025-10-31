@@ -4,7 +4,7 @@ import { sendPOSTRequest } from '@common/restAPI';
 import { loadCommonConfig } from '@common/config';
 import { useEffect, useState } from "react";
 import { StatusCodes } from "http-status-codes";
-import { handleWsMessage } from "./gameLogic";
+import { handleWsMessage, setStateFunctionRefs } from "./gameLogic";
 import { connectWS } from '@common/webSocket';
 
 
@@ -37,6 +37,7 @@ function App() {
     if( !isConfigLoaded || gameId == null ) return;
     const body = JSON.stringify({gameId, userId});
     sendPOSTRequest( 'api/games/init', body, handleResponseInit);
+    setStateFunctionRefs(setMyColor);
     
   }, [isConfigLoaded, gameId]);
   
@@ -100,6 +101,8 @@ function App() {
         boardString={boardString} 
         setBoardString={setBoardString}
         myColor={myColor}
+        gameId={gameId}
+        userId={userId}
       />
       }
     </div>

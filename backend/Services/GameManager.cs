@@ -72,6 +72,15 @@ public class GameManager
       return Guid.Empty;
     return game.GetUserGuid(userId);
   }
+
+  public Guid GetPartnerGuid(string gameId, int userId)
+  {
+    Game? game = _games.GetValueOrDefault(gameId);
+    if (game == null)
+      return Guid.Empty;
+    return game.GetPartnerGuid(userId);
+  }
+
   public Game? GetGame(string gameId)
   {
     return _games.GetValueOrDefault(gameId);
