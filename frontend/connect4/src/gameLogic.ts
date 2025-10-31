@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 
 let setMyColorRef: Dispatch<SetStateAction<"Red" | "Yellow" | null>>;
 let setGameStateRef: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>;
-let setBoardStringRef: Dispatch<SetStateAction<string>>;
 let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 
 let myUserId : number | null = null;
@@ -19,13 +18,11 @@ export function updateSetBoardRows( setBoardRows: Dispatch<SetStateAction<string
 
 export function setStateFunctionRefs(
   setMyColor: Dispatch<SetStateAction<"Red" | "Yellow" | null>>,
-  setGameState: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>,
-  setBoardString: Dispatch<SetStateAction<string>>
+  setGameState: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>
 
 ){
     setMyColorRef = setMyColor;
     setGameStateRef = setGameState;
-    setBoardStringRef = setBoardString;
 }
 
 export async function swapColors( 

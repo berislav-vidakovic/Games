@@ -39,7 +39,7 @@ function App() {
     if( !isConfigLoaded || gameId == null ) return;
     const body = JSON.stringify({gameId, userId});
     sendPOSTRequest( 'api/games/init', body, handleResponseInit);
-    setStateFunctionRefs(setMyColor, setGameState, setBoardString);
+    setStateFunctionRefs(setMyColor, setGameState);
     setGameState("init");
   }, [isConfigLoaded, gameId]);
   
