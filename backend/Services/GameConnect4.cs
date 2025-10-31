@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Services;
 
 public static class Connect4Results
@@ -28,6 +30,14 @@ public class GameConnect4 : Game
     _nextMove = null;
   }
 
+  public void InsertDisk(int userId, int row, int col)
+  {
+    int idx = row * 7 + col;
+    StringBuilder sb = new StringBuilder(_board);
+    char c = GetUserColor(userId)[0];
+    sb[idx] = c;
+    _board = sb.ToString();
+  }
   public void SetBoard(string sBoard)
   {
     _board = sBoard;

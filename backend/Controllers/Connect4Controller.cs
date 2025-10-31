@@ -159,5 +159,54 @@ public class Connect4Controller : ControllerBase
     return StatusCode(500, new { acknowledged = false });
   }
 
+   // POST /api/games/connect4/insertdisk - Request sent from Game browser
+  [HttpPost("insertdisk")]
+  //public async Task<IActionResult> PostSwapColors([FromBody] JsonElement body)
+  public IActionResult PostInsertDisk([FromBody] JsonElement body)
+  {
+    try  // POST request send from Game new browser
+    { // Req: { gameId, userId, row, col } Resp: { userId, board } - new board
+      if (body.TryGetProperty("gameId", out JsonElement game))
+      { 
+        if (!body.TryGetProperty("userId", out JsonElement userIdprop) )
+          return BadRequest(new { acknowledged = false,
+            error = "Missing keys gameId and/or userId in POST request" });
+
+        string gameId = game.ToString()!;
+        if (!_gameManager.IsGameInitialized(gameId))
+          return BadRequest(new { acknowledged = false, error = "Invalid gameId in POST request" });
+
+        // Get Color for userId, gameId
+        GameConnect4? gameC4 = (GameConnect4?)_gameManager.GetGame(gameId);
+        if (gameC4 == null)
+          return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
+
+        body.TryGetProperty("row", out var rowProp);
+        body.TryGetProperty("col", out var colProp);
+        int row = rowProp.GetInt32();
+        int col = colProp.GetInt32();
+
+        int userId = userIdprop.GetInt32()!; // Sender = POST response destination
+        Guid id2 = gameC4.GetPartnerGuid(userId); // WS desitnation
+
+        gameC4.InsertDisk(userId, row, col);
+        string board = gameC4.GetBoard();
+        
+        var response = new { userId, board };
+        var wsMsg = new { type = "insertDisk", status = "WsStatus.OK", data = response };       
+        
+        _wsManager.SendMessageByGuid(id2, wsMsg);
+
+        return Ok(response);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Error in Post Init Received: {ex.Message}");
+      return StatusCode(500, new { acknowledged = false, error = ex.Message });
+    }
+    return StatusCode(500, new { acknowledged = false });
+  }
+
 
 }

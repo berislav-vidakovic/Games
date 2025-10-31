@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import "@common/style.css";
-import { startGame, swapColors, stringToMatrix, updateSetBoardRows } from './gameLogic'
+import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk } from './gameLogic'
 
 
 const okSound = new Audio("sounds/OK.wav");  
@@ -68,6 +68,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
       if( rev[row][activeCol] != '-')
         ++row;
       else {
+        /*
         const updRow = rev[row]
           .split('')
           .map((cell,col)=>col==activeCol ? cell = currentPlayer[0] : cell)
@@ -77,7 +78,8 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
         const newBoard = [...rev].reverse();
         setBoardRows(newBoard);
         setBoardString(rev.join(''));
-        console.log(rev.join(''));
+        console.log(rev.join(''));*/
+        insertDisk( gameId, row, activeCol );
         okSound.play();
         return;
       }
