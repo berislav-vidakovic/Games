@@ -2,15 +2,59 @@ namespace Services;
 
 public class Game
 {
+  private int _userId1;
+  private int _userId2;
+
+  private Guid _user1Guid;
+  private Guid _user2Guid;
+  readonly string _game;
+  private bool _gameHandshakeDone;
   public Game( int user1, int user2, string game)
   {
     _userId1 = user1;
     _userId2 = user2;
     _game = game;
+    _gameHandshakeDone = false;
+    _user1Guid = Guid.Empty;
+    _user2Guid = Guid.Empty;
+  }
+  public int GetUser1() => _userId1;
+  public int GetUser2() => _userId2;
+
+  public int GetPartner(int userId)
+  {
+    return userId == _userId1 ? _userId2 : _userId1;
+  }
+  public void SetGameHandshake()
+  {
+    _gameHandshakeDone = true;
+  }
+  public bool GetGameHandshake()
+  {
+    return _gameHandshakeDone;
+  }
+
+  public bool SetUserGuid(int userId, Guid id)
+  {
+    if (userId == _userId1)
+      _user1Guid = id;
+    else if (userId == _userId2)
+      _user2Guid = id;
+    else
+      return false;
+
+    Console.WriteLine($"*** Set Guid={id} for UserId={userId}");
+    return true;
   }
   
-  private int _userId1;
-  private int _userId2;
+  public Guid GetUserGuid(int userId)
+  {
+    if (userId == _userId1)
+      return _user1Guid;
 
-  string _game;
+    if (userId == _userId2)
+      return _user2Guid;
+
+    return Guid.Empty;
+  }
 }

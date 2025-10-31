@@ -131,7 +131,6 @@ public class InvitationsController : ControllerBase
       // TODO: Initialize added Game
       _gameManager.InitGame(res.CallerId!.Value, res.CalleeId!.Value);
 
-
     }
     return res.Result!;
   }

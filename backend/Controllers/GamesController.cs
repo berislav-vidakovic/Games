@@ -24,11 +24,11 @@ public class GamesController : ControllerBase
     _gameManager = gm;
   }
 
-  // POST /api/games/run
+  // POST /api/games/run  - Request sent from Panel browser
   [HttpPost("run")]
   public IActionResult PostRunGame([FromBody] JsonElement body)
   {
-    try
+    try 
     { // Req: { run: "Connect Four", userId1, userId2, senderId } Resp: { game: "Connect Four", gameid, senderId }
       if (body.TryGetProperty("run", out JsonElement game))
       { // Req: { action: run, userId1, userId2 } Resp: { gameid }
@@ -62,20 +62,36 @@ public class GamesController : ControllerBase
     return StatusCode(500, new { acknowledged = false });
   }
 
-  // POST /api/games/init
+  // POST /api/games/init - Request sent from Game browser
   [HttpPost("init")]
-  public IActionResult PostInitGame([FromBody] JsonElement body)
+  public async Task<IActionResult> PostInitGame([FromBody] JsonElement body)
   {
-    try
-    { // Req: {gameId, userId} Resp: {gameId, userId}
+    try  // POST request send from Game new browser
+    { // Req: {gameId, userId} Resp: {gameId, id, userName, user2Id, user2Name}
       if (body.TryGetProperty("gameId", out JsonElement game))
-      { // Req: { action: run, userId1, userId2 } Resp: { gameid }
+      { 
         if (!body.TryGetProperty("userId", out JsonElement userIdprop) )
           return BadRequest(new { acknowledged = false,
             error = "Missing keys in POST request" });
+
         string gameId = game.ToString()!;
+        if (!_gameManager.IsGameInitialized(gameId) )
+          return BadRequest(new { acknowledged = false, error = "Invalid gameId in POST request" });
+
         int userId = userIdprop.GetInt32()!;
-        var response = new { gameId, userId };  
+        int user2Id = _gameManager.GetPartnerId(gameId, userId);
+
+        Guid id = Guid.NewGuid();
+        _gameManager.SetUserGuid(gameId, userId, id);
+        User? user1 = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        User? user2 = await _context.Users.FirstOrDefaultAsync(u => u.UserId == user2Id);
+        if (user1 == null || user2 == null)
+          return BadRequest(new { acknowledged = false, error = "Invalid userIds in POST request" });
+
+        string userName = user1.FullName!;
+        string user2Name = user2.FullName!;
+
+        var response = new { gameId, id, userName, user2Id, user2Name  };  
         return Ok(response);
       }
     }

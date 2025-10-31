@@ -6,17 +6,21 @@ const nokSound = new Audio("sounds/NOK.mp3");
 interface Connect4BoardProps {
   boardString: string;
   setBoardString: Dispatch<SetStateAction<string>>;
+  myColor: "Red" | "Yellow" | null; 
+  setMyColor: Dispatch<SetStateAction<"Red" | "Yellow" | null>>;
 }
 
 //type BoardArray = string[][];
 
-const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardString }) => {
+const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
+  setBoardString, myColor, setMyColor  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
   const [currentPlayer, setCurrentPlayer] = useState<"Red" | "Yellow">("Red"); 
   const [boardRows, setBoardRows] = useState<string[]>([]); 
 
+  setMyColor(null);
 
   // Transform string to matrix
   // YRY---------------------------------------
@@ -90,7 +94,9 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
        <div className="info-connect4">
         <div>
           <button
-            onClick={() => setCurrentPlayer(currentPlayer == "Red" ? "Yellow" : "Red")}
+            onClick={() => {
+              setCurrentPlayer(currentPlayer == "Red" ? "Yellow" : "Red");
+            }}
           >
             Your color
           </button>
@@ -107,7 +113,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, setBoardStri
             <div
               key={col}   
               className={              
-                col==activeCol ? `conn4cellNew ${currentPlayer}` : "conn4inactivecol"}
+                col==activeCol ? `conn4cellNew ${myColor}` : "conn4inactivecol"}
               onClick={() => {
                 console.log("Clicked column: ", col);
                 setActiveCol(col);

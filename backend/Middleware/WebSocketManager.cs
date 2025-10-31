@@ -67,10 +67,10 @@ public class WebSocketManager
     {
       PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
-    foreach( var kvp in _onlineUsers )
+    foreach( var kvp in _onlineUsers ) //<Guid, int> _onlineUsers
       if( kvp.Value == userId)
       {
-        WebSocket ws = _wsConnections[kvp.Key];
+        WebSocket ws = _wsConnections[kvp.Key]; //<Guid, WebSocket> _wsConnections
         string jsonR = JsonSerializer.Serialize(message, options);
         byte[] bytes = Encoding.UTF8.GetBytes(jsonR);
         ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);

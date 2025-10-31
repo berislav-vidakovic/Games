@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.VisualBasic;
 using Models;
+using Services;
 
 namespace Middleware;
 
@@ -15,10 +16,14 @@ public class WebSocketMiddleware // Singleton
 
   private readonly WebSocketManager _wsManager;
 
-  public WebSocketMiddleware(RequestDelegate next, WebSocketManager wsManager)
+  private readonly GameManager _gameManager;
+
+
+  public WebSocketMiddleware(RequestDelegate next, WebSocketManager wsManager, GameManager gm)
   {
     _next = next;
     _wsManager = wsManager;
+    _gameManager = gm;
   }
   
   public void AddSocket(Guid clientId, WebSocket ws)
@@ -59,10 +64,9 @@ public class WebSocketMiddleware // Singleton
         await CloseWsConnection(webSocket);
         return;
       }
-      Console.WriteLine("WS established - ID OK");
+      Console.WriteLine($"WS established - ID = {clientId}");
 
-
-      AddSocket(parsedClientId, webSocket) ;
+      AddSocket(parsedClientId, webSocket);
 
       // Buffer for receiving data
       var buffer = new byte[4096]; // 4KB buffer size
