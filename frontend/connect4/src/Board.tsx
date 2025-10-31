@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import "@common/style.css";
-import { startGame, swapColors } from './gameLogic'
+import { startGame, swapColors, stringToMatrix, updateSetBoardRows } from './gameLogic'
 
 
 const okSound = new Audio("sounds/OK.wav");  
@@ -17,6 +17,8 @@ interface Connect4BoardProps {
 
 //type BoardArray = string[][];
 
+
+
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
   setBoardString, myColor, gameId, userId, gameState  }) => {
   
@@ -25,23 +27,12 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
   const [currentPlayer, setCurrentPlayer] = useState<"Red" | "Yellow">("Red"); 
   const [boardRows, setBoardRows] = useState<string[]>([]); 
 
-  //setMyColor(null);
+  console.log(userId);
 
   // Transform string to matrix
-  // YRY---------------------------------------
   useEffect(() => {
-    const matrix: string[] = [];
-    for( let i = 0; i < 6; i++ ){
-      const row: string = boardString.slice(i*7,i*7+7);
-      matrix.push( row );
-    }
-    //console.log(...matrix);
-    //console.log(rev);
-    //console.log(rev.join(''));
-    setBoardRows(matrix.reverse());
-
-    // TODO: use this for render from 0 to 6
-    // use this for insert from 6 to 0 
+    stringToMatrix( boardString, setBoardRows);
+    updateSetBoardRows(setBoardRows);
   }, []);
 
   // Auto-focus

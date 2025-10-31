@@ -4,7 +4,8 @@ import { StatusCodes } from "http-status-codes";
 
 let setMyColorRef: Dispatch<SetStateAction<"Red" | "Yellow" | null>>;
 let setGameStateRef: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>;
-
+let setBoardStringRef: Dispatch<SetStateAction<string>>;
+let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 
 let myUserId : number | null = null;
 export function updateUserId(userId: number | null){
@@ -12,13 +13,19 @@ export function updateUserId(userId: number | null){
   console.log("===============User ID updated: ", myUserId);
 }
 
+export function updateSetBoardRows( setBoardRows: Dispatch<SetStateAction<string[]>> ){
+  setBoardRowsRef = setBoardRows;
+}
+
 export function setStateFunctionRefs(
   setMyColor: Dispatch<SetStateAction<"Red" | "Yellow" | null>>,
-  setGameState: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>
+  setGameState: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>,
+  setBoardString: Dispatch<SetStateAction<string>>
 
 ){
     setMyColorRef = setMyColor;
     setGameStateRef = setGameState;
+    setBoardStringRef = setBoardString;
 }
 
 export async function swapColors( 
@@ -39,6 +46,17 @@ async function handleResponseSwapColors( jsonResp: any, status: number ) {
     alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 }
 
+export function stringToMatrix( boardString: string,  
+    setBoardRows: Dispatch<SetStateAction<string[]>> ){
+  const matrix: string[] = [];
+  for( let i = 0; i < 6; i++ ){
+    const row: string = boardString.slice(i*7,i*7+7);
+    matrix.push( row );
+  }
+  setBoardRows(matrix.reverse());
+  console.log(" --------- stringToMatrix ----------------");
+}
+
 // -------------------------------------------------------------------------
 export async function startGame( 
     gameId: string | null ){
@@ -57,6 +75,9 @@ async function handleResponsePlayerMove( jsonResp: any, status: number ) {
       setGameStateRef( "myMove");
     else
       setGameStateRef( "theirMove");
+    console.log("Board POST: ", jsonResp.board);
+    stringToMatrix(jsonResp.board, setBoardRowsRef);   
+    
   }
   else 
     alert(`Error: ${jsonResp.error} STATUS: ${status}`);
@@ -74,6 +95,9 @@ export async function handleWsMessage( jsonMsg: any ) {
         setGameStateRef( "myMove");
       else
         setGameStateRef( "theirMove");
+      stringToMatrix(jsonMsg.data.board, setBoardRowsRef);      
+      console.log("Board WS: ", jsonMsg.data.board);
+
     }
     console.log(jsonMsg);
 }

@@ -118,7 +118,7 @@ public class Connect4Controller : ControllerBase
   public IActionResult PostStartGame([FromBody] JsonElement body)
   {
     try  // POST request send from Game new browser
-    { // Req: {gameId, userId} Resp: { move: userId}
+    { // Req: {gameId, userId} Resp: { userId, board} - userId with move (Red)
       if (body.TryGetProperty("gameId", out JsonElement game))
       { 
         if (!body.TryGetProperty("userId", out JsonElement userIdprop) )
@@ -134,16 +134,18 @@ public class Connect4Controller : ControllerBase
         if (gameC4 == null)
           return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
 
-        int userId = userIdprop.GetInt32()!; // Sender = POST response detination
+        int userId = userIdprop.GetInt32()!; // Sender = POST response destination
         Guid id2 = gameC4.GetPartnerGuid(userId); // Partner = WS destination
 
         // user with Move is Red user
         if (gameC4.GetUserColor(userId) != "Red")
           userId = gameC4.GetPartner(userId);
-        
-        var response = new { userId };   
 
+        string board = gameC4.GetBoard();
+        
+        var response = new { userId, board };
         var wsMsg = new { type = "startGame", status = "WsStatus.OK", data = response };       
+        
         _wsManager.SendMessageByGuid(id2, wsMsg);
 
         return Ok(response);
