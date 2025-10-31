@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import "@common/style.css";
-import { swapColors } from './gameLogic'
+import { startGame, swapColors } from './gameLogic'
 
 
 const okSound = new Audio("sounds/OK.wav");  
@@ -12,12 +12,13 @@ interface Connect4BoardProps {
   myColor: "Red" | "Yellow" | null; 
   gameId: string | null;
   userId: number | null;
+  gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null;
 }
 
 //type BoardArray = string[][];
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  setBoardString, myColor, gameId, userId  }) => {
+  setBoardString, myColor, gameId, userId, gameState  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -95,18 +96,24 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
 
   return (
     <>
-       <div className="info-connect4">
+      <div className="info-connect4">
         <div>
           <button
             onClick={() => {
-              swapColors(gameId, userId);
+              swapColors(gameId);
             }}
           >
             Your color
           </button>
-          <button>Start</button>
+          <button
+            onClick={() => {
+              startGame(gameId);
+            }}
+          >Start</button>
         </div>
         <span className="next-move">
+          STATE: {gameState}
+          <br />
           Next Move:
           <span className="conn4cellNew Red"></span>
         </span>

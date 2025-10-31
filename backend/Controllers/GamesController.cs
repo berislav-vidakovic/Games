@@ -32,7 +32,6 @@ public class GamesController : ControllerBase
     { // Req: { run: "Connect Four", userId1, userId2, senderId } Resp: { game: "Connect Four", gameid, senderId }
       if (body.TryGetProperty("run", out JsonElement game))
       { // Req: { action: run, userId1, userId2 } Resp: { gameid }
-        Console.WriteLine("POst Run Game 1");
         if (!body.TryGetProperty("userId1", out var callerId1prop) ||
             !body.TryGetProperty("userId2", out var calleeId2prop) ||
             !body.TryGetProperty("senderId", out var senderIdprop))
@@ -41,7 +40,6 @@ public class GamesController : ControllerBase
             acknowledged = false,
             error = "Both userId1, userId2 required in POST request"
           });
-        Console.WriteLine("POst Run Game 2");
 
         int userId1 = callerId1prop.GetInt32()!;
         int userId2 = calleeId2prop.GetInt32()!;
@@ -49,7 +47,6 @@ public class GamesController : ControllerBase
 
         string gameid = _gameManager.GetGameID(userId1, userId2);
         var response = new { game, gameid, senderId };
-        Console.WriteLine("POst Run Game 3");
 
         return Ok(response);
       }

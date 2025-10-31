@@ -4,9 +4,8 @@ import { sendPOSTRequest } from '@common/restAPI';
 import { loadCommonConfig } from '@common/config';
 import { useEffect, useState } from "react";
 import { StatusCodes } from "http-status-codes";
-import { handleWsMessage, setStateFunctionRefs } from "./gameLogic";
+import { handleWsMessage, setStateFunctionRefs, updateUserId } from "./gameLogic";
 import { connectWS } from '@common/webSocket';
-
 
 function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
@@ -19,6 +18,8 @@ function App() {
   const [user2Id, setUser2Id] = useState<number | null>(null);
   const [user2Name, setUser2Name] = useState<string | null>(null);
   const [myColor, setMyColor] = useState<"Red" | "Yellow" | null>(null); 
+  const [gameState, setGameState] = 
+    useState<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>(null); 
   
   // Common config
   useEffect( () => { 
@@ -30,6 +31,7 @@ function App() {
     console.log('Game ID:', gameID, "UserID:", senderID);
     setGameId(gameID);
     setUserId(Number(senderID));
+    updateUserId(Number(senderID));    
   }, []);
 
   // Common init
@@ -37,8 +39,8 @@ function App() {
     if( !isConfigLoaded || gameId == null ) return;
     const body = JSON.stringify({gameId, userId});
     sendPOSTRequest( 'api/games/init', body, handleResponseInit);
-    setStateFunctionRefs(setMyColor);
-    
+    setStateFunctionRefs(setMyColor, setGameState);
+    setGameState("init");
   }, [isConfigLoaded, gameId]);
   
   async function handleResponseInit( jsonResp: any, status: number ) {
@@ -96,6 +98,14 @@ function App() {
       }}>
        
       <h2>Connect Four</h2>
+       <div className="info-connect4">
+        <p>
+          You: <b>{userName}</b> 
+        </p>
+        <p>
+          Against: <b>{user2Name}</b> 
+        </p>
+      </div>
      
       {<Board 
         boardString={boardString} 
@@ -103,6 +113,7 @@ function App() {
         myColor={myColor}
         gameId={gameId}
         userId={userId}
+        gameState={gameState}
       />
       }
     </div>

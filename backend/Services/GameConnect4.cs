@@ -7,12 +7,18 @@ public class GameConnect4 : Game
 
   private readonly object _lockConnect4 = new();
 
+  private string _board;
+
+  private int? _nextMove;
+
 
   
   public GameConnect4(int user1, int user2, string game) : base(user1, user2, game)
   {
     _color1 = null;
     _color2 = null;
+    _board = "YRY---------------------YYY---------------";
+    _nextMove = null;
   }
 
   public string GetAnotherColor( string color)
