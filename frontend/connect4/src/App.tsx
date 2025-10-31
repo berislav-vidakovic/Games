@@ -32,6 +32,7 @@ function App() {
     setGameId(gameID);
     setUserId(Number(senderID));
     updateUserId(Number(senderID));    
+    setBoardString("YRY-----------------------------------YY--");
   }, []);
 
   // Common init
@@ -109,7 +110,6 @@ function App() {
      
       {<Board 
         boardString={boardString} 
-        setBoardString={setBoardString}
         myColor={myColor}
         gameId={gameId}
         userId={userId}

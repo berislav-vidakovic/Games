@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
 import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk } from './gameLogic'
 
@@ -8,7 +8,6 @@ const nokSound = new Audio("sounds/NOK.mp3");
 
 interface Connect4BoardProps {
   boardString: string;
-  setBoardString: Dispatch<SetStateAction<string>>;
   myColor: "Red" | "Yellow" | null; 
   gameId: string | null;
   userId: number | null;
@@ -20,11 +19,10 @@ interface Connect4BoardProps {
 
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  setBoardString, myColor, gameId, userId, gameState  }) => {
+  myColor, gameId, userId, gameState  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
-  const [currentPlayer, setCurrentPlayer] = useState<"Red" | "Yellow">("Red"); 
   const [boardRows, setBoardRows] = useState<string[]>([]); 
 
   console.log(userId);
