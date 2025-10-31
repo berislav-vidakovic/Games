@@ -35,7 +35,7 @@ public class InvitationsController : ControllerBase
 
   public async Task<InvitationResult> HandleInvitationMsg([FromBody] JsonElement body,
     string invitation)
-  {
+  { // Request: { callerId, calleeId, selectedGame }
     InvitationResult res = new();
     try
     {

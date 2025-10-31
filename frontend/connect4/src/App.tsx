@@ -59,25 +59,28 @@ function App() {
 
   // Game-specific init
   useEffect( () => { 
+    
     if( !isGameInitialized || !isWsConnected ) 
       console.log( "------NOT Ready for Connect4 initilization");
-    else  
+    else  {
       console.log( "--------Ready for Connect4 initilization");
-
-    //const body = JSON.stringify({gameId, userId});
-    //sendPOSTRequest( 'api/games/connect4/init', body, handleResponseConnect4Init);
+      const body = JSON.stringify({gameId, userId});
+      sendPOSTRequest( 'api/games/connect4/init', body, handleResponseConnect4Init);
+    }
     
   }, [isGameInitialized, isWsConnected]);
 
-  /*
+  
   async function handleResponseConnect4Init( jsonResp: any, status: number ) {
     console.log("POST init response:", jsonResp);
     // Req: {gameId, userId} Resp: {gameId, id, userName, user2Id, user2Name}
     if( status == StatusCodes.OK ){
+      console.log("My COLOR:", jsonResp.color);
+      setMyColor(jsonResp.color);
     }
     else 
       alert(`Error: ${jsonResp.error} STATUS: ${status}`);
-  }*/
+  }
 
 
 

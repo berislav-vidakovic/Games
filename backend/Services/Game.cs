@@ -2,13 +2,13 @@ namespace Services;
 
 public class Game
 {
-  private int _userId1;
-  private int _userId2;
+  protected int _userId1;
+  protected int _userId2;
 
-  private Guid _user1Guid;
-  private Guid _user2Guid;
+  protected Guid _user1Guid;
+  protected Guid _user2Guid;
   readonly string _game;
-  private bool _gameHandshakeDone;
+  protected bool _gameHandshakeDone;
   public Game( int user1, int user2, string game)
   {
     _userId1 = user1;

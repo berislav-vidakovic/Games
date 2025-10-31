@@ -7,20 +7,19 @@ interface Connect4BoardProps {
   boardString: string;
   setBoardString: Dispatch<SetStateAction<string>>;
   myColor: "Red" | "Yellow" | null; 
-  setMyColor: Dispatch<SetStateAction<"Red" | "Yellow" | null>>;
 }
 
 //type BoardArray = string[][];
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  setBoardString, myColor, setMyColor  }) => {
+  setBoardString, myColor  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
   const [currentPlayer, setCurrentPlayer] = useState<"Red" | "Yellow">("Red"); 
   const [boardRows, setBoardRows] = useState<string[]>([]); 
 
-  setMyColor(null);
+  //setMyColor(null);
 
   // Transform string to matrix
   // YRY---------------------------------------

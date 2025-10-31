@@ -22,8 +22,11 @@ public class GameManager
   {
     //Guid id = Guid.NewGuid();
     string key = GetGameID(userId1, userId2);
-    Console.WriteLine($"Adding game: {key} {game}" );
+    Console.WriteLine($"Adding game: {key} {game}");
 
+    if (game == "Connect Four")
+      return _games.TryAdd(key, new GameConnect4(userId1, userId2, game));
+    
     return _games.TryAdd(key, new Game(userId1, userId2, game));
   }
 
@@ -61,7 +64,7 @@ public class GameManager
       return false;
     return game.SetUserGuid(userId, id);
   }
-  
+
   public Guid GetUserGuid(string gameId, int userId)
   {
     Game? game = _games.GetValueOrDefault(gameId);
@@ -69,5 +72,8 @@ public class GameManager
       return Guid.Empty;
     return game.GetUserGuid(userId);
   }
-  
+  public Game? GetGame(string gameId)
+  {
+    return _games.GetValueOrDefault(gameId);
+  }
 }

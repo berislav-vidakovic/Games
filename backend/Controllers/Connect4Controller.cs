@@ -1,0 +1,64 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Data;
+using Models;
+using System.Text.Json;
+using Services;
+
+namespace Controllers;
+
+[ApiController]
+[Route("api/games/connect4")]
+public class Connect4Controller : ControllerBase
+{
+  private readonly GamesContext _context;
+
+  private readonly WebSocketManager _wsManager;
+
+  private readonly GameManager _gameManager;
+
+  public Connect4Controller(GamesContext context, WebSocketManager wsManager, GameManager gm)
+  {
+    _context = context;
+    _wsManager = wsManager;
+    _gameManager = gm;
+  }
+
+  // POST /api/games/connect4/init - Request sent from Game browser
+  [HttpPost("init")]
+  //public async Task<IActionResult> PostInitGame([FromBody] JsonElement body)
+  public IActionResult PostInitGame([FromBody] JsonElement body)
+  {
+    try  // POST request send from Game new browser
+    { // Req: {gameId, userId} Resp: {color}
+      if (body.TryGetProperty("gameId", out JsonElement game))
+      { 
+        if (!body.TryGetProperty("userId", out JsonElement userIdprop) )
+          return BadRequest(new { acknowledged = false,
+            error = "Missing keys gameId and/or userId in POST request" });
+
+        string gameId = game.ToString()!;
+        if (!_gameManager.IsGameInitialized(gameId))
+          return BadRequest(new { acknowledged = false, error = "Invalid gameId in POST request" });
+
+        // Get Color for userId, gameId
+        GameConnect4? gamec4 = (GameConnect4?)_gameManager.GetGame(gameId);
+        if (gamec4 == null)
+          return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
+        
+        int userId = userIdprop.GetInt32()!;
+        string color = gamec4.GetUserColor(userId);
+
+        var response = new { color };  
+        return Ok(response);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Error in Post Init Received: {ex.Message}");
+      return StatusCode(500, new { acknowledged = false, error = ex.Message });
+    }
+    return StatusCode(500, new { acknowledged = false });
+  }
+
+}
