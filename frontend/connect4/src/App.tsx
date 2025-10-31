@@ -100,7 +100,6 @@ function App() {
         boardString={boardString} 
         setBoardString={setBoardString}
         myColor={myColor}
-        setMyColor={setMyColor}
       />
       }
     </div>
