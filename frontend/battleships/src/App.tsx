@@ -10,7 +10,8 @@ function App() {
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   
   useEffect( () => { 
-    loadCommonConfig(setConfigLoaded);     
+    loadCommonConfig(setConfigLoaded);    
+    console.log(isConfigLoaded); 
   }, []);
 
 
