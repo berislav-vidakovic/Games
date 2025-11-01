@@ -26,7 +26,9 @@ public class Game
 
   public int GetPartner(int userId)
   {
-    return userId == _userId1 ? _userId2 : _userId1;
+    if (userId == _userId1) return _userId2;
+    if (userId == _userId2) return _userId1;
+    return -1;
   }
   public void SetGameHandshake()
   {

@@ -42,6 +42,7 @@ export async function sendPOSTRequest(
       switch (res.status) {
         case StatusCodes.OK: // 200
         case StatusCodes.CREATED: // 201
+        case StatusCodes.ACCEPTED: // 202
         case StatusCodes.RESET_CONTENT: // 205
         case StatusCodes.CONFLICT: // 409
         case StatusCodes.BAD_REQUEST: // 400      

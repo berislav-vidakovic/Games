@@ -65,13 +65,17 @@ async function restartGame(gameId: string | null){
   const body = JSON.stringify({gameId, userId: myUserId, user2Id: partnerId });
   console.log("Restart: ", myUserId, partnerId, body );
   
-  //sendPOSTRequest( 'api/games/connect4/restart', body, handleRestartGameResponse);
+  sendPOSTRequest( 'api/games/connect4/restart', body, handleRestartGameResponse);
 }
 
-/*
+
 async function handleRestartGameResponse( jsonResp: any, status: number ) {
   console.log("jsonResp", jsonResp, status);
-}*/
+}
+
+function handleWsRestartGame( jsonData: any ){
+  console.log("WS-jsonData", jsonData );
+}
 
 // -------------startGame - POST request, POST reposne, WS incoming ----------
 export async function startGame( 
@@ -81,13 +85,15 @@ export async function startGame(
   console.log( "GAME STATE: ", gameState );
   if( gameState == "init") {
     const body = JSON.stringify({gameId, userId: myUserId });
+    console.log("POST body: ", body);
     sendPOSTRequest( 'api/games/connect4/start', body, handleStartGameResponse);
   }
   else
     restartGame(gameId);
 }
-
+// Response to POST message
 async function handleStartGameResponse( jsonResp: any, status: number ) {
+  // Response: { userId, board }
   if( status == StatusCodes.OK ){
     //console.log("jsonResp.userId", jsonResp.userId, myUserId)
     if( Number(jsonResp.userId) == myUserId )
@@ -97,9 +103,26 @@ async function handleStartGameResponse( jsonResp: any, status: number ) {
     //console.log("Board POST: ", jsonResp.board);
     stringToMatrix(jsonResp.board, setBoardRowsRef);   
   }
+  else if( status == StatusCodes.ACCEPTED ) { // 202
+    alert( "User 2 did not open game window");
+  }
   else 
     alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 }
+
+// WS message sent to Game partner
+function handleWsStartGame( jsonData: any ){
+  // Response: { userId, board }   
+  //console.log("jsonMsg.data.userId", jsonMsg.data.userId, myUserId)
+  if( Number(jsonData.userId) == myUserId )
+    setGameStateRef( "myMove");
+  else
+    setGameStateRef( "theirMove");
+  stringToMatrix(jsonData.board, setBoardRowsRef);      
+  //console.log("Board WS: ", jsonMsg.data.board);
+}
+
+
 
 // -------------insertDisk - POST request, POST reposne, WS incoming ----------
 export async function insertDisk( 
@@ -124,15 +147,8 @@ async function handleInsertDiskResponse( jsonResp: any, status: number ) {
 export async function handleWsMessage( jsonMsg: any ) {
     if( jsonMsg.type== "swapColors" )
       setMyColorRef(jsonMsg.data.color);
-    else if( jsonMsg.type== "startGame" ) {
-      //console.log("jsonMsg.data.userId", jsonMsg.data.userId, myUserId)
-      if( Number(jsonMsg.data.userId) == myUserId )
-        setGameStateRef( "myMove");
-      else
-        setGameStateRef( "theirMove");
-      stringToMatrix(jsonMsg.data.board, setBoardRowsRef);      
-      //console.log("Board WS: ", jsonMsg.data.board);
-    }
+    else if( jsonMsg.type== "startGame" ) 
+      handleWsStartGame( jsonMsg.data );
     else if( jsonMsg.type == "insertDisk" ) {
       stringToMatrix(jsonMsg.data.board, setBoardRowsRef);
       if( jsonMsg.data.state=="inprogress")
@@ -151,6 +167,6 @@ export async function handleWsMessage( jsonMsg: any ) {
           setGameStateRef( "theirWin");
       }
     }
+    else if( jsonMsg.type == "restartGame" ) 
+      handleWsRestartGame( jsonMsg.data );    
 }
-
-

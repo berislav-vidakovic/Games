@@ -127,7 +127,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
         <span className="next-move">
           STATE: {gameState}
           <br />
-          Next Move:
+          {(gameState == "myMove" || gameState == "theirMove") && "Next Move:"}
           {<span 
             className={`conn4cellNew ${getClass()}`}></span>}
         </span>
