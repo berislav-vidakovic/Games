@@ -51,4 +51,62 @@
     font-size: 14px;
     padding: 10px 12px;
   }
+
+  /*Connect4 related*/
+    .connect4-container {
+    padding: 8px;
+    justify-content: flex-start; /* start from top */
+  }
+
+  .info-connect4 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+  }
+
+  .info-connect4 button {
+    width: 100%;
+    max-width: 160px;
+    font-size: 0.9rem;
+    margin: 4px 0;
+  }
+
+  .connect4-board {
+    grid-template-columns: repeat(7, 44px);
+    grid-template-rows: repeat(6, 44px);
+    padding: 4px;
+    border-radius: 6px;
+    margin: 12px auto;
+  }
+
+  .conn4cell,
+  .conn4cellNew {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+  }
+
+  .conn4cell::before,
+  .conn4cellNew::before {
+    width: 34px;
+    height: 34px;
+  }
+
+  .conn4top {
+    grid-template-columns: repeat(7, 44px);
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .next-move {
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
 }
