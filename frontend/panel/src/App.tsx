@@ -192,9 +192,34 @@ function App() {
       
       
     {selectedGame  
-     ? <h1>{selectedGame}</h1>
-     : <h1>Game Panel</h1>
+     ? <h2>{selectedGame}</h2>
+     : <h2>Game Panel</h2>
     }
+      <div className='status-box'>
+        { currentUserId != null  
+           ? <p><b>Logged in as: {
+                usersRegistered.find(u=>u.userId==currentUserId)!.fullname
+              } </b>[{onlineUsers} user(s) online]</p>
+           : <p>You are not logged in [{onlineUsers} user(s) online]</p>
+        }
+        { currentUserId && calleeUserId && callerUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#090"}}>
+              You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+          </p> }
+          { currentUserId && callerUserId && calleeUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#e00"}}>
+              You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+          </p> }
+          { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#00e"}}>
+              You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+          </p> }
+          { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
+          <p style={{fontWeight:"700", color:"#00e"}}>
+              Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+          </p> }
+        {/*<p>Game selected: Connect4</p>*/}
+      </div>
 
       {/* Game buttons */}
       <div className="buttons-container">      
@@ -252,31 +277,7 @@ function App() {
           <img src={blackjackImg} alt="Black Jack" />
         </button>
       </div>
-      <div className='status-box'>
-        { currentUserId != null  
-           ? <p><b>Logged in as: {
-                usersRegistered.find(u=>u.userId==currentUserId)!.fullname
-              } </b>[{onlineUsers} user(s) online]</p>
-           : <p>You are not logged in [{onlineUsers} user(s) online]</p>
-        }
-        { currentUserId && calleeUserId && callerUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#090"}}>
-              You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
-          </p> }
-          { currentUserId && callerUserId && calleeUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#e00"}}>
-              You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
-          </p> }
-          { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#00e"}}>
-              You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
-          </p> }
-          { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#00e"}}>
-              Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
-          </p> }
-        {/*<p>Game selected: Connect4</p>*/}
-      </div>
+      
     </div>
     {showRegisterDialog && (
       <RegisterDialog
