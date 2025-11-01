@@ -181,10 +181,10 @@ public class Connect4Controller : ControllerBase
   }
 
 
-// POST /api/games/connect4/restart - Request sent from Game browser
-  [HttpPost("restart")]
+// POST /api/games/connect4/newgame - Request sent from Game browser
+  [HttpPost("newgame")]
   //public async Task<IActionResult> PostSwapColors([FromBody] JsonElement body)
-  public IActionResult PostRestartGame([FromBody] JsonElement body)
+  public IActionResult PostNewGame([FromBody] JsonElement body)
   {
     try  // POST request send from Game new browser
     { // Req: {gameId, userId} Resp: { userId, board} - userId with move (Red)
@@ -203,6 +203,7 @@ public class Connect4Controller : ControllerBase
         if (gameC4 == null)
           return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
 
+
         int userId = userIdprop.GetInt32()!; // Sender = POST response destination
         Guid id2 = gameC4.GetPartnerGuid(userId); // Partner = WS destination
 
@@ -210,10 +211,10 @@ public class Connect4Controller : ControllerBase
         if (gameC4.GetUserColor(userId) != "Red")
           userId = gameC4.GetPartner(userId);
 
-        string board = gameC4.GetBoard();
+        string board = gameC4.ResetBoard();
         
         var response = new { userId, board };
-        var wsMsg = new { type = "startGame", status = "WsStatus.OK", data = response };       
+        var wsMsg = new { type = "newGame", status = "WsStatus.OK", data = response };       
         
         _wsManager.SendMessageByGuid(id2, wsMsg);
 

@@ -6,6 +6,7 @@ let setMyColorRef: Dispatch<SetStateAction<"Red" | "Yellow" | null>>;
 let setGameStateRef: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>;
 let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 
+
 let myUserId : number | null = null;
 let partnerId : number | null = null;
 
@@ -22,7 +23,6 @@ export function updateSetBoardRows( setBoardRows: Dispatch<SetStateAction<string
 export function setStateFunctionRefs(
   setMyColor: Dispatch<SetStateAction<"Red" | "Yellow" | null>>,
   setGameState: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null>>
-
 ){
     setMyColorRef = setMyColor;
     setGameStateRef = setGameState;
@@ -61,20 +61,27 @@ async function handleSwapColorsResponse( jsonResp: any, status: number ) {
 }
 
 // ---------------------restartGame -----------------------------------------
-async function restartGame(gameId: string | null){
+export async function newGame(gameId: string | null){
   const body = JSON.stringify({gameId, userId: myUserId, user2Id: partnerId });
   console.log("Restart: ", myUserId, partnerId, body );
   
-  sendPOSTRequest( 'api/games/connect4/restart', body, handleRestartGameResponse);
+  sendPOSTRequest( 'api/games/connect4/newgame', body, handleNewGameResponse);
 }
 
-
-async function handleRestartGameResponse( jsonResp: any, status: number ) {
+async function handleNewGameResponse( jsonResp: any, status: number ) {
   console.log("jsonResp", jsonResp, status);
+  //setBoardStringRef(jsonResp.board);
+  setGameStateRef("init");
+  stringToMatrix(jsonResp.board, setBoardRowsRef);   
+
 }
 
-function handleWsRestartGame( jsonData: any ){
+function handleWsNewGame( jsonData: any ){
   console.log("WS-jsonData", jsonData );
+  //setBoardStringRef(jsonData.board);
+  setGameStateRef("init");
+  stringToMatrix(jsonData.board, setBoardRowsRef);   
+
 }
 
 // -------------startGame - POST request, POST reposne, WS incoming ----------
@@ -88,8 +95,8 @@ export async function startGame(
     console.log("POST body: ", body);
     sendPOSTRequest( 'api/games/connect4/start', body, handleStartGameResponse);
   }
-  else
-    restartGame(gameId);
+  //else
+    //restartGame(gameId);
 }
 // Response to POST message
 async function handleStartGameResponse( jsonResp: any, status: number ) {
@@ -167,6 +174,6 @@ export async function handleWsMessage( jsonMsg: any ) {
           setGameStateRef( "theirWin");
       }
     }
-    else if( jsonMsg.type == "restartGame" ) 
-      handleWsRestartGame( jsonMsg.data );    
+    else if( jsonMsg.type == "newGame" ) 
+      handleWsNewGame( jsonMsg.data );    
 }

@@ -33,7 +33,13 @@ public class GameConnect4 : Game
     _color1 = null;
     _color2 = null;
     //_board = "YRY---------------------YYY---------------";
-    _board   = "------------------------------------------";
+    _board = "------------------------------------------";
+  }
+  
+  public string ResetBoard()
+  {
+    _board = "------------------------------------------";
+    return _board; 
   }
 
   public int EvaluateBoard()

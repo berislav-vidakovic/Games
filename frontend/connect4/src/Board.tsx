@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
 import '@common/style-mobile.css';
 
-import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk } from './gameLogic'
+import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk, newGame } from './gameLogic'
 
 
 const okSound = new Audio("sounds/OK.wav");  
@@ -14,9 +14,6 @@ interface Connect4BoardProps {
   gameId: string | null;
   gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null;
 }
-
-
-
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
   myColor, gameId, gameState  }) => {
@@ -118,11 +115,20 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
           >
             Your color
           </button>
-          <button
+          
+          {gameState == "init" && <button
             onClick={() => {
               startGame(gameId, gameState);
             }}
-          >New game</button>
+          >Start</button>}
+
+          {["myWin", "theirWin", "draw"].includes(gameState as string) 
+            && <button
+              onClick={() => {
+                newGame(gameId);
+              }}
+            >New Game</button>}
+
         </div>
         <span className="next-move">
           STATE: {gameState}
