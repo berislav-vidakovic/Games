@@ -89,15 +89,7 @@ function App() {
 
 
   return (
-    <div 
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center"
-      }}>
-       
+    <div className = "connect4-container">
       <h2>Connect Four</h2>
        <div className="info-connect4">
         <p>
