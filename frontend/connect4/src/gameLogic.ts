@@ -7,9 +7,12 @@ let setGameStateRef: Dispatch<SetStateAction<"init" | "myMove" | "theirMove" | "
 let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 
 let myUserId : number | null = null;
-export function updateUserId(userId: number | null){
+let partnerId : number | null = null;
+
+export function updateUserIds(userId: number | null, user2Id: number | null ){
   myUserId = userId;
-  //console.log("===============User ID updated: ", myUserId);
+  partnerId = user2Id;
+  console.log("===============User IDs updated: ", myUserId, partnerId);
 }
 
 export function updateSetBoardRows( setBoardRows: Dispatch<SetStateAction<string[]>> ){
@@ -57,15 +60,31 @@ async function handleSwapColorsResponse( jsonResp: any, status: number ) {
     alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 }
 
+// ---------------------restartGame -----------------------------------------
+async function restartGame(gameId: string | null){
+  const body = JSON.stringify({gameId, userId: myUserId, user2Id: partnerId });
+  console.log("Restart: ", myUserId, partnerId, body );
+  
+  //sendPOSTRequest( 'api/games/connect4/restart', body, handleRestartGameResponse);
+}
+
+/*
+async function handleRestartGameResponse( jsonResp: any, status: number ) {
+  console.log("jsonResp", jsonResp, status);
+}*/
+
 // -------------startGame - POST request, POST reposne, WS incoming ----------
 export async function startGame( 
-    gameId: string | null ){
-  // /api/games/connect4/start
-  // 1- send POST
-  // 2- handle POST
-  // 3- handle WS
-  const body = JSON.stringify({gameId, userId: myUserId });
-  sendPOSTRequest( 'api/games/connect4/start', body, handleStartGameResponse);
+    gameId: string | null,
+    gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null
+  ){
+  console.log( "GAME STATE: ", gameState );
+  if( gameState == "init") {
+    const body = JSON.stringify({gameId, userId: myUserId });
+    sendPOSTRequest( 'api/games/connect4/start', body, handleStartGameResponse);
+  }
+  else
+    restartGame(gameId);
 }
 
 async function handleStartGameResponse( jsonResp: any, status: number ) {

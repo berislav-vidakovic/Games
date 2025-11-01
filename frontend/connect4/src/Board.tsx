@@ -120,7 +120,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
           </button>
           <button
             onClick={() => {
-              startGame(gameId);
+              startGame(gameId, gameState);
             }}
           >New game</button>
         </div>

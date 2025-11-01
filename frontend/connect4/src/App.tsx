@@ -4,7 +4,7 @@ import { sendPOSTRequest } from '@common/restAPI';
 import { loadCommonConfig } from '@common/config';
 import { useEffect, useState } from "react";
 import { StatusCodes } from "http-status-codes";
-import { handleWsMessage, setStateFunctionRefs, updateUserId } from "./gameLogic";
+import { handleWsMessage, setStateFunctionRefs, updateUserIds } from "./gameLogic";
 import { connectWS } from '@common/webSocket';
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
     //console.log('Game ID:', gameID, "UserID:", senderID);
     setGameId(gameID);
     setUserId(Number(senderID));
-    updateUserId(Number(senderID));    
+    updateUserIds(Number(senderID), null);    
     setBoardString("YRY-----------------------------------YY--");
   }, []);
 
@@ -40,16 +40,17 @@ function App() {
     const body = JSON.stringify({gameId, userId});
     sendPOSTRequest( 'api/games/init', body, handleResponseInit);
     setStateFunctionRefs(setMyColor, setGameState);
-    setGameState("init");
   }, [isConfigLoaded, gameId]);
   
   async function handleResponseInit( jsonResp: any, status: number ) {
     //console.log("POST init response:", jsonResp);
     // Req: {gameId, userId} Resp: {gameId, id, userName, user2Id, user2Name}
     if( status == StatusCodes.OK ){
+      setGameState("init");
       setUserName( jsonResp.userName);
-      //setUser2Id(Number(jsonResp.user2Id));
       setUser2Name(jsonResp.user2Name);
+      updateUserIds(userId, Number(jsonResp.user2Id));    
+
       sessionStorage.setItem("myID", jsonResp.id);
       setGameInitialized(true);
       connectWS( setWsConnected, handleWsMessage );
