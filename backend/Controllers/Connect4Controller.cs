@@ -49,6 +49,8 @@ public class Connect4Controller : ControllerBase
         if (gamec4 == null)
           return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
 
+        //int res = gamec4.EvaluateBoard();
+
         int userId = userIdprop.GetInt32()!;
         string color = gamec4.GetUserColor(userId);
 

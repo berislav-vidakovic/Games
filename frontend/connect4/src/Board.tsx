@@ -60,6 +60,21 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
     return myColor == "Red" ? "Yellow": "Red"; 
   }
 
+  const getClass = (): string => {
+    console.log("getClass - gameState: ", gameState);
+    switch(gameState ){
+      case "myMove":
+        return myColor as string;
+      case "theirMove":
+        return getPartnerColor();
+      case "myWin":
+        return "Win";
+      case "theirWin":
+        return "Lose";
+      default:
+        return "";
+    }
+  }
 
   // "YR-R--RY---RRYYR-R--RY---RRYYR-R--RY---RRY"
   const insertNewDisc = () => {
@@ -105,18 +120,14 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
             onClick={() => {
               startGame(gameId);
             }}
-          >Start</button>
+          >New game</button>
         </div>
         <span className="next-move">
           STATE: {gameState}
           <br />
           Next Move:
           {<span 
-            className={`conn4cellNew ${
-              gameState=="myMove" 
-                ? myColor 
-                : gameState=="theirMove" ? getPartnerColor() : ""
-            }`}></span>}
+            className={`conn4cellNew ${getClass()}`}></span>}
         </span>
       </div>
 
