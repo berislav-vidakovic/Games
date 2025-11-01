@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
+import '@common/style-mobile.css';
+
 const okSound = new Audio("sounds/OK.wav");  
 const nokSound = new Audio("sounds/NOK.mp3"); 
 

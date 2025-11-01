@@ -1,6 +1,8 @@
 import battleshipImg from '../assets/battleships.gif';
 import './App.css';
 import "@common/style.css";
+import '@common/style-mobile.css';
+
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';
 

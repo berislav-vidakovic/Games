@@ -7,6 +7,8 @@ import mmImg from '../assets/mm.jpg';
 
 import './App.css';
 import "@common/style.css";
+import '@common/style-mobile.css';
+
 import { URL_SUDOKU } from '@common/config';
 import { loadCommonConfig } from '@common/config';
 import { useState, useEffect } from 'react';

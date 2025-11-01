@@ -1,4 +1,6 @@
 /* --- Responsive adjustments for small screens --- */
+/* style-mobile.css */
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;   /* Stack vertically */

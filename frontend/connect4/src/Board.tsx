@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
+import '@common/style-mobile.css';
+
 import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk } from './gameLogic'
 
 
