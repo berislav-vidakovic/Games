@@ -478,55 +478,5 @@ button img:hover {
   font-size: 1rem;
 }
 
-/* --- Responsive adjustments for small screens --- */
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;   /* Stack vertically */
-    width: 95vw;              /* Full width */
-    height: auto;
-    margin: 20px auto;
-    padding: 0;
-  }
+@import './style-mobile.css';
 
-  .users-box {
-    flex: none;
-    width: 100%;
-    border-radius: 8px 8px 0 0;
-    padding: 12px 16px;
-    margin-bottom: 16px;
-  }
-
-  .main-content {
-    padding: 16px;
-  }
-
-  .auth-buttons {
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
-
-  .auth-buttons button {
-    width: auto;
-    margin-left: 8px;
-    margin-top: 8px;
-    font-size: 14px;
-    padding: 6px 12px;
-  }
-
-  .buttons-container {
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .buttons-container img {
-    width: 80px;
-    height: 80px;
-  }
-
-  .status-box {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-}
