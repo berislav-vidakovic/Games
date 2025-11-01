@@ -14,7 +14,6 @@ interface Connect4BoardProps {
   gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null;
 }
 
-//type BoardArray = string[][];
 
 
 
@@ -57,9 +56,15 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
     }
   };
 
+  const getPartnerColor = (): "Red" | "Yellow" => {
+    return myColor == "Red" ? "Yellow": "Red"; 
+  }
+
 
   // "YR-R--RY---RRYYR-R--RY---RRYYR-R--RY---RRY"
   const insertNewDisc = () => {
+    if (!["myMove", "theirMove"].includes(gameState as string))
+      return;
     let row: number = 0;
     let rev = [...boardRows].reverse();
     while( row < 6 ){
@@ -106,7 +111,12 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
           STATE: {gameState}
           <br />
           Next Move:
-          <span className="conn4cellNew Red"></span>
+          {<span 
+            className={`conn4cellNew ${
+              gameState=="myMove" 
+                ? myColor 
+                : gameState=="theirMove" ? getPartnerColor() : ""
+            }`}></span>}
         </span>
       </div>
 
@@ -131,11 +141,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
         className="connect4-board"
         tabIndex={0}  
         ref={boardRef}
-        onKeyDown={handleKeyDown}
-        onClick={() => {
-          console.log("Clicked on board");
-          insertNewDisc();
-        }}
+        onKeyDown={handleKeyDown}        
       >
        
         {boardRows.join('').split('').map((c,i)=>{
@@ -144,11 +150,16 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
               c == 'Y' ? "Yellow" : "",
               c == 'R' ? "Red" : ""
             ].filter(Boolean)
-              .join(" ");
+            .join(" ");
 
           return (<div
             key={i}
-            className = {classes}            
+            className = {classes} 
+            onClick={() => {
+              console.log("Clicked on board");
+              if( i%7 == activeCol)
+                insertNewDisc();
+            }}           
           >
           </div>)
         })}

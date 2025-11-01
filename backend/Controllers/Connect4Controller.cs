@@ -187,14 +187,27 @@ public class Connect4Controller : ControllerBase
         int col = colProp.GetInt32();
 
         int userId = userIdprop.GetInt32()!; // Sender = POST response destination
-        Guid id2 = gameC4.GetPartnerGuid(userId); // WS desitnation
+        Guid id2 = gameC4.GetPartnerGuid(userId); // WS destination
 
         gameC4.InsertDisk(userId, row, col);
         string board = gameC4.GetBoard();
+
+        var state = "inprogress";
+
+        int res = gameC4.EvaluateBoard();
+        if (res == Connect4Results.DRAW || res == Connect4Results.WIN)
+        {
+          state = "gameover";
+          string result = res == Connect4Results.DRAW ? "draw" : "win";
+          Guid id1 = gameC4.GetUserGuid(userId); // WS destination
+          var wsMsg1 = new { type = "gameOver", status = "WsStatus.OK", data = new { userId, result } };
+          _wsManager.SendMessageByGuid(id1, wsMsg1);
+          _wsManager.SendMessageByGuid(id2, wsMsg1);
+        }
         
-        var response = new { userId, board };
-        var wsMsg = new { type = "insertDisk", status = "WsStatus.OK", data = response };       
-        
+        var response = new { userId, board, state };
+        var wsMsg = new { type = "insertDisk", status = "WsStatus.OK", data = response };
+
         _wsManager.SendMessageByGuid(id2, wsMsg);
 
         return Ok(response);

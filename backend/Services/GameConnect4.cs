@@ -30,6 +30,22 @@ public class GameConnect4 : Game
     _nextMove = null;
   }
 
+  public int EvaluateBoard()
+  {
+    if (GameWin())
+      return Connect4Results.WIN;
+    if (!_board.Contains('-'))
+      return Connect4Results.DRAW;
+
+    return Connect4Results.IN_PROGRESS;
+  }
+
+  private bool GameWin()
+  {
+    return false;
+  }
+  
+
   public void InsertDisk(int userId, int row, int col)
   {
     int idx = row * 7 + col;
@@ -47,12 +63,7 @@ public class GameConnect4 : Game
     return _board;
   }
 
-  public int EvaluateBoard()
-  {
-    return Connect4Results.IN_PROGRESS;
-  }
-
-  public string GetAnotherColor(string color)
+ public string GetAnotherColor(string color)
   {
     return color == "Red" ? "Yellow" : "Red";
   }
