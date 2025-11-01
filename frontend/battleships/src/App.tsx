@@ -19,10 +19,10 @@ function App() {
       <h2>Battleships</h2>
       <div className="buttons-container">
         <button onClick={() => {
-            if( !isConfigLoaded )
-              console.log("Config not loaded");
-            else  
-              console.log("Battleships is under construction");
+            //if( !isConfigLoaded )
+              ////console.log("Config not loaded");
+            //else  
+             // //console.log("Battleships is under construction");
           }
         }>
           <img src={battleshipImg} alt="Battleships" />

@@ -53,7 +53,7 @@ function App() {
    }      
   }, [isConfigLoaded, isInitialized]);
 
-  //const handleSignIn = () => console.log("Sign In clicked");
+  //const handleSignIn = () => //console.log("Sign In clicked");
   const handleSignOut = () => { 
     logoutUser( currentUserId as number); 
     clearInvitations();
@@ -64,7 +64,7 @@ function App() {
   
   
   const handleRespond = (accept: boolean) => {    
-    console.log("Respond to Invitation clicked: ", accept);
+    //console.log("Respond to Invitation clicked: ", accept);
     if( accept )
       inviteUser( callerUserId as number, calleeUserId as number, "accept" );
     else
@@ -73,7 +73,7 @@ function App() {
 
 
   const handleRun = () => {
-    console.log("Run clicked");
+    //console.log("Run clicked");
     if( selectedGame == 'Connect Four')
     {
       runGame(callerUserId as number, calleeUserId as number, selectedGame, currentUserId as number);
@@ -96,7 +96,7 @@ function App() {
     setCalleeUserId(null);  
     setCallerUserId(null);
     setInvitationState("init");
-    console.log(callerUserId, "called ", calleeUserId);
+    //console.log(callerUserId, "called ", calleeUserId);
   }
 
   const isBtnVisibleSignIn = (): boolean => {
@@ -228,12 +228,12 @@ function App() {
         <button 
           onClick={() => {
               if( !isConfigLoaded || !currentUserId ) {
-                console.log("Config not loaded (or no user logged in)");
+                //console.log("Config not loaded (or no user logged in)");
                 return;
               }
               if( selectedGame == 'Sudoku') handleSelectGame(URL_SUDOKU);
               else{
-                console.log('SELECTED Sudoku');
+                //console.log('SELECTED Sudoku');
                 setSelectedGame('Sudoku');
               }
             }}
@@ -245,11 +245,11 @@ function App() {
         <button 
           onClick={() => {
             if( !isConfigLoaded || !currentUserId ) {
-              console.log("Config not loaded (or no user logged in)");
+              //console.log("Config not loaded (or no user logged in)");
               return;
             }            
             else {
-              console.log('SELECTED Connect Four');
+              //console.log('SELECTED Connect Four');
               setSelectedGame('Connect Four');
             }
           }} 
@@ -260,21 +260,25 @@ function App() {
           <img src={connect4Img} alt="Connect 4" />
         </button>
         <button 
-          onClick={() => { console.log("Memory is under construction..."); setSelectedGame(null);}} 
+          onClick={() => { //console.log("Memory is under construction..."); setSelectedGame(null);
+            }            } 
           title="Memory">
           <img src={memoryImg} alt="Memory" />
         </button>
         <button 
-          onClick={() => { console.log("Master Mind is under construction..."); setSelectedGame(null);}}
+          onClick={() => { //console.log("Master Mind is under construction..."); setSelectedGame(null);
+            }            }
           title="Master Mind">
           <img src={mmImg} alt="Master Mind" />
         </button>
         <button 
-          onClick={() => { console.log("Tic Tac Toe is under construction..."); setSelectedGame(null);}}
+          onClick={() => { //console.log("Tic Tac Toe is under construction..."); setSelectedGame(null);
+            }}
           title="Tic Tac Toe">
           <img src={tictactoeImg} alt="Tic Tac Toe" />
         </button>
-        <button onClick={() => { console.log("Black Jack is under construction..."); setSelectedGame(null);}}
+        <button onClick={() => { //console.log("Black Jack is under construction..."); setSelectedGame(null);
+        }}
           title="Black Jack">
           <img src={blackjackImg} alt="Black Jack" />
         </button>

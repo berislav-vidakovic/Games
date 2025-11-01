@@ -4,7 +4,7 @@ import  { URL_BACKEND_HTTP }  from './config';
 // Generic GET sending
 export async function sendGETRequest(endpoint: string, handleResponse: (data: any) => void ): Promise<any> {
     const getUrl = `${URL_BACKEND_HTTP}/${endpoint}`;
-    console.log("Sending GET: ", getUrl );
+    ////console.log("Sending GET: ", getUrl );
     fetch(getUrl, { 
         method: "GET",
         credentials: "include" // required for cookies
@@ -14,7 +14,7 @@ export async function sendGETRequest(endpoint: string, handleResponse: (data: an
           const errorText = await res.text();
           throw new Error(`${res.status}: ${errorText || res.statusText}`);
         }
-        console.log("...received GET response!");
+        //console.log("...received GET response!");
         return res.json();
       })
       .then( (jsonResp) => {          
@@ -29,14 +29,14 @@ export async function sendPOSTRequest(
     msgBody: string, 
     handleResponse: (data: any, status: number) => void ): Promise<any> {
   const postUrl = `${URL_BACKEND_HTTP}/${endpoint}` + `?id=${sessionStorage.getItem("myID")}`;
-  console.log("Sending POST: ", `${postUrl} Body:${msgBody}` );
+  //console.log("Sending POST: ", `${postUrl} Body:${msgBody}` );
   fetch( postUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: msgBody, 
   }) 
     .then(async (res) => { 
-      console.log("...received POST response!");
+      //console.log("...received POST response!");
       const jsonResp = await res.json();
       
       switch (res.status) {

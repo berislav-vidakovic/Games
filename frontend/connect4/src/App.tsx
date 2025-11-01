@@ -15,7 +15,6 @@ function App() {
   const [gameId, setGameId] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
-  const [user2Id, setUser2Id] = useState<number | null>(null);
   const [user2Name, setUser2Name] = useState<string | null>(null);
   const [myColor, setMyColor] = useState<"Red" | "Yellow" | null>(null); 
   const [gameState, setGameState] = 
@@ -24,11 +23,11 @@ function App() {
   // Common config
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
-    console.log( "Loading Config ... ", isConfigLoaded);
+    //console.log( "Loading Config ... ", isConfigLoaded);
     const params = new URLSearchParams(window.location.search);
     const gameID = params.get('gameId');
     const senderID = params.get('senderId');
-    console.log('Game ID:', gameID, "UserID:", senderID);
+    //console.log('Game ID:', gameID, "UserID:", senderID);
     setGameId(gameID);
     setUserId(Number(senderID));
     updateUserId(Number(senderID));    
@@ -45,11 +44,11 @@ function App() {
   }, [isConfigLoaded, gameId]);
   
   async function handleResponseInit( jsonResp: any, status: number ) {
-    console.log("POST init response:", jsonResp);
+    //console.log("POST init response:", jsonResp);
     // Req: {gameId, userId} Resp: {gameId, id, userName, user2Id, user2Name}
     if( status == StatusCodes.OK ){
       setUserName( jsonResp.userName);
-      setUser2Id(Number(jsonResp.user2Id));
+      //setUser2Id(Number(jsonResp.user2Id));
       setUser2Name(jsonResp.user2Name);
       sessionStorage.setItem("myID", jsonResp.id);
       setGameInitialized(true);
@@ -58,16 +57,14 @@ function App() {
     else 
       alert(`Error: ${jsonResp.error} STATUS: ${status}`);
 
-    console.log( user2Id, user2Name, userName );
+    //console.log( user2Id, user2Name, userName );
   }
 
   // Game-specific init
   useEffect( () => { 
     
-    if( !isGameInitialized || !isWsConnected ) 
-      console.log( "------NOT Ready for Connect4 initilization");
-    else  {
-      console.log( "--------Ready for Connect4 initilization");
+    if( isGameInitialized && isWsConnected ) {
+      //console.log( "--------Ready for Connect4 initilization");
       const body = JSON.stringify({gameId, userId});
       sendPOSTRequest( 'api/games/connect4/init', body, handleResponseConnect4Init);
     }
@@ -76,10 +73,10 @@ function App() {
 
   
   async function handleResponseConnect4Init( jsonResp: any, status: number ) {
-    console.log("POST init response:", jsonResp);
+    //console.log("POST init response:", jsonResp);
     // Req: {gameId, userId} Resp: {gameId, id, userName, user2Id, user2Name}
     if( status == StatusCodes.OK ){
-      console.log("My COLOR:", jsonResp.color);
+      //console.log("My COLOR:", jsonResp.color);
       setMyColor(jsonResp.color);
     }
     else 
@@ -104,7 +101,6 @@ function App() {
         boardString={boardString} 
         myColor={myColor}
         gameId={gameId}
-        userId={userId}
         gameState={gameState}
       />
       }

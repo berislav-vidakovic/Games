@@ -18,14 +18,14 @@ export async function connectWS(
         const params = new URLSearchParams();
         if (myID != null) 
           params.append('id', myID);
-        console.log("PARAMS: ", params.toString());
+        //console.log("PARAMS: ", params.toString());
         const wsUrl = `${URL_BACKEND_WS}?${params.toString()}`;        
         ws = new WebSocket(wsUrl);
         
-        console.log("Creating new WebSocket connection...");
+        //console.log("Creating new WebSocket connection...");
 
         ws.onopen = () => {
-          console.log("WebSocket connected!");
+          //console.log("WebSocket connected!");
           setWsConnected(true);
         };
 
@@ -40,13 +40,13 @@ export async function connectWS(
         };
 
         ws.onmessage = (event) => {
-          console.log("...received WS message");
+          //console.log("...received WS message");
           const jsonMsg = JSON.parse(event.data);
           handleWsMessage(jsonMsg);
         };
       }
       else  {
-         console.log("WS connected already");
+         //console.log("WS connected already");
          setWsConnected(true);
       }
 

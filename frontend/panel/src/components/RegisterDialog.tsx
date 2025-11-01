@@ -27,7 +27,7 @@ function RegisterDialog({
     }  
     const login: string = loginRef.current?.value.trim() ?? "";
     const fullname: string = fullnameRef.current?.value.trim() ?? "";
-    console.log("Entered values:", { login, fullname });      
+    //console.log("Entered values:", { login, fullname });      
     if (!login || !fullname) {
       alert("Please fill in both fields.");
       return;

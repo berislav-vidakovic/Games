@@ -130,7 +130,7 @@ Sudoku:
     }, [isConfigLoaded]);
 
     const handleInit = ( jsonResp: any ) => {    
-      console.log("Response to GET : ", jsonResp );
+      //console.log("Response to GET : ", jsonResp );
       setBoard(jsonResp.boards[0].board);
       setSolution(jsonResp.boards[0].solution);
       setBoardsLoaded(true);

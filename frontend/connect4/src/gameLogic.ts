@@ -9,7 +9,7 @@ let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 let myUserId : number | null = null;
 export function updateUserId(userId: number | null){
   myUserId = userId;
-  console.log("===============User ID updated: ", myUserId);
+  //console.log("===============User ID updated: ", myUserId);
 }
 
 export function updateSetBoardRows( setBoardRows: Dispatch<SetStateAction<string[]>> ){
@@ -34,7 +34,7 @@ export function stringToMatrix( boardString: string,
     matrix.push( row );
   }
   setBoardRows(matrix.reverse());
-  console.log(" --------- stringToMatrix ----------------");
+  //console.log(" --------- stringToMatrix ----------------");
 }
 
 
@@ -70,12 +70,12 @@ export async function startGame(
 
 async function handleStartGameResponse( jsonResp: any, status: number ) {
   if( status == StatusCodes.OK ){
-    console.log("jsonResp.userId", jsonResp.userId, myUserId)
+    //console.log("jsonResp.userId", jsonResp.userId, myUserId)
     if( Number(jsonResp.userId) == myUserId )
       setGameStateRef( "myMove");
     else
       setGameStateRef( "theirMove");
-    console.log("Board POST: ", jsonResp.board);
+    //console.log("Board POST: ", jsonResp.board);
     stringToMatrix(jsonResp.board, setBoardRowsRef);   
   }
   else 
@@ -106,13 +106,13 @@ export async function handleWsMessage( jsonMsg: any ) {
     if( jsonMsg.type== "swapColors" )
       setMyColorRef(jsonMsg.data.color);
     else if( jsonMsg.type== "startGame" ) {
-      console.log("jsonMsg.data.userId", jsonMsg.data.userId, myUserId)
+      //console.log("jsonMsg.data.userId", jsonMsg.data.userId, myUserId)
       if( Number(jsonMsg.data.userId) == myUserId )
         setGameStateRef( "myMove");
       else
         setGameStateRef( "theirMove");
       stringToMatrix(jsonMsg.data.board, setBoardRowsRef);      
-      console.log("Board WS: ", jsonMsg.data.board);
+      //console.log("Board WS: ", jsonMsg.data.board);
     }
     else if( jsonMsg.type == "insertDisk" ) {
       stringToMatrix(jsonMsg.data.board, setBoardRowsRef);
@@ -122,7 +122,7 @@ export async function handleWsMessage( jsonMsg: any ) {
         console.log(" *** WS *** Game Over ***");
     }
     else if( jsonMsg.type == "gameOver" ) {
-      console.log("WS GameOver received");
+      //console.log("WS GameOver received");
       if( jsonMsg.data.result == "draw" )
         setGameStateRef( "draw");
       else if( jsonMsg.data.result == "win" ){

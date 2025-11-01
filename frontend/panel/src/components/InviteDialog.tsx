@@ -25,7 +25,7 @@ function InviteDialog({
       return;
     }  
     const selectedUserId : number = Number(selectedUserRef.current!.value);
-    console.log("Selected user ID:", selectedUserId);
+    //console.log("Selected user ID:", selectedUserId);
    
     inviteUser(currentUserId, selectedUserId, "send", selectedGame); // async call
     setShowInviteDialog(false);    // Close dialog

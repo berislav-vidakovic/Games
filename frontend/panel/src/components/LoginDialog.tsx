@@ -23,7 +23,7 @@ function LoginDialog({
       return;
     }  
     const selectedUserId : number = Number(selectedUserRef.current!.value);
-    console.log("Selected user ID:", selectedUserId);
+    //console.log("Selected user ID:", selectedUserId);
    
     loginUser(selectedUserId); // async call
     setShowLoginDialog(false);    // Close dialog

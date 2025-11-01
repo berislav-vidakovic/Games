@@ -12,7 +12,6 @@ interface Connect4BoardProps {
   boardString: string;
   myColor: "Red" | "Yellow" | null; 
   gameId: string | null;
-  userId: number | null;
   gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null;
 }
 
@@ -20,13 +19,13 @@ interface Connect4BoardProps {
 
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  myColor, gameId, userId, gameState  }) => {
+  myColor, gameId, gameState  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
   const [boardRows, setBoardRows] = useState<string[]>([]); 
 
-  console.log(userId);
+  //console.log(userId);
 
   // Transform string to matrix
   useEffect(() => {
@@ -34,9 +33,10 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
     updateSetBoardRows(setBoardRows);
   }, []);
 
-  // Auto-focus
   useEffect(() => {
-    boardRef.current?.focus();
+    if (!/Mobi|Android/i.test(navigator.userAgent)) {
+      boardRef.current?.focus(); // only auto-focus on desktop
+    }
   }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -63,7 +63,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
   }
 
   const getClass = (): string => {
-    console.log("getClass - gameState: ", gameState);
+    //console.log("getClass - gameState: ", gameState);
     switch(gameState ){
       case "myMove":
         return myColor as string;
@@ -98,7 +98,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
         const newBoard = [...rev].reverse();
         setBoardRows(newBoard);
         setBoardString(rev.join(''));
-        console.log(rev.join(''));*/
+        //console.log(rev.join(''));*/
         insertDisk( gameId, row, activeCol );
         okSound.play();
         return;
@@ -140,7 +140,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
               className={              
                 col==activeCol ? `conn4cellNew ${myColor}` : "conn4inactivecol"}
               onClick={() => {
-                console.log("Clicked column: ", col);
+                //console.log("Clicked column: ", col);
                 setActiveCol(col);
                 boardRef.current?.focus(); // 👈 restore keyboard focus
               }}
@@ -169,7 +169,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
             key={i}
             className = {classes} 
             onClick={() => {
-              console.log("Clicked on board");
+              //console.log("Clicked on board");
               if( i%7 == activeCol)
                 insertNewDisc();
             }}           

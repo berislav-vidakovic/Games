@@ -25,7 +25,7 @@ export async function loadCommonConfig(
   }
 
   const config = await response.json();
-  console.log(`Loaded environment: ${currentEnv}`);
+  ////console.log(`Loaded environment: ${currentEnv}`);
 
   URL_BACKEND_HTTP = config.urlBackend[currentEnv].HTTP;
   URL_BACKEND_WS = config.urlBackend[currentEnv].WS;
