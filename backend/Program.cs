@@ -23,7 +23,7 @@ builder.Services.AddSingleton(provider =>
   var scopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
   var config = provider.GetRequiredService<IConfiguration>();
   var wsManager = provider.GetRequiredService<WebSocketManager>();
-  return new GameManager(wsManager, scopeFactory, config);
+  return new GameManager(wsManager, scopeFactory, config, "GameMonitor");
 });
 
 

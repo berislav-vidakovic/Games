@@ -1,6 +1,7 @@
 
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
@@ -32,7 +33,11 @@ public class WebSocketManager
       _onlineUsers.TryRemove(clientId, out _);
   }
 
-  public void AddSocket(Guid id, WebSocket ws) => _wsConnections[id] = ws;
+  public void AddSocket(Guid id, WebSocket ws)
+  {
+    _wsConnections[id] = ws;
+    Console.WriteLine($"Added WS: {RuntimeHelpers.GetHashCode(ws)}, WS(s): {_wsConnections.Count}");
+  }
 
   public void RemoveSocketByClientId(Guid clientId)
   {
@@ -47,6 +52,8 @@ public class WebSocketManager
     {
       _wsConnections.TryRemove(item.Key, out _);
     }
+    Console.WriteLine($"Removed WS: {RuntimeHelpers.GetHashCode(ws)}, WS(s): {_wsConnections.Count}");
+
   }
 
 

@@ -5,36 +5,19 @@ using System.Text;
 using System.Timers;
 
 
-public class GameManager
+public class GameManager : TimerManager
 {
   private ConcurrentDictionary<string, Game> _games;
   private readonly WebSocketManager _wsManager;
-  private readonly IServiceScopeFactory _scopeFactory;
-  protected int _idleTimeoutSec;
-  protected int _checkIntervalMin;
-  private Timer? _activityMonitor;
 
-  public GameManager(WebSocketManager wsManager,
-    IServiceScopeFactory scopeFactory, IConfiguration config)
+  public GameManager(WebSocketManager wsManager, IServiceScopeFactory scopeFactory,
+    IConfiguration config, string key) : base(scopeFactory, config, key)
   {
     _wsManager = wsManager;
     _games = new();
 
-    _scopeFactory = scopeFactory;
-    _activityMonitor = null;
-
-    string keyIdleTimeout = "GameMonitor:IdleTimeoutSec"; // TODO: Add to appsettings.json
-    string keyCheckInterval = "GameMonitor:CheckIntervalMin";
-
-    if (config.GetSection(keyIdleTimeout).Exists())
-      _idleTimeoutSec = int.Parse(config[keyIdleTimeout]!);
-
-    if (config.GetSection(keyCheckInterval).Exists())
-      _checkIntervalMin = int.Parse(config[keyCheckInterval]!);
-
     Console.WriteLine($"Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
   }
-
 
 
   public string GetGameID(int userId1, int userId2 )
@@ -131,31 +114,6 @@ public class GameManager
     return game;
   }
 
-  // Timer implementation ------------------------------------------
-  public void TimerStart()
-  {
-    _activityMonitor = new System.Timers.Timer(_checkIntervalMin * 60 * 1000);
-    _activityMonitor.AutoReset = true;
-    _activityMonitor.Elapsed += CleanupIdleGames;
-    _activityMonitor.Start();
-    Console.WriteLine($"*** TIMER started ************");
-
-  }
-
-  public void TimerStop()
-  {
-    Console.WriteLine($"*** TIMER stopping .....  ************");
-    
-    if ( _activityMonitor != null )
-      return;
-    _activityMonitor!.Stop();
-    _activityMonitor!.Dispose();
-    Console.WriteLine($"*** ... TIMER stopped ************");
-
-  }
-
-
-
   public void RemoveGameByIds(Guid id1, Guid id2)
   {
     foreach (var kvp in _games)
@@ -197,7 +155,7 @@ public class GameManager
       _wsManager.RemoveSocketByClientId(id);
   }
 
-  private async void CleanupIdleGames(object? sender, ElapsedEventArgs e)
+  protected override async void CleanupIdleItems(object? sender, ElapsedEventArgs e)
   {
     Console.WriteLine($"*** START-CleanupIdleGames, game(s): {_games.Count}, WS(s): {_wsManager.GetAllSockets().Count()} *** ");
     foreach (var kvp in _games)

@@ -37,10 +37,17 @@ public class WebSocketMiddleware // Singleton
     //_wsConnections.TryRemove(clientId, out _);
     _wsManager.RemoveSocketByClientId(clientId);
   }
-  
+
   public void RemoveSocket(WebSocket ws)
   {
     _wsManager.RemoveSocket(ws);
+  }
+  
+  private async Task CloseAndRemoveWsConnection(WebSocket ws, string msg)
+  {
+    Console.WriteLine("Terminating WS connection..." + msg);
+    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, msg, CancellationToken.None);
+    RemoveSocket(ws);
   }
 
   public IEnumerable<WebSocket> GetAllSockets() => _wsManager.GetAllSockets();
@@ -61,7 +68,7 @@ public class WebSocketMiddleware // Singleton
       Console.WriteLine("WS established");
       if (!Guid.TryParse(clientId, out Guid parsedClientId))
       {
-        await CloseWsConnection(webSocket);
+        await CloseAndRemoveWsConnection(webSocket, "Invalid client ID");
         return;
       }
       Console.WriteLine($"WS established - ID = {clientId}");
@@ -81,9 +88,8 @@ public class WebSocketMiddleware // Singleton
           if (msgMetaData.MessageType == WebSocketMessageType.Close) // Closing WS connection
           {
             Console.WriteLine($"WebSocket connection CLOSED ");
+            await CloseAndRemoveWsConnection(webSocket, "Client closed the connection");
 
-            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed the connection", CancellationToken.None);
-            break;
           }
 
           if (msgMetaData.MessageType == WebSocketMessageType.Text)
@@ -114,12 +120,7 @@ public class WebSocketMiddleware // Singleton
     }
   }
 
-  private async Task CloseWsConnection(WebSocket ws)
-  {
-    Console.WriteLine("Terminating WS connection...Invalid ID!");
-    await ws.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Invalid client ID", CancellationToken.None);
-    RemoveSocket(ws);
-  }
+
 
   private async Task HandleMessageAsync(string message, WebSocket webSocket)
   {
