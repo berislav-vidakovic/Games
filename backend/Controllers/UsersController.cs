@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
 using System.Text.Json;
+using Services;
 
 namespace Controllers;
 
@@ -14,10 +15,13 @@ public class UsersController : ControllerBase
 
   private readonly WebSocketManager _wsManager;
 
-  public UsersController(GamesContext context, WebSocketManager wsManager)
+  private readonly GameManager _gameManager;
+
+  public UsersController(GamesContext context, WebSocketManager wsManager, GameManager gm)
   {
     _context = context;
     _wsManager = wsManager;
+    _gameManager = gm;
   }
 
   // GET: /api/users/all
@@ -111,6 +115,7 @@ public class UsersController : ControllerBase
       var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
       _wsManager.BroadcastMessage(msg);
 
+      
       return StatusCode(StatusCodes.Status200OK, response);
     }
     catch (Exception ex)
@@ -139,7 +144,7 @@ public class UsersController : ControllerBase
 
       int userId = loginProp.GetInt32()!;
 
-      // Find user by userId and update online status=true
+      // Find user by userId and update online status=false
       var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
       if (user == null)
         return StatusCode(StatusCodes.Status204NoContent,
@@ -150,10 +155,11 @@ public class UsersController : ControllerBase
 
       _wsManager.UpdateOnlineUsers(parsedClientId, userId, false);
 
-
       var response = new { userId, isOnline = false };
       var msg = new { type = "userSessionUpdate", status = "WsStatus.OK", data = response };
       _wsManager.BroadcastMessage(msg);
+
+      _gameManager.RemoveGamesByUserId(userId);
 
       return StatusCode(StatusCodes.Status200OK, response);
     }

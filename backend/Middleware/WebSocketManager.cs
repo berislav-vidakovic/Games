@@ -100,8 +100,10 @@ public class WebSocketManager : TimerManager
 
   public void SendMessageByGuid(Guid id, object message)
   {
-    WebSocket ws = _wsConnections[id].WebSocket;
-    SendMessageAsync(ws, message);
+    Console.WriteLine($"Sending WS to ID: {id} (_wsConnections size: {_wsConnections.Count})");
+    var wsm = _wsConnections.TryGetValue(id, out var m) ? m : null;
+    if (wsm != null)
+      SendMessageAsync(wsm.WebSocket, message);
   }
 
   public void SendMessageAsync(WebSocket webSocket, object message)

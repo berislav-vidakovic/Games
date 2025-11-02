@@ -48,7 +48,7 @@ export async function inviteUser(callerId: number, calleeId: number,
   switch(invitation){
     case "send":
       sendPOSTRequest(POSTinviteEndpoint, body, handleInvite);
-      //console.log("POST invitiation sending: ", body );
+      console.log("POST invitiation sending: ", body );
       break;
     case "cancel":
       sendPOSTRequest(POSTcancelEndpoint, body, handleInvite);

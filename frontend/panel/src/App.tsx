@@ -224,7 +224,7 @@ function App() {
            : <p>You are not logged in [{onlineUsers} user(s) online]</p>
         }
         
-        {selectedGame && (
+        {selectedGame && isWsConnected &&(
           <>
             { currentUserId && calleeUserId && callerUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#090"}}>

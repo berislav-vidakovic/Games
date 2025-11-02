@@ -151,6 +151,7 @@ function handleWsInvitation( jsonResp: any ){
       setCalleeUserIdRef( Number(jsonResp.calleeId) );
       setInvitationStateRef("pending");
       setSelectedGameRef(jsonResp.selectedGame);
+      console.log("WS invitation ", jsonResp );
       break;
     case "cancel":
       setCallerUserIdRef( null );

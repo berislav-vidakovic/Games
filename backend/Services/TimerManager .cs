@@ -41,7 +41,7 @@ public class TimerManager
   {
     Console.WriteLine($"*** TIMER stopping .....  ************");
     
-    if ( _activityMonitor != null )
+    if ( _activityMonitor == null )
       return;
     _activityMonitor!.Stop();
     _activityMonitor!.Dispose();

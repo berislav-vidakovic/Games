@@ -35,26 +35,62 @@ public class GameManager : TimerManager
   }
   public bool AddGame(int userId1, int userId2, string game)
   {
-    //Guid id = Guid.NewGuid();
     string key = GetGameID(userId1, userId2);
     Console.WriteLine($"Adding game: {key} {game}");
-    TimerStart();
+
+    if (_games.Count == 0)
+    {
+      TimerStart();
+      Console.WriteLine($"====STARTED Timer for Game =====================================");
+    }
+    else
+    {
+      Console.WriteLine($"====Timer already running for Game(s): {_games.Count} ==========");
+    }
 
     if (game == "Connect Four")
       return _games.TryAdd(key, new GameConnect4(userId1, userId2, game));
-    
+
     return _games.TryAdd(key, new Game(userId1, userId2, game));
+  }
+  
+  public void RemoveGamesByUserId(int userId)
+  {
+      Console.WriteLine($"===RemoveGamesByUserId =====================================");
+
+    var gamesToRemove = new List<string>();
+
+    foreach (var kvp in _games)
+    {
+      Game game = kvp.Value;
+      if (game.GetUser1() == userId || game.GetUser2() == userId)
+        gamesToRemove.Add(kvp.Key);
+    }
+
+    foreach (var gameId in gamesToRemove)
+    {
+      _games.TryRemove(gameId, out _);
+      Console.WriteLine($"Removed game {gameId} due to user {userId} logout/disconnect.");
+    }
+
+    if (_games.IsEmpty)
+    {
+      TimerStop();
+      Console.WriteLine($"===Stopped Timer for Game =====================================");
+    }
   }
 
   public void RemoveGame(int userId1, int userId2)
   {
     string key = GetGameID(userId1, userId2);
     _games.TryRemove(key, out _);
+
     if (_games.IsEmpty)
+    {
       TimerStop();
+      Console.WriteLine($"===Stopped Timer for Game =====================================");
+    }
   }
-
-
 
   public int GetPartnerId(string gameId, int userId)
   {
@@ -128,6 +164,11 @@ public class GameManager : TimerManager
       if ((guid1 == id1 && guid2 == id2) || (guid1 == id2 && guid2 == id1))
       {
         _games.TryRemove(kvp.Key, out _);
+        if (_games.IsEmpty)
+        {
+          TimerStop();
+          Console.WriteLine($"===Stopped Timer for Games =====================================");
+        }
         return;
       }
     }
