@@ -56,7 +56,7 @@ public class GameConnect4 : Game
 
   private bool GameWin()
   {
-    Console.WriteLine("BOARD: " + _board);
+    //Console.WriteLine("BOARD: " + _board);
     List<string> matrix = new();
     for (int i = 0; i < _board.Length; i += COLUMNS)
       matrix.Add(_board.Substring(i, COLUMNS));

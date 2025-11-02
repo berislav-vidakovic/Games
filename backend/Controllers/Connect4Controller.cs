@@ -127,39 +127,30 @@ public class Connect4Controller : ControllerBase
           return BadRequest(new { acknowledged = false,
             error = "Missing keys gameId and/or userId in POST request" });
 
-
-        Console.WriteLine("Control point 1");
-        
         string gameId = game.ToString()!;
         if (!_gameManager.IsGameInitialized(gameId))
           return BadRequest(new { acknowledged = false, error = "Invalid gameId in POST request" });
 
-        Console.WriteLine("Control point 2");
 
         // Get GameConnect4  object created in POST /api/invitations/invite
         GameConnect4? gameC4 = (GameConnect4?)_gameManager.GetGame(gameId);
 
-        Console.WriteLine("Control point 3");
 
         if (gameC4 == null)
           return BadRequest(new { acknowledged = false, error = "Invalid Game type in POST request" });
 
         int userId = userIdprop.GetInt32()!; // Sender = POST response destination
-        Console.WriteLine("Control point 4");
 
         Guid id2 = gameC4.GetPartnerGuid(userId); // Partner = WS destination
-        Console.WriteLine("Control point 5 " + id2);
 
 
         // user with Move is Red user
         if (gameC4.GetUserColor(userId) != "Red")
           userId = gameC4.GetPartner(userId);
 
-        Console.WriteLine("Control point 6");
 
         string board = gameC4.GetBoard();
         
-        Console.WriteLine("Control point 7");
 
         var response = new { userId, board };
         var wsMsg = new { type = "startGame", status = "WsStatus.OK", data = response };

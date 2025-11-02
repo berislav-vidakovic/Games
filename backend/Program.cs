@@ -18,7 +18,13 @@ builder.Services.AddControllers();
 // Web socket connection
 builder.Services.AddSingleton<WebSocketManager>();
 
-builder.Services.AddSingleton<GameManager>();
+builder.Services.AddSingleton(provider =>
+{
+  var scopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
+  var config = provider.GetRequiredService<IConfiguration>();
+  var wsManager = provider.GetRequiredService<WebSocketManager>();
+  return new GameManager(wsManager, scopeFactory, config);
+});
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

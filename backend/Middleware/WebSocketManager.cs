@@ -13,7 +13,14 @@ public class WebSocketManager
   }
   private readonly ConcurrentDictionary<Guid, WebSocket> _wsConnections;
 
+  public WebSocket? GetSocketByGuid(Guid id)
+  {
+    _wsConnections.TryGetValue(id, out var socket);
+    return socket;
+  }
+
   public IEnumerable<WebSocket> GetAllSockets() => _wsConnections.Values;
+
 
   private readonly ConcurrentDictionary<Guid, int> _onlineUsers;
 

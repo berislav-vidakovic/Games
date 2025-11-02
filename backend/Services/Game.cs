@@ -9,10 +9,11 @@ public class Game
   protected Guid _user2Guid;
   readonly string _game;
   protected bool _gameHandshakeDone;
+  protected DateTime _lastActivity;
 
   private readonly object _lockBase = new();
 
-  public Game( int user1, int user2, string game)
+  public Game(int user1, int user2, string game)
   {
     _userId1 = user1;
     _userId2 = user2;
@@ -20,7 +21,17 @@ public class Game
     _gameHandshakeDone = false;
     _user1Guid = Guid.Empty;
     _user2Guid = Guid.Empty;
+    _lastActivity = DateTime.Now;
   }
+  public void SetTimeStamp()
+  {
+    _lastActivity = DateTime.Now;
+  }
+  public long GetIdleTimeSec()
+  {
+    return (long)(DateTime.Now - _lastActivity).TotalSeconds;
+  }
+  
   public int GetUser1() => _userId1;
   public int GetUser2() => _userId2;
 
@@ -54,6 +65,9 @@ public class Game
       return true;
     }
   }
+  public Guid GetUser1Guid() => _user1Guid;
+  public Guid GetUser2Guid() => _user2Guid;
+
 
   public Guid GetUserGuid(int userId)
   {
