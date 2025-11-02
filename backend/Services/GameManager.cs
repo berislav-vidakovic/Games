@@ -3,20 +3,24 @@ using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
 using System.Timers;
-
+using Data;
 
 public class GameManager : TimerManager
 {
   private ConcurrentDictionary<string, Game> _games;
   private readonly WebSocketManager _wsManager;
 
+  private readonly GamesContext _dbContext;
+
   public GameManager(WebSocketManager wsManager, IServiceScopeFactory scopeFactory,
-    IConfiguration config, string key) : base(scopeFactory, config, key)
+    IConfiguration config, string key) : base(config, key)
   {
     _wsManager = wsManager;
     _games = new();
+    using var scope = scopeFactory.CreateScope();
+    _dbContext = scope.ServiceProvider.GetRequiredService<GamesContext>();
 
-    Console.WriteLine($"Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
+    Console.WriteLine($"Gm Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
   }
 
 
@@ -133,29 +137,7 @@ public class GameManager : TimerManager
     return game.GetIdleTimeSec() > _idleTimeoutSec;
   }
 
-  private async Task CloseWebSockets(Guid[] ids)
-  {
-    foreach (var id in ids)
-    {
-      WebSocket? ws = _wsManager.GetSocketByGuid(id);
-      if (ws == null)
-        return;
-      if (ws.State == WebSocketState.Open || ws.State == WebSocketState.CloseReceived)
-        await ws.CloseAsync(
-          WebSocketCloseStatus.NormalClosure, "Idle timeout", CancellationToken.None);
-
-      // TODO: Remove Socket object from dict
-
-      ws.Dispose();
-    }
-  }
-  private void RemoveWebSockets(Guid[] ids)
-  {
-    foreach (var id in ids)
-      _wsManager.RemoveSocketByClientId(id);
-  }
-
-  protected override async void CleanupIdleItems(object? sender, ElapsedEventArgs e)
+  protected override void CleanupIdleItems(object? sender, ElapsedEventArgs e)
   {
     Console.WriteLine($"*** START-CleanupIdleGames, game(s): {_games.Count}, WS(s): {_wsManager.GetAllSockets().Count()} *** ");
     foreach (var kvp in _games)
@@ -165,12 +147,9 @@ public class GameManager : TimerManager
       {
         Guid id1 = game.GetUser1Guid();
         Guid id2 = game.GetUser2Guid();
-        await CloseWebSockets([id1, id2]);
-        RemoveWebSockets([id1, id2]);
         RemoveGameByIds(id1, id2);
       }
     }
     Console.WriteLine($"*** END-CleanupIdleGames, game(s): {_games.Count}, WS(s): {_wsManager.GetAllSockets().Count()} *** ");
-    
   }
 }

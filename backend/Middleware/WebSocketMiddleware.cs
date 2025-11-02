@@ -25,29 +25,21 @@ public class WebSocketMiddleware // Singleton
     _wsManager = wsManager;
     _gameManager = gm;
   }
-  
+
   public void AddSocket(Guid clientId, WebSocket ws)
   {
     //_wsConnections[clientId] = ws;
     _wsManager.AddSocket(clientId, ws);
-}
-
-  public void RemoveSocketByClientId(Guid clientId)
-  {
-    //_wsConnections.TryRemove(clientId, out _);
-    _wsManager.RemoveSocketByClientId(clientId);
-  }
-
-  public void RemoveSocket(WebSocket ws)
-  {
-    _wsManager.RemoveSocket(ws);
+    _wsManager.SetTimeStamp(ws);
   }
   
   private async Task CloseAndRemoveWsConnection(WebSocket ws, string msg)
   {
     Console.WriteLine("Terminating WS connection..." + msg);
     await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, msg, CancellationToken.None);
-    RemoveSocket(ws);
+    //RemoveSocket(ws);
+    _wsManager.RemoveSocket(ws);
+    ws.Dispose();
   }
 
   public IEnumerable<WebSocket> GetAllSockets() => _wsManager.GetAllSockets();
@@ -126,6 +118,7 @@ public class WebSocketMiddleware // Singleton
   {
     try
     {
+      _wsManager.SetTimeStamp(webSocket);
       JsonDocument json = JsonDocument.Parse(message);
       //const msg = { type: "healthCheck", status: "WsStatus.Request", data: { id, content: "ping" } };
       string? id = json.RootElement.GetProperty("data").GetProperty("id").GetString();
@@ -137,10 +130,7 @@ public class WebSocketMiddleware // Singleton
       {
         Console.WriteLine("---------WS message -healthCheck- received-----------");
         var response = new { type = "health", status = "WsStatus.OK", data = new { response = "pong" } };
-
-        string jsonR = JsonSerializer.Serialize(response);
-        JsonDocument jsonResponse = JsonDocument.Parse(jsonR);
-        _ = SendMessageAsync(webSocket, jsonResponse);
+        _wsManager.SendMessageAsync(webSocket, response);
       }
       else
       {
@@ -156,15 +146,4 @@ public class WebSocketMiddleware // Singleton
       }
     }
   }
-
-  private Task SendMessageAsync(WebSocket webSocket, JsonDocument jsonMsg)
-  {
-    //Console.WriteLine("Sending WS.................................");
-    string strToSend = jsonMsg.RootElement.GetRawText();
-    byte[] bytes = Encoding.UTF8.GetBytes(strToSend);
-    ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
-    return webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-  }
-
-
 }

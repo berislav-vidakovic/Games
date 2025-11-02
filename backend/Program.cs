@@ -16,7 +16,11 @@ builder.Services.AddDbContext<GamesContext>(options =>
 builder.Services.AddControllers();
 
 // Web socket connection
-builder.Services.AddSingleton<WebSocketManager>();
+builder.Services.AddSingleton(provider =>
+{
+  var config = provider.GetRequiredService<IConfiguration>();
+  return new WebSocketManager(config, "WebSocketMonitor");
+});
 
 builder.Services.AddSingleton(provider =>
 {
@@ -26,11 +30,9 @@ builder.Services.AddSingleton(provider =>
   return new GameManager(wsManager, scopeFactory, config, "GameMonitor");
 });
 
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 string[]? allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOriginsFrontend").Get<string[]>();
 if( allowedOrigins != null )

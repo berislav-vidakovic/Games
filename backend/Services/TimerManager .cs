@@ -7,18 +7,15 @@ using System.Timers;
 
 public class TimerManager
 {
-  private readonly IServiceScopeFactory _scopeFactory;
   protected int _idleTimeoutSec;
   protected int _checkIntervalMin;
   private Timer? _activityMonitor;
 
-  public TimerManager(IServiceScopeFactory scopeFactory,
-    IConfiguration config, string configKey )
+  public TimerManager(IConfiguration config, string configKey )
   {
-    _scopeFactory = scopeFactory;
     _activityMonitor = null;
 
-    string keyIdleTimeout = $"{configKey}:IdleTimeoutSec"; // TODO: Add to appsettings.json
+    string keyIdleTimeout = $"{configKey}:IdleTimeoutSec"; 
     string keyCheckInterval = $"{configKey}:CheckIntervalMin";
 
     if (config.GetSection(keyIdleTimeout).Exists())
@@ -27,13 +24,9 @@ public class TimerManager
     if (config.GetSection(keyCheckInterval).Exists())
       _checkIntervalMin = int.Parse(config[keyCheckInterval]!);
 
-    Console.WriteLine($"Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
+    Console.WriteLine($"(base)Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
   }
 
-  protected virtual void SetTimeStamp()
-  {
-    Console.WriteLine("Base class SetTimeStamp");
-  }
 
   protected void TimerStart()
   {
