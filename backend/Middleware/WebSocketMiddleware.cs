@@ -13,11 +13,9 @@ public class WebSocketMiddleware // Singleton
 {
   private readonly RequestDelegate _next;
 
-
   private readonly WebSocketManager _wsManager;
 
   private readonly GameManager _gameManager;
-
 
   public WebSocketMiddleware(RequestDelegate next, WebSocketManager wsManager, GameManager gm)
   {
@@ -28,7 +26,6 @@ public class WebSocketMiddleware // Singleton
 
   public void AddSocket(Guid clientId, WebSocket ws)
   {
-    //_wsConnections[clientId] = ws;
     _wsManager.AddSocket(clientId, ws);
     _wsManager.SetTimeStamp(ws);
   }
@@ -41,8 +38,6 @@ public class WebSocketMiddleware // Singleton
     _wsManager.RemoveSocket(ws);
     ws.Dispose();
   }
-
-  public IEnumerable<WebSocket> GetAllSockets() => _wsManager.GetAllSockets();
 
   public async Task InvokeAsync(HttpContext context)
   {
@@ -80,7 +75,7 @@ public class WebSocketMiddleware // Singleton
           if (msgMetaData.MessageType == WebSocketMessageType.Close) // Closing WS connection
           {
             Console.WriteLine($"WebSocket connection CLOSED ");
-            await CloseAndRemoveWsConnection(webSocket, "Client closed the connection");
+            await CloseAndRemoveWsConnection(webSocket, "WS connection closed");
 
           }
 
@@ -111,8 +106,6 @@ public class WebSocketMiddleware // Singleton
       await _next(context);
     }
   }
-
-
 
   private async Task HandleMessageAsync(string message, WebSocket webSocket)
   {

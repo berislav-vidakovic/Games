@@ -103,6 +103,7 @@ function App() {
         myColor={myColor}
         gameId={gameId}
         gameState={gameState}
+        isWsConnected={isWsConnected}
       />
       }
     </div>

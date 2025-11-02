@@ -13,10 +13,11 @@ interface Connect4BoardProps {
   myColor: "Red" | "Yellow" | null; 
   gameId: string | null;
   gameState: "init" | "myMove" | "theirMove" | "draw" | "myWin" | "theirWin" | null;
+  isWsConnected: boolean;
 }
 
 const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString, 
-  myColor, gameId, gameState  }) => {
+  myColor, gameId, gameState, isWsConnected  }) => {
   
   const [activeCol, setActiveCol] = useState<number>(0); 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -85,17 +86,6 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
       if( rev[row][activeCol] != '-')
         ++row;
       else {
-        /*
-        const updRow = rev[row]
-          .split('')
-          .map((cell,col)=>col==activeCol ? cell = currentPlayer[0] : cell)
-          .join('');
-        rev[row] = updRow;
-        setCurrentPlayer(currentPlayer == "Red" ? "Yellow" : "Red");
-        const newBoard = [...rev].reverse();
-        setBoardRows(newBoard);
-        setBoardString(rev.join(''));
-        //console.log(rev.join(''));*/
         insertDisk( gameId, row, activeCol );
         okSound.play();
         return;
@@ -109,7 +99,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
       <div className="info-connect4">
         <div>
           {["init", "myWin", "theirWin", "draw"].includes(gameState as string) 
-            && <button
+            && isWsConnected && <button
             onClick={() => {
               swapColors(gameId);
             }}
@@ -117,13 +107,14 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
             Your color
           </button>}
           
-          {gameState == "init" && <button
+          {gameState == "init" && isWsConnected && <button
             onClick={() => {
               startGame(gameId, gameState);
             }}
           >Start</button>}
 
-          {["myWin", "theirWin", "draw"].includes(gameState as string) 
+          {(["myWin", "theirWin", "draw"].includes(gameState as string) 
+            || !isWsConnected )
             && <button
               onClick={() => {
                 newGame(gameId);

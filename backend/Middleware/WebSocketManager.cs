@@ -4,8 +4,20 @@ using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Timers;
 using Services;
 
+public class WebSocketMonitor 
+{
+  public WebSocket WebSocket { get; set; }
+  public DateTime LastActive { get; set; }
+
+  public WebSocketMonitor(WebSocket ws)
+  {
+    WebSocket = ws;
+    LastActive = DateTime.Now;
+  }
+}
 public class WebSocketManager : TimerManager
 {
   public WebSocketManager(IConfiguration config, string key) : base(config, key)
@@ -16,18 +28,23 @@ public class WebSocketManager : TimerManager
     Console.WriteLine($"Ws Timer settings: {_idleTimeoutSec}s, {_checkIntervalMin}min");
 
   }
-  private readonly ConcurrentDictionary<Guid, WebSocket> _wsConnections;
+  private readonly ConcurrentDictionary<Guid, WebSocketMonitor> _wsConnections;
+  private readonly ConcurrentDictionary<Guid, int> _onlineUsers;
+
 
   public WebSocket? GetSocketByGuid(Guid id)
   {
-    _wsConnections.TryGetValue(id, out var socket);
-    return socket;
+    if (_wsConnections.TryGetValue(id, out var socket))
+      return socket.WebSocket;
+    return null;
   }
 
-  public IEnumerable<WebSocket> GetAllSockets() => _wsConnections.Values;
+  public IEnumerable<WebSocket> GetAllSockets()
+  {
+    return _wsConnections.Values.Select(monitor => monitor.WebSocket);
+  }
 
 
-  private readonly ConcurrentDictionary<Guid, int> _onlineUsers;
 
   public void UpdateOnlineUsers(Guid clientId, int userId, bool online)
   {
@@ -39,20 +56,24 @@ public class WebSocketManager : TimerManager
 
   public void AddSocket(Guid id, WebSocket ws)
   {
-    _wsConnections[id] = ws;
+    _wsConnections[id] = new WebSocketMonitor(ws);
+    if(_wsConnections.Count == 1)
+      TimerStart();
     Console.WriteLine($"Added WS: {RuntimeHelpers.GetHashCode(ws)}, WS(s): {_wsConnections.Count}");
   }
 
-  public void RemoveSocketByClientId(Guid clientId)
+  private void RemoveSocketByClientId(Guid clientId)
   {
     _wsConnections.TryRemove(clientId, out _);
+    if (_wsConnections.IsEmpty)
+      TimerStop();
   }
-  
+
   public void RemoveSocket(WebSocket ws)
   {
     // Find the first entry with this WebSocket instance
-    var item = _wsConnections.FirstOrDefault(pair => pair.Value == ws);
-    if (!item.Equals(default(KeyValuePair<Guid, WebSocket>)))
+    var item = _wsConnections.FirstOrDefault(pair => pair.Value.WebSocket == ws);
+    if (!item.Equals(default(KeyValuePair<Guid, WebSocketMonitor>)))
     {
       RemoveSocketByClientId(item.Key);
       Console.WriteLine($"Removed WS: {RuntimeHelpers.GetHashCode(ws)}, WS(s): {_wsConnections.Count}");
@@ -64,10 +85,6 @@ public class WebSocketManager : TimerManager
   public void BroadcastMessage(object message)
   {
     IEnumerable<WebSocket> wsConns = GetAllSockets();
-    var options = new JsonSerializerOptions
-    {
-      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
     foreach (WebSocket ws in wsConns)
     {
       SendMessageAsync(ws, message);
@@ -76,8 +93,6 @@ public class WebSocketManager : TimerManager
 
   public void SendMessage(int userId, object message)
   {
-    // ConcurrentDictionary<Guid, WebSocket> _wsConnections;
-    // ConcurrentDictionary<Guid, int> _onlineUsers;
     foreach (var kvp in _onlineUsers) //<Guid, int> _onlineUsers
       if (kvp.Value == userId)
         SendMessageByGuid(kvp.Key, message);
@@ -85,11 +100,7 @@ public class WebSocketManager : TimerManager
 
   public void SendMessageByGuid(Guid id, object message)
   {
-    var options = new JsonSerializerOptions
-    {
-      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-    WebSocket ws = _wsConnections[id]; //<Guid, WebSocket> _wsConnections
+    WebSocket ws = _wsConnections[id].WebSocket;
     SendMessageAsync(ws, message);
   }
 
@@ -110,49 +121,43 @@ public class WebSocketManager : TimerManager
   public void SetTimeStamp(WebSocket ws)
   {
     Console.WriteLine($"===Added Timestamp WS: {RuntimeHelpers.GetHashCode(ws)}===");
-  }
-
-/*
-  private bool IsIdleTimeout(Game game)
-  {
-    return game.GetIdleTimeSec() > _idleTimeoutSec;
-  }
-  private async Task CloseWebSockets(Guid[] ids)
-  {
-    foreach (var id in ids)
+    var item = _wsConnections.FirstOrDefault(pair => pair.Value.WebSocket == ws);
+    if (!item.Equals(default(KeyValuePair<Guid, WebSocketMonitor>)))
     {
-      WebSocket? ws = _wsManager.GetSocketByGuid(id);
-      if (ws == null)
-        return;
-      if (ws.State == WebSocketState.Open || ws.State == WebSocketState.CloseReceived)
-        await ws.CloseAsync(
-          WebSocketCloseStatus.NormalClosure, "Idle timeout", CancellationToken.None);
-
-      // TODO: Remove Socket object from dict
-
-      ws.Dispose();
+      item.Value.LastActive = DateTime.Now;
     }
   }
-  private void RemoveWebSockets(Guid[] ids)
+  
+  private bool IsIdleTimeout(WebSocketMonitor wsm)
   {
-    foreach (var id in ids)
-      _wsManager.RemoveSocketByClientId(id);
+    return (long)(DateTime.Now - wsm.LastActive).TotalSeconds > _idleTimeoutSec;
   }
+    
+  private async Task CloseWebSocket(Guid id)
+  {
+    WebSocket? ws = GetSocketByGuid(id);
+    if (ws == null)
+      return;
+    if (ws.State == WebSocketState.Open || ws.State == WebSocketState.CloseReceived)
+      await ws.CloseAsync(
+        WebSocketCloseStatus.NormalClosure, "Idle timeout", CancellationToken.None);
+
+    ws.Dispose();
+  }
+  
   protected override async void CleanupIdleItems(object? sender, ElapsedEventArgs e)
   {
-    Console.WriteLine($"*** START-CleanupIdleGames, game(s): {_games.Count}, WS(s): {_wsManager.GetAllSockets().Count()} *** ");
-    foreach (var kvp in _games)
+    Console.WriteLine($"*** START-CleanupIdleWS, WS(s): {GetAllSockets().Count()} *** ");
+    foreach (var kvp in _wsConnections)
     {
-      Game game = kvp.Value;
-      if (IsIdleTimeout(game))
+      WebSocketMonitor wsm = kvp.Value;
+      if (IsIdleTimeout(wsm))
       {
-        Guid id1 = game.GetUser1Guid();
-        Guid id2 = game.GetUser2Guid();
-        await CloseWebSockets([id1, id2]);
-        RemoveWebSockets([id1, id2]);
-        RemoveGameByIds(id1, id2);
+        await CloseWebSocket(kvp.Key);
+        RemoveSocketByClientId(kvp.Key);
+        Console.WriteLine($"--- Closed idle WS: {RuntimeHelpers.GetHashCode(wsm.WebSocket)} ---");
       }
     }
-    Console.WriteLine($"*** END-CleanupIdleGames, game(s): {_games.Count}, WS(s): {_wsManager.GetAllSockets().Count()} *** ");
-  } */
+    Console.WriteLine($"*** END-CleanupIdleWS, WS(s): {GetAllSockets().Count()} *** ");
+  } 
 }

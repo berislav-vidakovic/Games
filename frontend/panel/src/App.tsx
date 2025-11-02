@@ -103,7 +103,7 @@ function App() {
 
   const isBtnVisibleSignIn = (): boolean => {
     return currentUserId == null && isWsConnected && 
-      usersRegistered.some(u=>!u.isonline)
+      usersRegistered.some(u=>!u.isonline);
   }
 
   const isBtnVisibleSignOut = (): boolean => {
@@ -116,21 +116,27 @@ function App() {
 
   const isBtnVisibleRun = (): boolean => {
     return (invitationState == "paired" || selectedGame == "Sudoku")  
-      && currentUserId != null
+      && currentUserId != null && isWsConnected;
   }
 
   const isBtnVisibleInvite = (): boolean => {
     return invitationState == "init" && selectedGame == "Connect Four" && 
-          currentUserId != null
+          currentUserId != null && isWsConnected;
   }
 
   const isBtnVisibleCancel = (): boolean => {
-    return invitationState == "sent";
+    return invitationState == "sent" && isWsConnected;
   }
 
   const isBtnVisibleResponse = (): boolean => {
-    return invitationState == "pending";
+    return invitationState == "pending" && isWsConnected;
   }
+
+  const isBtnVisibleConnect = (): boolean => {
+    return !isWsConnected && isInitialized;
+  }
+
+  
 
   return (
    <div className="app-container">
@@ -156,6 +162,17 @@ function App() {
     <div className="main-content">
       {/* Top auth buttons */}
       <div className="auth-buttons">
+        {
+          !isInitialized && <p>
+            System loading ...
+          </p>
+        }
+        {isBtnVisibleConnect() && 
+        <button
+          onClick={()=>{ window.location.reload(); }}
+        >
+          Connect
+        </button>}
         {isBtnVisibleSignUp() && <button 
           //onClick={handleSignUp}
           id="btnRegister" 
