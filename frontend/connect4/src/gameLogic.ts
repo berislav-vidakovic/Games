@@ -9,10 +9,13 @@ let setBoardRowsRef: Dispatch<SetStateAction<string[]>>;
 
 let myUserId : number | null = null;
 let partnerId : number | null = null;
+let myGameId : string | null = null;
 
-export function updateUserIds(userId: number | null, user2Id: number | null ){
+export function updateUserIds(userId: number | null, user2Id: number | null,
+    gameId: string | null = null ){
   myUserId = userId;
   partnerId = user2Id;
+  myGameId = gameId;
   console.log("===============User IDs updated: ", myUserId, partnerId);
 }
 
@@ -40,6 +43,14 @@ export function stringToMatrix( boardString: string,
   //console.log(" --------- stringToMatrix ----------------");
 }
 
+export function reConnect(){
+  console.log("Reconnecting WebSocket...");
+  // Implement WebSocket reconnection logic here
+  sessionStorage.setItem("reconnecting", "true");
+  sessionStorage.setItem("gameId", String(myGameId));
+  sessionStorage.setItem("senderId", String(myUserId));  
+  window.location.reload();
+}
 
 // -------------swapColors - POST request, POST reposne, WS incoming ----------
 export async function swapColors( 

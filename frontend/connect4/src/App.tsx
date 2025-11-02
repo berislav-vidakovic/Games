@@ -24,13 +24,23 @@ function App() {
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
     //console.log( "Loading Config ... ", isConfigLoaded);
-    const params = new URLSearchParams(window.location.search);
-    const gameID = params.get('gameId');
-    const senderID = params.get('senderId');
+    let gameID;
+    let senderID;
+    const bReconnecting = sessionStorage.getItem("reconnecting") === "true";
+    if( !bReconnecting) {
+      const params = new URLSearchParams(window.location.search);
+      gameID = params.get('gameId');
+      senderID = params.get('senderId');
+    }
+    else {
+      gameID = sessionStorage.getItem("gameId");
+      senderID = sessionStorage.getItem("senderId");
+      sessionStorage.setItem("reconnecting", "false");
+    }
     //console.log('Game ID:', gameID, "UserID:", senderID);
     setGameId(gameID);
     setUserId(Number(senderID));
-    updateUserIds(Number(senderID), null);    
+    updateUserIds(Number(senderID), null, gameID);    
     setBoardString("YRY-----------------------------------YY--");
   }, []);
 

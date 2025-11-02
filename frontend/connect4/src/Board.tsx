@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import "@common/style.css";
 import '@common/style-mobile.css';
 
-import { startGame, swapColors, stringToMatrix, updateSetBoardRows, insertDisk, newGame } from './gameLogic'
+import { startGame, swapColors, stringToMatrix, updateSetBoardRows, 
+  insertDisk, newGame, reConnect } from './gameLogic'
 
 
 const okSound = new Audio("sounds/OK.wav");  
@@ -117,7 +118,10 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
             || !isWsConnected )
             && <button
               onClick={() => {
-                newGame(gameId);
+                if( !isWsConnected)
+                  reConnect();
+                else                  
+                  newGame(gameId);
               }}
             >New Game</button>}
 
