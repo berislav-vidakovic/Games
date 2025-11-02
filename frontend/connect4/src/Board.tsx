@@ -77,7 +77,7 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
 
   // "YR-R--RY---RRYYR-R--RY---RRYYR-R--RY---RRY"
   const insertNewDisc = () => {
-    if (!["myMove", "theirMove"].includes(gameState as string))
+    if (!["myMove"].includes(gameState as string))
       return;
     let row: number = 0;
     let rev = [...boardRows].reverse();
@@ -108,13 +108,14 @@ const Connect4Board: React.FC<Connect4BoardProps> = ({ boardString,
     <>
       <div className="info-connect4">
         <div>
-          <button
+          {["init", "myWin", "theirWin", "draw"].includes(gameState as string) 
+            && <button
             onClick={() => {
               swapColors(gameId);
             }}
           >
             Your color
-          </button>
+          </button>}
           
           {gameState == "init" && <button
             onClick={() => {

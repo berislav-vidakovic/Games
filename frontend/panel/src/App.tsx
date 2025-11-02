@@ -80,6 +80,8 @@ function App() {
     }
     else if( selectedGame == 'Sudoku' )
       handleSelectGame( URL_SUDOKU);
+    setInvitationState("init");
+    setSelectedGame(null);
   }
 
   const handleSelectGame = (url: string) => {
@@ -204,22 +206,28 @@ function App() {
               } </b>[{onlineUsers} user(s) online]</p>
            : <p>You are not logged in [{onlineUsers} user(s) online]</p>
         }
-        { currentUserId && calleeUserId && callerUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#090"}}>
-              You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
-          </p> }
-          { currentUserId && callerUserId && calleeUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#e00"}}>
-              You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
-          </p> }
-          { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#00e"}}>
-              You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
-          </p> }
-          { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
-          <p style={{fontWeight:"700", color:"#00e"}}>
-              Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
-          </p> }
+        
+        {selectedGame && (
+          <>
+            { currentUserId && calleeUserId && callerUserId == currentUserId && 
+              <p style={{fontWeight:"700", color:"#090"}}>
+                  You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+              </p> }
+              { currentUserId && callerUserId && calleeUserId == currentUserId && 
+              <p style={{fontWeight:"700", color:"#e00"}}>
+                  You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+              </p> }
+              { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
+              <p style={{fontWeight:"700", color:"#00e"}}>
+                  You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+              </p> }
+              { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
+              <p style={{fontWeight:"700", color:"#00e"}}>
+                  Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+              </p> } 
+          </>              
+          )}
+          
         {/*<p>Game selected: Connect4</p>*/}
       </div>
 
@@ -242,6 +250,7 @@ function App() {
         >
           <img src={sudokuImg} alt="Sudoku" />
         </button>
+
         <button 
           onClick={() => {
             if( !isConfigLoaded || !currentUserId ) {

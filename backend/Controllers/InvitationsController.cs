@@ -32,8 +32,8 @@ public class InvitationsController : ControllerBase
     _gameManager = gm;
   } 
 
-
-  public async Task<InvitationResult> HandleInvitationMsg([FromBody] JsonElement body,
+  // Handle POST Request and send WS message
+  public async Task<InvitationResult> HandleRequestSendWs([FromBody] JsonElement body,
     string invitation)
   { // Request: { callerId, calleeId, selectedGame }
     InvitationResult res = new();
@@ -92,7 +92,7 @@ public class InvitationsController : ControllerBase
   [HttpPost("invite")]
   public async Task<IActionResult> PostInvitationSend([FromBody] JsonElement body)
   {
-    var res = await HandleInvitationMsg(body, "send" );
+    var res = await HandleRequestSendWs(body, "send" );
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
@@ -110,7 +110,7 @@ public class InvitationsController : ControllerBase
   [HttpPost("cancel")]
   public async Task<IActionResult> PostInvitationCancel([FromBody] JsonElement body)
   {
-    var res = await HandleInvitationMsg(body, "cancel");
+    var res = await HandleRequestSendWs(body, "cancel");
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
@@ -124,7 +124,7 @@ public class InvitationsController : ControllerBase
   [HttpPost("accept")]
   public async Task<IActionResult> PostInvitationAccept([FromBody] JsonElement body)
   {
-    var res = await HandleInvitationMsg(body, "accept");
+    var res = await HandleRequestSendWs(body, "accept");
     if (res.Result is OkObjectResult)
     {
       Console.WriteLine($"Invitation from {res.CallerId} to {res.CalleeId}");
@@ -139,7 +139,7 @@ public class InvitationsController : ControllerBase
   [HttpPost("reject")]
   public async Task<IActionResult> PostInvitationReject([FromBody] JsonElement body)
   {
-    var res = await HandleInvitationMsg(body, "reject");
+    var res = await HandleRequestSendWs(body, "reject");
 
     if (res.Result is OkObjectResult)
     {
