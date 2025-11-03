@@ -1,6 +1,6 @@
 //import { StatusCodes } from "http-status-codes"
 import type { Dispatch, SetStateAction } from "react";
-import type { User } from '@common/interfaces';
+import type { User, Locales } from '@common/interfaces';
 import { StatusCodes } from "http-status-codes";
 import { URL_CONNECT4 } from '@common/config';
 
@@ -12,8 +12,7 @@ let setOnlineUsersRef:  Dispatch<SetStateAction<number>>;
 let setCallerUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setCalleeUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setInvitationStateRef: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>;
-let setSelectedGameRef: Dispatch<SetStateAction<"Sudoku" | "Connect Four" | null>>;
-
+let setSelectedGameRef: Dispatch<SetStateAction<"panel.game.sudoku" | "panel.game.connect4" | null>>;
 
 
 export function setStateFunctionRefs(
@@ -24,7 +23,7 @@ export function setStateFunctionRefs(
   setCallerUserId:  Dispatch<SetStateAction<number | null>>,
   setCalleeUserId:  Dispatch<SetStateAction<number | null>>,
   setInvitationState: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>,
-  setSelectedGame: Dispatch<SetStateAction<"Sudoku" | "Connect Four" | null>>
+  setSelectedGame: Dispatch<SetStateAction<"panel.game.sudoku" | "panel.game.connect4" | null>>,
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
@@ -124,7 +123,7 @@ export function handleInvite( jsonResp: any, status: number ){
 //Req: { run: "Connect Four", userId1, userId2 } Resp: { game: "Connect Four", gameid }
 export function handleResponseRunGame( jsonResp: any, status: number ){
   if( status == StatusCodes.OK )
-    if( jsonResp.game == "Connect Four" )    
+    if( jsonResp.game == "panel.game.connect4" )    
       window.open(`${URL_CONNECT4}?gameId=${jsonResp.gameid}&senderId=${jsonResp.senderId}`, '_blank');    
 }
 

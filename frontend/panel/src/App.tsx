@@ -1,16 +1,20 @@
+// App.tsx 
 import sudokuImg from '../assets/sudoku.jpg';
 import connect4Img from '../assets/connect4.png';
 import memoryImg from '../assets/memory.png';
 import tictactoeImg from '../assets/tictactoe.png';
 import blackjackImg from '../assets/blackjack.png';
 import mmImg from '../assets/mm.jpg';
+import enImg from '@common/assets/en.png';
+import deImg from '@common/assets/de.png';
+import hrImg from '@common/assets/hr.png';
 
 import './App.css';
 import "@common/style.css";
 import '@common/style-mobile.css';
 
 import { URL_SUDOKU } from '@common/config';
-import { loadCommonConfig } from '@common/config';
+import { loadCommonConfig, getTitle, getLocalization } from '@common/config';
 import { useState, useEffect } from 'react';
 import { connectWS } from '@common/webSocket';
 import type { User } from '@common/interfaces';
@@ -19,9 +23,10 @@ import { getAllUsers, logoutUser, inviteUser, runGame } from './utils';
 import RegisterDialog from './components/RegisterDialog.tsx' 
 import LoginDialog from './components/LoginDialog.tsx' 
 import InviteDialog from './components/InviteDialog.tsx' 
-
+ 
 
 function App() {
+  const [currentLang, setCurrentLangState] = useState<'en' | 'de' | 'hr'>('en');
   const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   const [isInitialized, setInitialized] = useState<boolean>(false);
@@ -34,7 +39,7 @@ function App() {
   const [callerUserId, setCallerUserId] = useState<number | null>(null);
   const [calleeUserId, setCalleeUserId] = useState<number | null>(null);
   const [invitationState, setInvitationState] = useState<"init" | "sent" | "pending" | "paired">("init");
-  const [selectedGame, setSelectedGame] = useState<"Sudoku" | "Connect Four" | null>(null);
+  const [selectedGame, setSelectedGame] = useState<"panel.game.sudoku" | "panel.game.connect4" | null>(null);
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -43,8 +48,10 @@ function App() {
   useEffect( () => { if( isConfigLoaded){
       setStateFunctionRefs(setInitialized, setUsersRegistered, 
         setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId,
-        setInvitationState, setSelectedGame );
+        setInvitationState, setSelectedGame );      
+      
       getAllUsers(handleResponseGetAllUsers );
+      getLocalization();
    }      
   }, [isConfigLoaded]); 
 
@@ -74,11 +81,11 @@ function App() {
 
   const handleRun = () => {
     //console.log("Run clicked");
-    if( selectedGame == 'Connect Four')
+    if( selectedGame == 'panel.game.connect4')
     {
       runGame(callerUserId as number, calleeUserId as number, selectedGame, currentUserId as number);
     }
-    else if( selectedGame == 'Sudoku' )
+    else if( selectedGame == 'panel.game.sudoku' )
       handleSelectGame( URL_SUDOKU);
     setInvitationState("init");
     setSelectedGame(null);
@@ -115,12 +122,12 @@ function App() {
   }
 
   const isBtnVisibleRun = (): boolean => {
-    return (invitationState == "paired" || selectedGame == "Sudoku")  
+    return (invitationState == "paired" || selectedGame == "panel.game.sudoku")  
       && currentUserId != null && isWsConnected;
   }
 
   const isBtnVisibleInvite = (): boolean => {
-    return invitationState == "init" && selectedGame == "Connect Four" && 
+    return invitationState == "init" && selectedGame == "panel.game.connect4" && 
           currentUserId != null && isWsConnected;
   }
 
@@ -136,13 +143,17 @@ function App() {
     return !isWsConnected && isInitialized;
   }
 
-  
+  const setCurrentLanguage = (lang: 'en' | 'de' | 'hr'): void => {
+    setCurrentLangState(lang);
+    sessionStorage.setItem('currentLang', lang);
+  }
+
 
   return (
    <div className="app-container">
     {/* --- Users Box on the left --- */}
     <div className="users-box">
-      <h2>Users:</h2>
+      <h2>{getTitle("panel.users")}:</h2>
         <ul>
         { usersRegistered.map((u) => ( 
           <li key={u.userId} className="user-item">               
@@ -160,6 +171,26 @@ function App() {
 
     {/* --- Right main content --- */}
     <div className="main-content">
+      <div className="auth-buttons">
+        <img 
+          src={enImg} 
+          className = "flaglocales" 
+          alt="English" 
+          onClick={ ()=> setCurrentLanguage('en') }
+        />
+        <img 
+          src={deImg} 
+          className = "flaglocales" 
+          alt="Deutsch" 
+          onClick={ ()=> setCurrentLanguage('de') }
+        />
+        <img 
+          src={hrImg} 
+          className = "flaglocales" 
+          alt="Hrvatski" 
+          onClick={ ()=> setCurrentLanguage('hr') }
+        />
+      </div>
       {/* Top auth buttons */}
       <div className="auth-buttons">
         {
@@ -171,76 +202,80 @@ function App() {
         <button
           onClick={()=>{ window.location.reload(); }}
         >
-          Connect
+          { getTitle("panel.connect") }
         </button>}
         {isBtnVisibleSignUp() && <button 
           //onClick={handleSignUp}
           id="btnRegister" 
           onClick={() => setShowRegisterDialog(true)}
         >
-          Sign Up
+          { getTitle("panel.signup") }
         </button>}
 
         {isBtnVisibleSignIn() && <button 
           id="btnLogin" 
           onClick={() => setShowLoginDialog(true)}          
-        > Sign In </button>}
+        > 
+          { getTitle("panel.signin") } 
+        </button>}
+        
 
         {isBtnVisibleSignOut() && <button 
           onClick={handleSignOut}
-        > Sign Out </button>}
+        > 
+          { getTitle("panel.signout") }
+        </button>}
 
         {isBtnVisibleRun() &&
         <button 
           onClick={handleRun}
-        > Run </button>}
+        > { getTitle("panel.run") }  </button>}
           
         {isBtnVisibleInvite() &&
         <button 
           onClick={handleInvite}
-        >Invite </button>}
+        >{ getTitle("panel.invite") } </button>}
 
         {isBtnVisibleCancel() &&  <button 
           onClick={handleCancelInvitation}
-        >Cancel </button>}
+        >{ getTitle("panel.cancel") } </button>}
 
         {isBtnVisibleResponse() && ( <>
-          <button onClick={() => handleRespond(true)}>Accept </button>
-          <button onClick={() => handleRespond(false)}>Reject </button>
+          <button onClick={() => handleRespond(true)}>{ getTitle("panel.accept") } </button>
+          <button onClick={() => handleRespond(false)}>{ getTitle("panel.reject") } </button>
         </>)}
       </div>
       
       
       
     {selectedGame  
-     ? <h2>{selectedGame}</h2>
-     : <h2>Game Panel</h2>
+     ? <h2>{ getTitle( selectedGame) }</h2>
+     : <h2 key={currentLang}>{ getTitle("panel.title") }</h2>
     }
       <div className='status-box'>
         { currentUserId != null  
-           ? <p><b>Logged in as: {
+           ? <p><b>{ getTitle("panel.loginmsg1") } {
                 usersRegistered.find(u=>u.userId==currentUserId)!.fullname
-              } </b>[{onlineUsers} user(s) online]</p>
-           : <p>You are not logged in [{onlineUsers} user(s) online]</p>
+              } </b>[{onlineUsers}{ getTitle("panel.loginmsg2") }</p>
+           : <p>{ getTitle("panel.loginmsg3") } [{onlineUsers}{ getTitle("panel.loginmsg2") }</p>
         }
-        
         {selectedGame && isWsConnected &&(
           <>
             { currentUserId && calleeUserId && callerUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#090"}}>
-                  You invited user: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+                  { getTitle("panel.invitemsg") } {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
               </p> }
               { currentUserId && callerUserId && calleeUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#e00"}}>
-                  You have invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+                  { getTitle("panel.invitedmsg") } {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
               </p> }
               { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#00e"}}>
-                  You accepted invitation from: {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+                  { getTitle("panel.acceptmsg") } 
               </p> }
               { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#00e"}}>
-                  Invitation accepted by: {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+                  { getTitle("panel.acceptedmsg") } 
               </p> } 
           </>              
           )}
@@ -256,14 +291,12 @@ function App() {
                 //console.log("Config not loaded (or no user logged in)");
                 return;
               }
-              if( selectedGame == 'Sudoku') handleSelectGame(URL_SUDOKU);
-              else{
-                //console.log('SELECTED Sudoku');
-                setSelectedGame('Sudoku');
-              }
+              if( selectedGame == 'panel.game.sudoku') handleSelectGame(URL_SUDOKU);
+              else setSelectedGame('panel.game.sudoku');
+              
             }}
-          title="Sudoku"
-          className={selectedGame === 'Sudoku' ? 'selected-button' : ''}
+          title={getTitle(selectedGame as string)}
+          className={selectedGame === 'panel.game.sudoku' ? 'selected-button' : ''}
         >
           <img src={sudokuImg} alt="Sudoku" />
         </button>
@@ -276,12 +309,11 @@ function App() {
             }            
             else {
               //console.log('SELECTED Connect Four');
-              setSelectedGame('Connect Four');
+              setSelectedGame('panel.game.connect4');
             }
           }} 
-          title="Connect 4"
-          className={selectedGame === 'Connect Four' ? 'selected-button' : ''}
-
+          title={getTitle('panel.game.connect4')}
+          className={selectedGame === 'panel.game.connect4' ? 'selected-button' : ''}
         >
           <img src={connect4Img} alt="Connect 4" />
         </button>

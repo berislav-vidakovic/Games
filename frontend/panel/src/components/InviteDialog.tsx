@@ -12,7 +12,7 @@ function InviteDialog({
     usersRegistered: User[];
     isWsConnected: boolean;
     currentUserId: number;  
-    selectedGame: "Sudoku" | "Connect Four" | null;
+    selectedGame: "panel.game.sudoku" | "panel.game.connect4" | null;
  }
 ) {
 

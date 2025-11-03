@@ -408,6 +408,42 @@ MySQL
 
         sudo journalctl -u games-backend -f
 
+## Localization
+
+### Powershell
+    
+  ```powershell
+  [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+  chcp 65001
+  mysql --default-character-set=utf8mb4 -u barry75 -p
+  ```
+
+### MySQL
+
+  ```sql
+  SHOW VARIABLES LIKE 'char%';  
+  SHOW VARIABLES LIKE 'collation%';
+  SHOW CREATE TABLE localization;  
+  SET NAMES utf8mb4;   
+  ```
+
+### ASP.Net
+
+- appsettings.json
+
+  ```json
+  CharSet=utf8mb4
+  ```
+
+### React
+
+- index.html
+
+  ```html
+  <meta charset="UTF-8" />
+  ```
+
+  
 
 
 

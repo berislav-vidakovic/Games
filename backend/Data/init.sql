@@ -20,5 +20,13 @@ CREATE TABLE users (
   isonline BOOLEAN DEFAULT FALSE
 );
 
+DROP TABLE IF EXISTS localization;
+CREATE TABLE localization (
+  paramkey VARCHAR(100) NOT NULL,
+  paramvalue VARCHAR(100) NOT NULL,
+  lang VARCHAR(2) NOT NULL,
+  PRIMARY KEY (paramkey, lang)
+);
+
 
 COMMIT;

@@ -1,6 +1,8 @@
 // common/config.ts
 
 import type { Dispatch, SetStateAction } from "react";
+import { sendGETRequest } from './restAPI';
+import type { Locales } from './interfaces';
 
 export let URL_BACKEND_HTTP = '';
 export let URL_BACKEND_WS = '';
@@ -10,8 +12,20 @@ export let URL_CONNECT4 = '';
 export let URL_BATTLESHIP = '';
 
 
+let locales: Locales[] = [];
+
+
 function detectEnv(): 'Development' | 'Production' {
   return import.meta.env.MODE === 'production' ? 'Production' : 'Development';
+}
+
+
+export const getTitle = (paramKey: string): string => {
+  const currentLang = sessionStorage.getItem('currentLang') || 'en';
+  const locale = locales.find( l => 
+    l.paramKey == paramKey && l.language == currentLang );
+  console.log("Get title", paramKey, "->", locale);
+  return locale ? locale.paramValue : paramKey;
 }
 
 export async function loadCommonConfig(
@@ -35,4 +49,19 @@ export async function loadCommonConfig(
   URL_BATTLESHIP = config.urlFrontend[currentEnv].battleship;
 
   setConfigLoaded(true);
+}
+
+export async function getLocalization() {
+    sendGETRequest('api/localization/get', handleGetLocalization);
+    //console.log("GET localization sent...");
+} 
+
+export  const handleGetLocalization = ( jsonResp: any ) => {    
+  console.log("GET Locales:", jsonResp)
+  locales = jsonResp.locales.map( (l: any) => ({
+    paramKey: l.paramKey,
+    paramValue: l.paramValue,
+    language: l.language
+  }) );
+  console.log("Locales stored:", locales);
 }

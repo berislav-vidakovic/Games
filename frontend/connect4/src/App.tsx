@@ -27,8 +27,9 @@ function App() {
     let gameID;
     let senderID;
     const bReconnecting = sessionStorage.getItem("reconnecting") === "true";
+    const params = new URLSearchParams(window.location.search);
+    console.log( "Params:", params.get('gameId'), params.get('senderId'), "Reconnecting:", bReconnecting );
     if( !bReconnecting) {
-      const params = new URLSearchParams(window.location.search);
       gameID = params.get('gameId');
       senderID = params.get('senderId');
     }

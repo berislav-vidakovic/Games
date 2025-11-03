@@ -19,6 +19,9 @@ export async function getAllUsers(
     //console.log("GET users sent...");
 }
 
+
+
+
 export async function registerUser(login: string, fullname: string) {
   const body = JSON.stringify({ register: { login, fullname } } );
   //{ register: { login, fullname } 

@@ -5,3 +5,8 @@ export interface User {
   isonline: boolean;
 };
 
+export interface Locales {
+  paramKey: string;
+  paramValue: string; 
+  language: string;
+};

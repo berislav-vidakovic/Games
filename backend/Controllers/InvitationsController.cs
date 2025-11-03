@@ -56,16 +56,12 @@ public class InvitationsController : ControllerBase
         return res;        
       }
       int callerId = callerIdprop.GetInt32()!;
-      Console.WriteLine("Control point 1");
 
       int calleeId = calleeIdprop.GetInt32()!;
-      Console.WriteLine("Control point 2");
 
       var caller = await _context.Users.FirstOrDefaultAsync(u => u.UserId == callerId);
-      Console.WriteLine("Control point 3");
 
       var callee = await _context.Users.FirstOrDefaultAsync(u => u.UserId == calleeId);
-      Console.WriteLine("Control point 4");
 
       if (caller == null || !caller.IsOnline || callee == null || !callee.IsOnline)
       {
@@ -75,7 +71,6 @@ public class InvitationsController : ControllerBase
       }
 
       body.TryGetProperty("selectedGame", out var selectedGame);
-      Console.WriteLine("Control point 5");
 
       var response = new { invitation, callerId, calleeId, selectedGame };
       var msg = new { type = "invitation", status = "WsStatus.OK", data = response };
@@ -84,11 +79,9 @@ public class InvitationsController : ControllerBase
         _wsManager.SendMessage(calleeId, msg);
       else if( invitation == "accept" || invitation == "reject")
         _wsManager.SendMessage(callerId, msg);
-      Console.WriteLine("Control point 6");
 
 
       res.Result = Ok(response);
-      Console.WriteLine("Control point 7");
 
       res.CalleeId = calleeId;
       res.CallerId = callerId;

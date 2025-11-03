@@ -48,7 +48,7 @@ public class GameManager : TimerManager
       Console.WriteLine($"====Timer already running for Game(s): {_games.Count} ==========");
     }
 
-    if (game == "Connect Four")
+    if (game == "panel.game.connect4")
       return _games.TryAdd(key, new GameConnect4(userId1, userId2, game));
 
     return _games.TryAdd(key, new Game(userId1, userId2, game));
