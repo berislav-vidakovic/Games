@@ -1,6 +1,6 @@
 //import { StatusCodes } from "http-status-codes"
 import type { Dispatch, SetStateAction } from "react";
-import type { User, Locales } from '@common/interfaces';
+import type { User } from '@common/interfaces';
 import { StatusCodes } from "http-status-codes";
 import { URL_CONNECT4 } from '@common/config';
 
