@@ -3,7 +3,7 @@ server {
 
     # Main site redirect
     location = / {
-        return 302 /games/panel/;
+        return 302 /panel/;
     }
 
     root /var/www/games;
