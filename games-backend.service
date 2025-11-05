@@ -1,10 +1,10 @@
 [Unit]
-Description=Games Backend
+Description=Games Backend in ASP.Net
 After=network.target
 
 [Service]
 WorkingDirectory=/var/www/games/backend
-ExecStart=/usr/bin/dotnet /var/www/games/backend/backend.dll
+ExecStart=/usr/bin/dotnet /var/www/games/backend/backend.dll --urls "http://127.0.0.1:5001"
 Restart=always
 RestartSec=5
 User=barry75

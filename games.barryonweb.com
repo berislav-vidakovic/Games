@@ -1,0 +1,98 @@
+server {
+    server_name games.barryonweb.com;
+
+    # Main site redirect
+    location = / {
+        return 302 /games/panel/;
+    }
+
+    root /var/www/games;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # Redirect /panel → /panel/
+    location = /panel {
+        return 301 /panel/;
+    }
+
+    location /panel/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /panel/index.html;
+    }
+
+    # Redirect /sudoku → /sudoku/
+    location = /sudoku {
+        return 301 /sudoku/;
+    }
+
+    location /sudoku/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /sudoku/index.html;
+    }
+
+    # Redirect /connect4 → /connect4/
+    location = /connect4 {
+        return 301 /connect4/;
+    }
+
+    location /connect4/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /connect4/index.html;
+    }
+
+
+    # Redirect /battleships → /battleships/
+    location = /battleships {
+        return 301 /battleships/;
+    }
+
+    location /battleships/ {
+        root /var/www/games/frontend;
+        index index.html;
+        try_files $uri /battleships/index.html;
+    }
+
+    # Backend API proxy
+        location /api/ {
+        proxy_pass http://localhost:5001/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection keep-alive;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # WebSocket proxy
+        location /websocket {
+        proxy_pass http://localhost:5001/websocket;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+
+    # Optional: increase timeout for long-lived connections
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/games.barryonweb.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/games.barryonweb.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+}
+
+server {
+  listen 80;
+  server_name games.barryonweb.com;
+  return 301 https://$host$request_uri;
+}

@@ -53,10 +53,10 @@ jobs:
       - name: Update Nginx config
         run: |
           ssh barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
-          scp games barry75@barryonweb.com:/var/www/games/nginx/
+          scp games.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
           ssh barry75@barryonweb.com "
-            sudo cp /var/www/games/nginx/games /etc/nginx/sites-available/ &&
-            sudo ln -sf /etc/nginx/sites-available/games /etc/nginx/sites-enabled/games &&
+            sudo cp /var/www/games/nginx/games.barryonweb.com /etc/nginx/sites-available/ &&
+            sudo ln -sf /etc/nginx/sites-available/games.barryonweb.com /etc/nginx/sites-enabled/ &&
             sudo nginx -t &&
             sudo systemctl reload nginx
           "

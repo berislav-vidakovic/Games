@@ -307,10 +307,14 @@ MySQL
   -Locally
 
       curl http://localhost:5000/api/sudoku/board
+      curl -v http://127.0.0.1:5001/api/users/all
+
 
   -Remotely
 
       Browse http://barryonweb.com/api/sudoku/board
+      curl -v https://games.barryonweb.com/api/users/all
+
 
 
 ## CI/CD pipelines
@@ -391,6 +395,24 @@ MySQL
 #### Create .github/workflows/deploy-backend.yml
   - Restart by creating service
     - Create service file sudo nano /etc/systemd/system/games-backend.service
+
+      ```bash
+      [Unit]
+      Description=Games Backend
+      After=network.target
+
+      [Service]
+      WorkingDirectory=/var/www/games/backend
+      ExecStart=/usr/bin/dotnet /var/www/games/backend/backend.dll
+      Restart=always
+      RestartSec=5
+      User=barry75
+      Environment=ASPNETCORE_ENVIRONMENT=Production
+
+      [Install]
+      WantedBy=multi-user.target
+      ```
+
     - Reload systemd
 
           sudo systemctl daemon-reload
@@ -442,6 +464,9 @@ MySQL
   ```html
   <meta charset="UTF-8" />
   ```
+
+  5Mp0wPuC9TIIy6jEiwA1V8zrAuMvUekOaxTYM84Lkv6JTt5W7cevljkhF2gB0udS
+
 
   
 

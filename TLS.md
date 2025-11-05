@@ -77,6 +77,93 @@ Only port 80 for HTTP is OK
         Congratulations, all simulated renewals succeeded:
         /etc/letsencrypt/live/barryonweb.com/fullchain.pem (success)
 
+### 4-A. Request and install certificate for games. subdomain 
+
+- Check IP address it points to 
+
+  ```bash
+  dig +short games.barryonweb.com 
+  dig +short barryonweb.com 
+  ```
+
+- Ensure Nginx has a server block for it
+
+  ```bash
+  sudo certbot --nginx -d games.barryonweb.com  
+  ```
+  ```bash
+  server {
+    server_name games.barryonweb.com;
+
+    root /var/www/games;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    listen 80;
+  }
+  ```
+- Create symbolic link into sites-enabled
+
+  ```bash
+  sudo ln -s /etc/nginx/sites-available/games.barryonweb.com /etc/nginx/sites-enabled/
+  sudo nginx -t
+  sudo systemctl reload nginx
+  ```
+
+- Run certbot
+
+  ```bash
+  sudo certbot --nginx -d games.barryonweb.com
+  ```
+
+- Add HSTS header to the end of listen 443 ssl block in Nginx conf
+
+  ```bash
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  ```
+
+- Add main site redirection under server_name in Nginx conf:
+
+  ```bash
+  # Main site redirect
+  location = / {
+      return 302 /games/panel/;
+  }
+  ```
+
+- Test
+
+   - curl -I http://games.barryonweb.com
+  
+      ```bash
+      HTTP/1.1 301 Moved Permanently
+      Server: nginx/1.24.0 (Ubuntu)
+      Date: Wed, 05 Nov 2025 15:47:51 GMT
+      Content-Type: text/html
+      Content-Length: 178
+      Connection: keep-alive
+      Location: https://games.barryonweb.com/
+      ```
+
+   - curl -I https://games.barryonweb.com
+  
+      ```bash
+      HTTP/1.1 302 Moved Temporarily
+      Server: nginx/1.24.0 (Ubuntu)
+      Date: Wed, 05 Nov 2025 15:47:36 GMT
+      Content-Type: text/html
+      Content-Length: 154
+      Location: https://games.barryonweb.com/games/panel/
+      Connection: keep-alive
+      Strict-Transport-Security: max-age=31536000; includeSubDomains
+      ```
+
+
+
+
 
 ### 5. Ensure HTTP → HTTPS redirect
 

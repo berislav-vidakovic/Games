@@ -5,8 +5,8 @@
             "WS": "ws://localhost:5003/websocket"
         },
         "Production": {
-            "HTTP": "https://barryonweb.com",
-            "WS": "wss://barryonweb.com/websocket"
+            "HTTP": "https://games.barryonweb.com",
+            "WS": "wss://games.barryonweb.com/websocket"
         }
     },
     "urlFrontend": {
@@ -17,10 +17,10 @@
           "battleship": "http://localhost:5177/"
       },
       "Production": {
-          "panel": "https://barryonweb.com/panel/",
-          "sudoku": "https://barryonweb.com/sudoku/",
-          "connect4": "https://barryonweb.com/connect4/",
-          "battleship": "https://barryonweb.com/battleships/"
+          "panel": "https://games.barryonweb.com/panel/",
+          "sudoku": "https://games.barryonweb.com/sudoku/",
+          "connect4": "https://games.barryonweb.com/connect4/",
+          "battleship": "https://games.barryonweb.com/battleships/"
       }
     }
 }
