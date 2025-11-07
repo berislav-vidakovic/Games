@@ -14,9 +14,10 @@ Only port 80 for HTTP is OK
 
     sudo apt update
     sudo apt install certbot python3-certbot-nginx
+    which certbot
     certbot --version
 
-### 4. Request and install the certificate
+### 4. Request and install the certificate for main domain
 
 - The following command will:
 
@@ -79,6 +80,23 @@ Only port 80 for HTTP is OK
 
 ### 4-A. Request and install certificate for games. subdomain 
 
+- Verify  certificates, timer and renewal 
+
+  ```bash
+  sudo certbot certificates
+  sudo systemctl status certbot.timer
+  systemctl list-timers | grep certbot
+  sudo certbot renew --dry-run
+  ```
+
+Test renewal command simulates the renewal of all Let’s Encrypt certificates without actually changing anything.
+It runs the exact same steps as a real renewal (checks DNS, validates domain ownership, contacts Let’s Encrypt).
+But instead of issuing new certs, it requests test certificates from Let’s Encrypt’s staging servers.
+It doesn’t modify live certificates or Nginx. 
+It reports any issues (permissions, missing plugins, wrong credentials, DNS propagation issues, etc).
+
+        
+
 - Check IP address it points to 
 
   ```bash
@@ -130,7 +148,7 @@ Only port 80 for HTTP is OK
   ```bash
   # Main site redirect
   location = / {
-      return 302 /games/panel/;
+      return 302 /panel/;
   }
   ```
 
@@ -160,7 +178,6 @@ Only port 80 for HTTP is OK
       Connection: keep-alive
       Strict-Transport-Security: max-age=31536000; includeSubDomains
       ```
-
 
 
 

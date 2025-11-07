@@ -26,7 +26,7 @@ import InviteDialog from './components/InviteDialog.tsx'
  
 
 function App() {
-  const [currentLang, setCurrentLangState] = useState<'en' | 'de' | 'hr'>('en');
+  const [currentLang, setCurrentLangState] = useState<'en' | 'de' | 'hr' | null>(null);
   const [usersRegistered, setUsersRegistered] = useState<User[]>([]);
   const [isConfigLoaded, setConfigLoaded] = useState<boolean>(false);
   const [isInitialized, setInitialized] = useState<boolean>(false);
@@ -40,6 +40,8 @@ function App() {
   const [calleeUserId, setCalleeUserId] = useState<number | null>(null);
   const [invitationState, setInvitationState] = useState<"init" | "sent" | "pending" | "paired">("init");
   const [selectedGame, setSelectedGame] = useState<"panel.game.sudoku" | "panel.game.connect4" | null>(null);
+  const [localesLoaded, setLocalesLoaded] = useState(false);
+
 
   useEffect( () => { 
     loadCommonConfig(setConfigLoaded);     
@@ -51,7 +53,9 @@ function App() {
         setInvitationState, setSelectedGame );      
       
       getAllUsers(handleResponseGetAllUsers );
-      getLocalization();
+      getLocalization().then(() => {
+        setLocalesLoaded(true); // mark locales as loaded
+      });
    }      
   }, [isConfigLoaded]); 
 
@@ -144,16 +148,18 @@ function App() {
   }
 
   const setCurrentLanguage = (lang: 'en' | 'de' | 'hr'): void => {
-    setCurrentLangState(lang);
     sessionStorage.setItem('currentLang', lang);
+    console.log("Set current language to ", lang);
+    setCurrentLangState(lang);
   }
 
+  // TODO: Pass lang to each call of  getTitle("panel.users", currentLang) 
 
   return (
    <div className="app-container">
     {/* --- Users Box on the left --- */}
-    <div className="users-box">
-      <h2>{getTitle("panel.users")}:</h2>
+    <div className="users-box">  
+      <h2>{localesLoaded ? getTitle("panel.users", currentLang) : "..."}:</h2>
         <ul>
         { usersRegistered.map((u) => ( 
           <li key={u.userId} className="user-item">               
@@ -202,80 +208,82 @@ function App() {
         <button
           onClick={()=>{ window.location.reload(); }}
         >
-          { getTitle("panel.connect") }
+          { localesLoaded ? getTitle("panel.connect") : "..." }
         </button>}
         {isBtnVisibleSignUp() && <button 
           //onClick={handleSignUp}
           id="btnRegister" 
           onClick={() => setShowRegisterDialog(true)}
         >
-          { getTitle("panel.signup") }
+          { localesLoaded ? getTitle("panel.signup") : "..." }
         </button>}
 
         {isBtnVisibleSignIn() && <button 
           id="btnLogin" 
           onClick={() => setShowLoginDialog(true)}          
         > 
-          { getTitle("panel.signin") } 
+          { localesLoaded ? getTitle("panel.signin"): "..." } 
         </button>}
         
 
         {isBtnVisibleSignOut() && <button 
           onClick={handleSignOut}
         > 
-          { getTitle("panel.signout") }
+          { localesLoaded ? getTitle("panel.signout") : "..."}
         </button>}
 
         {isBtnVisibleRun() &&
         <button 
           onClick={handleRun}
-        > { getTitle("panel.run") }  </button>}
+        > { localesLoaded ? getTitle("panel.run") : "..."}  </button>}
           
         {isBtnVisibleInvite() &&
         <button 
           onClick={handleInvite}
-        >{ getTitle("panel.invite") } </button>}
+        >{ localesLoaded ? getTitle("panel.invite") : "..."} </button>}
 
         {isBtnVisibleCancel() &&  <button 
           onClick={handleCancelInvitation}
-        >{ getTitle("panel.cancel") } </button>}
+        >{ localesLoaded ? getTitle("panel.cancel") : "..."} </button>}
 
         {isBtnVisibleResponse() && ( <>
-          <button onClick={() => handleRespond(true)}>{ getTitle("panel.accept") } </button>
-          <button onClick={() => handleRespond(false)}>{ getTitle("panel.reject") } </button>
+          <button onClick={() => handleRespond(true)}>{ localesLoaded ? getTitle("panel.accept") : "..."} </button>
+          <button onClick={() => handleRespond(false)}>{ localesLoaded ? getTitle("panel.reject") : "..."} </button>
         </>)}
       </div>
       
       
       
     {selectedGame  
-     ? <h2>{ getTitle( selectedGame) }</h2>
-     : <h2 key={currentLang}>{ getTitle("panel.title") }</h2>
+     ? <h2>{ localesLoaded ? getTitle( selectedGame) : "..."}</h2>
+     : <h2 key={currentLang}>{ localesLoaded ? getTitle("panel.title") : "..."}</h2>
     }
       <div className='status-box'>
         { currentUserId != null  
-           ? <p><b>{ getTitle("panel.loginmsg1") } {
+           ? <p><b>{ localesLoaded ? getTitle("panel.loginmsg1") : "..."} {
                 usersRegistered.find(u=>u.userId==currentUserId)!.fullname
-              } </b>[{onlineUsers}{ getTitle("panel.loginmsg2") }</p>
-           : <p>{ getTitle("panel.loginmsg3") } [{onlineUsers}{ getTitle("panel.loginmsg2") }</p>
+              } </b>[{onlineUsers}{ localesLoaded ? getTitle("panel.loginmsg2") : "..."}</p>
+           : <p>{ 
+            localesLoaded ? getTitle("panel.loginmsg3") : "..."} 
+            [{onlineUsers}{ localesLoaded ? getTitle("panel.loginmsg2") : "..."}</p>
         }
         {selectedGame && isWsConnected &&(
           <>
             { currentUserId && calleeUserId && callerUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#090"}}>
-                  { getTitle("panel.invitemsg") } {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
+                  { localesLoaded ? getTitle("panel.invitemsg"): "..." } {usersRegistered.find(u=>u.userId==calleeUserId)!.fullname}
               </p> }
               { currentUserId && callerUserId && calleeUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#e00"}}>
-                  { getTitle("panel.invitedmsg") } {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
+                  { localesLoaded ? getTitle("panel.invitedmsg") : "..."} {usersRegistered.find(u=>u.userId==callerUserId)!.fullname}
               </p> }
               { currentUserId && invitationState == "paired" && calleeUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#00e"}}>
-                  { getTitle("panel.acceptmsg") } 
+                  { localesLoaded ? getTitle("panel.acceptmsg"): "..." } 
               </p> }
               { currentUserId && invitationState == "paired" && callerUserId == currentUserId && 
               <p style={{fontWeight:"700", color:"#00e"}}>
-                  { getTitle("panel.acceptedmsg") } 
+                  { localesLoaded ? getTitle("panel.acceptedmsg") : "..."} 
               </p> } 
           </>              
           )}
@@ -295,7 +303,7 @@ function App() {
               else setSelectedGame('panel.game.sudoku');
               
             }}
-          title={getTitle(selectedGame as string)}
+          title={localesLoaded ? getTitle(selectedGame as string) : "..." }
           className={selectedGame === 'panel.game.sudoku' ? 'selected-button' : ''}
         >
           <img src={sudokuImg} alt="Sudoku" />
@@ -312,7 +320,7 @@ function App() {
               setSelectedGame('panel.game.connect4');
             }
           }} 
-          title={getTitle('panel.game.connect4')}
+          title={localesLoaded ? getTitle('panel.game.connect4') : "..."}
           className={selectedGame === 'panel.game.connect4' ? 'selected-button' : ''}
         >
           <img src={connect4Img} alt="Connect 4" />

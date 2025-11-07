@@ -20,11 +20,13 @@ function detectEnv(): 'Development' | 'Production' {
 }
 
 
-export const getTitle = (paramKey: string): string => {
-  const currentLang = sessionStorage.getItem('currentLang') || 'en';
+export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = null): string => {
+  //const currentLang = sessionStorage.getItem('currentLang') || 'en';
+  const currentLang = lang || sessionStorage.getItem('currentLang') || 'en';
   const locale = locales.find( l => 
     l.paramKey == paramKey && l.language == currentLang );
-  console.log("Get title", paramKey, "->", locale);
+  if( paramKey == "panel.users")
+    console.log("Get title", paramKey, "->", locale, currentLang);
   return locale ? locale.paramValue : paramKey;
 }
 
@@ -51,17 +53,22 @@ export async function loadCommonConfig(
   setConfigLoaded(true);
 }
 
-export async function getLocalization() {
-    sendGETRequest('api/localization/get', handleGetLocalization);
-    //console.log("GET localization sent...");
-} 
+export async function getLocalization(): Promise<void> {
+  return new Promise((resolve) => {
+    sendGETRequest('api/localization/get', (jsonResp: any) => {
+      handleGetLocalization(jsonResp);
+      resolve(); // resolve the promise once locales are loaded
+    });
+  });
+}
+
 
 export  const handleGetLocalization = ( jsonResp: any ) => {    
-  console.log("GET Locales:", jsonResp)
+  console.log("Resp GET Locales:", jsonResp)
   locales = jsonResp.locales.map( (l: any) => ({
     paramKey: l.paramKey,
     paramValue: l.paramValue,
     language: l.language
   }) );
-  console.log("Locales stored:", locales);
+  //console.log("Locales stored:", locales);
 }

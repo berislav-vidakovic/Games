@@ -28,5 +28,12 @@ CREATE TABLE localization (
   PRIMARY KEY (paramkey, lang)
 );
 
+DROP TABLE IF EXISTS healthcheck;
+CREATE TABLE healthcheck (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  msg VARCHAR(255)
+);
+
+INSERT INTO healthcheck (msg) VALUES ('Hello world from DB!');
 
 COMMIT;
