@@ -52,7 +52,12 @@ export async function loadCommonConfig(
     "subDomain": "games" 
   }, */
   let backend = 'backendCsMySQL';
-  backend = 'backendJavaMySQL';
+  const hostname = window.location.hostname.toLowerCase();
+  if (hostname.includes('gamesj')) {
+    backend = 'backendJavaMySQL';
+  } else if (hostname.includes('games')) {
+    backend = 'backendCsMySQL';
+  }
   
 
   /* "urlBackend": {
