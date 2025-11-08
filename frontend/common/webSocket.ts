@@ -25,7 +25,7 @@ export async function connectWS(
         //console.log("Creating new WebSocket connection...");
 
         ws.onopen = () => {
-          //console.log("WebSocket connected!");
+          console.log("WebSocket connected!");
           setWsConnected(true);
         };
 
