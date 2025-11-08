@@ -188,6 +188,15 @@ body {
   flex-wrap: wrap; 
 }
 
+.tech-stack {
+  display: flex;
+  margin-bottom: 8px;
+  justify-content: flex-start; 
+  flex-wrap: wrap; 
+}
+
+
+
 .info-connect4 {
   display: flex;
   align-items: center;      /* vertical alignment */

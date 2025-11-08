@@ -178,7 +178,7 @@ function App() {
 
     {/* --- Right main content --- */}
     <div className="main-content">
-      <div className="auth-buttons">
+      <div className="auth-buttons">        
         <img 
           src={enImg} 
           className = "flaglocales" 
@@ -252,8 +252,10 @@ function App() {
           <button onClick={() => handleRespond(false)}>{ localesLoaded ? getTitle("panel.reject") : "..."} </button>
         </>)}
       </div>
+      
 
-      <div className="auth-buttons">
+      <div className="tech-stack">
+         Tech stack:
          { techStack.map((img,idx)=>
           <img 
             key={idx} 
