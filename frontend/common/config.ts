@@ -40,17 +40,21 @@ export async function loadCommonConfig(
   }
   const config = await response.json();
   console.log("Config loaded:", config);
-  
-  let backend = 'backendJavaMySQL';
-  const hostname = window.location.hostname.toLowerCase();
-  console.log("hostname:", hostname);
-  if (hostname.includes('gamesj')) {
-    backend = 'backendJavaMySQL';
-  } else if (hostname.includes('games')) {
-    backend = 'backendCsMySQL';
-  }
-
   console.log(`Loaded environment: ${currentEnv}`);
+  
+  let backend = import.meta.env.VITE_BACKEND;
+  //let backend = "backendJavaMySQL";
+  console.log("Initial backend from env:", backend);
+
+  if( currentEnv === 'Production' ) {
+    const hostname = window.location.hostname.toLowerCase();
+    console.log("hostname:", hostname);
+    if (hostname.includes('gamesj')) {
+      backend = 'backendJavaMySQL';
+    } else if (hostname.includes('games')) {
+      backend = 'backendCsMySQL';
+    }
+  }
 
   URL_BACKEND_HTTP = config.urlBackend[backend][currentEnv].HTTP;
   URL_BACKEND_WS = config.urlBackend[backend][currentEnv].WS;

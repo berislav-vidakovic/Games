@@ -256,7 +256,7 @@ function App() {
 
       <div className="tech-stack">
          Tech stack:
-         { techStack.map((img,idx)=>
+         { techStack && techStack.map((img,idx)=>
           <img 
             key={idx} 
             src={img} 
