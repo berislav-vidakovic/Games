@@ -41,6 +41,7 @@ function App() {
   const [invitationState, setInvitationState] = useState<"init" | "sent" | "pending" | "paired">("init");
   const [selectedGame, setSelectedGame] = useState<"panel.game.sudoku" | "panel.game.connect4" | null>(null);
   const [localesLoaded, setLocalesLoaded] = useState(false);
+  const [techStack, setTechStack] = useState<string[]>([]);
 
 
   useEffect( () => { 
@@ -50,7 +51,7 @@ function App() {
   useEffect( () => { if( isConfigLoaded){
       setStateFunctionRefs(setInitialized, setUsersRegistered, 
         setCurrentUserId, setOnlineUsers, setCallerUserId, setCalleeUserId,
-        setInvitationState, setSelectedGame );      
+        setInvitationState, setSelectedGame, setTechStack );      
       
       getAllUsers(handleResponseGetAllUsers );
       getLocalization().then(() => {
@@ -251,6 +252,20 @@ function App() {
           <button onClick={() => handleRespond(false)}>{ localesLoaded ? getTitle("panel.reject") : "..."} </button>
         </>)}
       </div>
+
+      <div className="auth-buttons">
+         { techStack.map((img,idx)=>
+          <img 
+            key={idx} 
+            src={img} 
+            className = "flaglocales" 
+          />
+         )
+        
+         }
+       
+      </div>
+
       
       
       

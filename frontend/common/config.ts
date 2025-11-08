@@ -34,12 +34,6 @@ export async function loadCommonConfig(
   setConfigLoaded:  Dispatch<SetStateAction<boolean>>
 ): Promise<void> {
   const currentEnv = detectEnv();
-/*
-  let response = await fetch('subdomains.json');
-  if (!response.ok) {
-    throw new Error('Failed to load configuration subdomains.json');
-  }
-  const subdomains = await response.json(); */
   const response = await fetch('clientsettings.json');
   if (!response.ok) {
     throw new Error('Failed to load configuration clientsettings.json');
@@ -47,32 +41,14 @@ export async function loadCommonConfig(
   const config = await response.json();
   console.log("Config loaded:", config);
   
-  /*"BackendCsMySQL": {
-    "devPort": 5003,
-    "subDomain": "games" 
-  }, */
-  let backend = 'backendCsMySQL';
+  let backend = 'backendJavaMySQL';
   const hostname = window.location.hostname.toLowerCase();
+  console.log("hostname:", hostname);
   if (hostname.includes('gamesj')) {
     backend = 'backendJavaMySQL';
   } else if (hostname.includes('games')) {
     backend = 'backendCsMySQL';
   }
-  
-
-  /* "urlBackend": {
-      "Development": {
-          "HTTP": "http://localhost:5003",
-          "WS": "ws://localhost:5003/websocket"
-      },
-      "Production": {
-          "HTTP": "https://games.barryonweb.com",
-          "WS": "wss://games.barryonweb.com/websocket"
-      }
-    }, */
-
-     //"HTTP": "http://localhost:5003",
-     //"WS": "ws://localhost:5003/websocket"
 
   console.log(`Loaded environment: ${currentEnv}`);
 

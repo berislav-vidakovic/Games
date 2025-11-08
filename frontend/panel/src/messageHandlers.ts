@@ -13,6 +13,7 @@ let setCallerUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setCalleeUserIdRef:  Dispatch<SetStateAction<number | null>>;
 let setInvitationStateRef: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>;
 let setSelectedGameRef: Dispatch<SetStateAction<"panel.game.sudoku" | "panel.game.connect4" | null>>;
+let setTechStackRef: Dispatch<SetStateAction<string[]>>;
 
 
 export function setStateFunctionRefs(
@@ -24,6 +25,7 @@ export function setStateFunctionRefs(
   setCalleeUserId:  Dispatch<SetStateAction<number | null>>,
   setInvitationState: Dispatch<SetStateAction<"init" | "sent" | "pending" | "paired">>,
   setSelectedGame: Dispatch<SetStateAction<"panel.game.sudoku" | "panel.game.connect4" | null>>,
+  setTechStack: Dispatch<SetStateAction<string[]>>
 ){
     setInitializedRef = setInitialized;
     setUsersRegisteredRef = setUsersRegistered;
@@ -33,6 +35,7 @@ export function setStateFunctionRefs(
     setCalleeUserIdRef = setCalleeUserId;
     setInvitationStateRef = setInvitationState;
     setSelectedGameRef = setSelectedGame;
+    setTechStackRef = setTechStack;
 }
 
 export  const handleResponseGetAllUsers = ( jsonResp: any ) => {    
@@ -53,6 +56,8 @@ export  const handleResponseGetAllUsers = ( jsonResp: any ) => {
   sessionStorage.setItem("myID", jsonResp.id );
   setInitializedRef(true);
   setCurrentUserIdRef(null);
+  setTechStackRef(jsonResp.techstack);
+  console.log("Tech stack:", jsonResp.techstack);
 }
 
 export const handleResponseSignUp = ( jsonResp: any, status: number ) => {    
