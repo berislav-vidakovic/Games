@@ -22,10 +22,11 @@ CREATE TABLE users (
 
 DROP TABLE IF EXISTS localization;
 CREATE TABLE localization (
+  id INT AUTO_INCREMENT PRIMARY KEY,
   paramkey VARCHAR(100) NOT NULL,
   paramvalue VARCHAR(100) NOT NULL,
   lang VARCHAR(2) NOT NULL,
-  PRIMARY KEY (paramkey, lang)
+  UNIQUE KEY uk_param_lang (paramkey, lang)
 );
 
 DROP TABLE IF EXISTS healthcheck;

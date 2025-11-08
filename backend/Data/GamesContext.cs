@@ -16,7 +16,10 @@ public class GamesContext : DbContext
   {
     modelBuilder.Entity<User>().ToTable("users");
     modelBuilder.Entity<SudokuBoard>().ToTable("sudokuboards");
-    modelBuilder.Entity<Localization>().ToTable("localization")
-      .HasKey(l => new { l.ParamKey, l.Language });
+    modelBuilder.Entity<Localization>().ToTable("localization");
+    modelBuilder.Entity<Localization>()
+            .HasIndex(l => new { l.ParamKey, l.Language })
+            .IsUnique();
+
   }
 }

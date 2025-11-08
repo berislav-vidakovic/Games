@@ -42,12 +42,14 @@ jobs:
       # Copy published files to server
       - name: Deploy backend files 
         run: |
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/backend"
           scp -r backend/publish/* barry75@barryonweb.com:/var/www/games/backend/
       
       # Copy DB scripts to server
       - name: Copy DB scripts 
         run: |
-          scp -r backend/Data/*.sql barry75@barryonweb.com:/var/www/games/backend/data/
+          ssh barry75@barryonweb.com "mkdir -p /var/www/games/data/mysql"
+          scp -r backend/Data/*.sql barry75@barryonweb.com:/var/www/games/data/mysql/
       
       # Deploy Nginx config and reload
       - name: Update Nginx config

@@ -24,7 +24,7 @@ public class LocalizationController : ControllerBase
     _gameManager = gm;
   } 
 
-  // POST /api/localization/get
+  // GET /api/localization/get
   [HttpGet("get")]
   public async Task<ActionResult<IEnumerable<Localization>>> GetLocalization()
   {     

@@ -4,6 +4,9 @@ namespace Models;
 
 public class Localization
 {
+  [Column("id")]
+  public int Id { get; set; }
+  
   [Column("paramkey")]
   public string ParamKey { get; set; } = "";
   
