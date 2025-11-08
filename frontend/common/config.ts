@@ -45,6 +45,7 @@ export async function loadCommonConfig(
     throw new Error('Failed to load configuration clientsettings.json');
   }
   const config = await response.json();
+  console.log("Config loaded:", config);
   
   /*"BackendCsMySQL": {
     "devPort": 5003,
@@ -68,7 +69,7 @@ export async function loadCommonConfig(
      //"HTTP": "http://localhost:5003",
      //"WS": "ws://localhost:5003/websocket"
 
-  ////console.log(`Loaded environment: ${currentEnv}`);
+  console.log(`Loaded environment: ${currentEnv}`);
 
   URL_BACKEND_HTTP = config.urlBackend[backend][currentEnv].HTTP;
   URL_BACKEND_WS = config.urlBackend[backend][currentEnv].WS;
@@ -80,10 +81,10 @@ export async function loadCommonConfig(
     URL_CONNECT4 = config.urlFrontend[currentEnv].connect4;
     URL_BATTLESHIP = config.urlFrontend[currentEnv].battleship;
   } else {
-    URL_PANEL = config.urlFrontend[backend][currentEnv].panel;
-    URL_SUDOKU = config.urlFrontend[backend][currentEnv].sudoku;
-    URL_CONNECT4 = config.urlFrontend[backend][currentEnv].connect4;
-    URL_BATTLESHIP = config.urlFrontend[backend][currentEnv].battleship;
+    URL_PANEL = config.urlFrontend[currentEnv][backend].panel;
+    URL_SUDOKU = config.urlFrontend[currentEnv][backend].sudoku;
+    URL_CONNECT4 = config.urlFrontend[currentEnv][backend].connect4;
+    URL_BATTLESHIP = config.urlFrontend[currentEnv][backend].battleship;
   }
   
 
