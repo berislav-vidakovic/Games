@@ -31,7 +31,8 @@ public class UsersController : ControllerBase
   {
     var users = await _context.Users.ToListAsync();
     Guid id = Guid.NewGuid();
-    var response = new { id, users };
+    List<string> techstack = new List<string> { "text", ".Net C# MySQL" };
+    var response = new { id, users, techstack };
     return Ok( response );
   }
 

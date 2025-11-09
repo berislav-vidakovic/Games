@@ -255,13 +255,16 @@ function App() {
       
 
       <div className="tech-stack">
-         Tech stack:
-         { techStack && techStack.map((img,idx)=>
-          <img 
-            key={idx} 
-            src={img} 
-            className = "flaglocales" 
-          />
+         Tech stack: &nbsp;
+         {techStack && 
+            techStack[0] == "text" 
+            ? techStack[1]
+            : techStack.map((img,idx)=>
+              <img 
+                key={idx} 
+                src={img} 
+                className = "flaglocales" 
+              />
          )
         
          }

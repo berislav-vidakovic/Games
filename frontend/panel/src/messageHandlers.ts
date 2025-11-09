@@ -73,8 +73,8 @@ export const handleResponseSignUp = ( jsonResp: any, status: number ) => {
 
 export function handleUserLogin( jsonResp: any, status: number ){
   //var response = new { userId, isOnline = true };
-  //console.log("******** ****** POST response handleUserLogin received: ", 
-     // jsonResp, "Status: ", status); 
+  console.log("******** ****** POST response handleUserLogin received: ", 
+      jsonResp, "Status: ", status); 
   if( status == StatusCodes.OK )
     setCurrentUserIdRef(Number(jsonResp.userId));
 }
