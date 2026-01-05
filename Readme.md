@@ -68,3 +68,15 @@
   ```
 
 
+### 3. Deployment environment control
+
+- Create bash script to build Doker image and run docker container
+  ```bash
+     docker compose -f docker-compose.test.yml up -d
+    ```
+  - Restart container
+    ```bash
+    docker compose -f docker-compose.test.yml down
+    docker compose -f docker-compose.test.yml build --no-cache
+    docker compose -f docker-compose.test.yml up -d
+  ```
