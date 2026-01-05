@@ -21,6 +21,16 @@ function detectEnv(): 'Development' | 'Production' {
   return import.meta.env.MODE === 'production' ? 'Production' : 'Development';
 }
 
+function getHttpUrl(): string {
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}`;
+}
+
+function getWebSocketUrl(): string {
+  const WS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${WS_PROTOCOL}://${window.location.host}/websocket`;  
+}
+
 export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = null): string => {
   //const currentLang = sessionStorage.getItem('currentLang') || 'en';
   const currentLang = lang || sessionStorage.getItem('currentLang') || 'en';
@@ -48,8 +58,15 @@ export async function loadCommonConfig(
   let backend = 'backendJavaMySQL';  
   setApiOption(apiDesign);
 
-  URL_BACKEND_HTTP = config.urlBackend[backend][currentEnv].HTTP;
-  URL_BACKEND_WS = config.urlBackend[backend][currentEnv].WS;
+  if( currentEnv === 'Development' ) {
+    URL_BACKEND_HTTP = config.urlBackend[backend][currentEnv].HTTP;
+    URL_BACKEND_WS = config.urlBackend[backend][currentEnv].WS;
+  }
+  else { //Production
+    URL_BACKEND_HTTP = getHttpUrl();
+    URL_BACKEND_WS = getWebSocketUrl();
+  }
+  
   console.log("Backend URLs:", URL_BACKEND_HTTP, URL_BACKEND_WS);
 
   if( currentEnv === 'Development' ) {
@@ -57,11 +74,15 @@ export async function loadCommonConfig(
     URL_SUDOKU = config.urlFrontend[currentEnv].sudoku;
     URL_CONNECT4 = config.urlFrontend[currentEnv].connect4;
     URL_MEMORY = config.urlFrontend[currentEnv].memory;
-  } else {
-    URL_PANEL = config.urlFrontend[currentEnv][backend].panel;
-    URL_SUDOKU = config.urlFrontend[currentEnv][backend].sudoku;
-    URL_CONNECT4 = config.urlFrontend[currentEnv][backend].connect4;
-    URL_MEMORY = config.urlFrontend[currentEnv][backend].memory;
+  } else { // Production
+    //URL_PANEL = config.urlFrontend[currentEnv][backend].panel;
+    //URL_SUDOKU = config.urlFrontend[currentEnv][backend].sudoku;
+    //URL_CONNECT4 = config.urlFrontend[currentEnv][backend].connect4;
+    //URL_MEMORY = config.urlFrontend[currentEnv][backend].memory;
+    URL_PANEL = URL_BACKEND_HTTP + "/panel/";
+    URL_SUDOKU = URL_BACKEND_HTTP + "/sudoku/"; 
+    URL_CONNECT4 =  URL_BACKEND_HTTP + "/connect4/";
+    URL_MEMORY =  URL_BACKEND_HTTP + "/memory/";
   }
 
   // GraphQL healthcheck 
