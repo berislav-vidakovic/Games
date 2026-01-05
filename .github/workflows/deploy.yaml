@@ -128,9 +128,9 @@ jobs:
       # Transfer frontend from GitHub Repo to Ubuntu server via SCP
       - name: Deploy frontend via SSH to server
         run: |
-          scp -P -r $SSH_PORT frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
-          scp -P -r $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
-          scp -P -r $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
+          scp -r -P $SSH_PORT frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
+          scp -r -P $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
+          scp -r -P $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
 
 
  
