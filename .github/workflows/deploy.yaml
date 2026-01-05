@@ -29,6 +29,7 @@ jobs:
       # Build backend
       - name: Build backend
         run: |
+          cd backend
           mvn clean package -DskipTests
 
       # Setup SSH
