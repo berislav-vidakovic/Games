@@ -16,8 +16,8 @@
         "WS": "ws://localhost:8082/websocket"
       },
       "Production": {
-        "HTTP": "https://gamesj.barryonweb.com",
-        "WS": "wss://gamesj.barryonweb.com/websocket"
+        "HTTP": "https://games-dev.barryonweb.com",
+        "WS": "wss://games-dev.barryonweb.com/websocket"
       }
     }
   },
@@ -36,10 +36,10 @@
         "memory": "https://games.barryonweb.com/memory/"
       },
       "backendJavaMySQL": {
-        "panel": "https://gamesjclient.barryonweb.com/panel/",
-        "sudoku": "https://gamesjclient.barryonweb.com/sudoku/",
-        "connect4": "https://gamesjclient.barryonweb.com/connect4/",
-        "memory": "https://gamesjclient.barryonweb.com/memory/"
+        "panel": "https://games-dev.barryonweb.com/panel/",
+        "sudoku": "https://games-dev.barryonweb.com/sudoku/",
+        "connect4": "https://games-dev.barryonweb.com/connect4/",
+        "memory": "https://games-dev.barryonweb.com/memory/"
       }
     }
   }

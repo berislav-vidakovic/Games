@@ -23,8 +23,8 @@ public class AppConfig {
                     .allowedOrigins("http://localhost:5174",
                       "http://localhost:5175", 
                       "http://localhost:5176", 
-                      "https://gamesj.barryonweb.com",
-                      "https://gamesjclient.barryonweb.com")
+                      "https://games-dev.barryonweb.com"
+                    )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*") // GraphQL required
                     .allowCredentials(true);

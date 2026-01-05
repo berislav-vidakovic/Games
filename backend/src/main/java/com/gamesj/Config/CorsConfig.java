@@ -18,8 +18,7 @@ public class CorsConfig {
                 "http://localhost:5174",
                 "http://localhost:5175",
                 "http://localhost:5176",
-                "https://gamesj.barryonweb.com",
-                "https://gamesjclient.barryonweb.com"
+                "https://games-dev.barryonweb.com"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
