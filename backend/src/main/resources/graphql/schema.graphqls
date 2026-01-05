@@ -1,0 +1,50 @@
+type Query {
+  ping: String
+  pingDb: String
+  getAllUsers: UsersAll
+  localizations(clientId: ID!): LocalizationResponse
+}
+
+type Mutation {
+  registerUser( login: String!, fullName: String!, password: String!): RegisterUserPayload!
+  refreshToken(clientId: String!, refreshToken: String): RefreshTokenResponse!
+}
+
+type UsersAll {
+  id: ID!
+  users: [User!]!
+  techstack: [String!]!
+}
+
+type User {
+  userId: Int!
+  login: String!
+  fullName: String
+  isOnline: Boolean!
+}
+
+type RegisterUserPayload {
+  acknowledged: Boolean!
+  user: User
+  error: String
+}
+
+type LocalizationResponse {
+  locales: [Localization!]!
+}
+
+type Localization {
+  id: ID!
+  paramKey: String
+  paramValue: String
+  language: String
+}
+
+type RefreshTokenResponse {
+  accessToken: String
+  refreshToken: String
+  userId: Int!
+  isOnline: Boolean!
+  error: String
+}
+

@@ -1,0 +1,25 @@
+# ===== OS / Editor =====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ===== Backend (Java / Maven / Spring Boot) =====
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Logs
+*.log
+
+# ===== Frontend (React / Vite / TypeScript) =====
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ===== Environment files =====
+.env
+.env.*
