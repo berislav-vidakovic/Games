@@ -60,7 +60,7 @@ jobs:
       - name: Deploy images 
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/backend/images"
-          scp -P $SSH_PORT backend/src/main/resources/static/images/*.png barry75@barryonweb.com:/var/www/games/gamesj/images/    
+          scp -P $SSH_PORT backend/src/main/resources/static/images/*.png barry75@barryonweb.com:/var/www/games/backend/images/    
 
       # Deploy Nginx config and reload
       - name: Update Nginx config
