@@ -1,0 +1,15 @@
+node_modules
+
+panel/node_modules
+panel/dist
+
+sudoku/node_modules
+sudoku/dist
+
+connect4/node_modules
+connect4/dist
+
+./gamesjclient.barryonweb copy.com
+
+
+
