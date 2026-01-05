@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gamesj.Core.Repositories.UserRepository;
+import com.gamesj.GamesjApplication;
 import com.gamesj.Core.DTO.UsersAll;
 import com.gamesj.Core.Models.User;
 
@@ -31,7 +32,8 @@ public class UserService {
     List<String> techstack = List.of(
         baseUrl + "/images/java.png",
         baseUrl + "/images/spring.png",
-        baseUrl + "/images/mysql.png"
+        baseUrl + "/images/mysql.png",
+        GamesjApplication.getVersionInfo()
     );
 
     UsersAll dtoUsersAll = new UsersAll(

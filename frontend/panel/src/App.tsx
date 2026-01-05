@@ -21,6 +21,8 @@ import RegisterDialog from './components/RegisterDialog.tsx'
 import LoginDialog from './components/LoginDialog.tsx' 
 import InviteDialog from './components/InviteDialog.tsx' 
 
+const VERSION_KEY="Version";
+const VERSION_DELIMITER="=";
 
 function App() {
   const [currentLang, setCurrentLangState] = useState<'en' | 'de' | 'hr' | null>(null);
@@ -297,11 +299,11 @@ function App() {
       </div>
       
       <div className="tech-stack">
-         Tech stack: &nbsp;
+         {"Games "+ techStack.find(e=>e.slice(0,VERSION_KEY.length)==VERSION_KEY)?.split(VERSION_DELIMITER)[1] } &nbsp;
          {techStack && 
-            techStack[0] == "text" 
-            ? techStack[1]
-            : techStack.map((img,idx)=>
+            techStack
+              .filter(e=>e.slice(0,VERSION_KEY.length)!=VERSION_KEY)
+              .map((img,idx)=>
               <img 
                 key={idx} 
                 src={img} 

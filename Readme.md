@@ -32,7 +32,8 @@
   - Restart container
     ```bash
     docker compose -f docker-compose.test.yml down
-    docker compose -f docker-compose.test.yml up -d --build
+    docker compose -f docker-compose.test.yml build --no-cache
+    docker compose -f docker-compose.test.yml up -d
     ```
   - Test
     ```bash
