@@ -20,11 +20,24 @@
 - Add docker-compose.yml to backend 
   - map Port 8084:8080 and specify DB details
   - Override Port from application.yml with  --server.port=8080
-- Build & run container on server manually 
-  - Build
-    ```bash
-    docker build -t games-backend-test .
-    ```
+  - Build & run container on server
+      ```yaml
+      services:
+        games-backend-test:
+          build: .
+          container_name: games-backend-test
+          ports:
+            - "8084:8080"
+          environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://barryonweb.com:3306/games_test
+            SPRING_DATASOURCE_USERNAME: barry75
+            SPRING_DATASOURCE_PASSWORD: abc123
+            SPRING_PROFILES_ACTIVE: prod
+            JAVA_OPTS: "-Xms256m -Xmx512m"
+            SPRING_SERVER_PORT: 8080
+          command: ["java", "-jar", "app.jar", "--server.port=8080"]
+          restart: unless-stopped
+      ```
   - Run
     ```bash
     docker compose -f docker-compose.test.yml up -d
@@ -34,6 +47,7 @@
     docker compose -f docker-compose.test.yml down
     docker compose -f docker-compose.test.yml build --no-cache
     docker compose -f docker-compose.test.yml up -d
+    docker compose -f docker-compose.test.yml up -d --remove-orphans
     ```
   - Test
     ```bash
@@ -50,6 +64,7 @@
 
 - update server name 
 - update Port to 8084
+- Enable Nginx config site
 - Test
   ```bash
   curl http://games-test.barryonweb.com/api/ping
@@ -72,11 +87,19 @@
 
 - Create bash script to build Doker image and run docker container
   ```bash
-     docker compose -f docker-compose.test.yml up -d
-    ```
-  - Restart container
-    ```bash
-    docker compose -f docker-compose.test.yml down
-    docker compose -f docker-compose.test.yml build --no-cache
-    docker compose -f docker-compose.test.yml up -d
+  #!/bin/bash
+  set -e
+
+  PROJECT_NAME="games-test"
+  COMPOSE_FILE="docker-compose.test.yml"
+
+  echo "Stopping and removing container and network..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME down --remove-orphans
+
+  echo "Building image from scratch..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build --no-cache
+
+  echo "Starting container..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME up -d
   ```
+
