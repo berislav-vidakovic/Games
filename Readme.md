@@ -1,4 +1,10 @@
-# Games - Full stack project in React, Java and MySql
+# 🎮 Games – Full Stack Game Platform
+
+
+
+
+**Games** is a full‑stack web application showcasing classic games like **Sudoku** and **Connect4** with a modern architecture:
+React frontend, **Java Spring Boot backend**, **MySQL database**, and both **REST & GraphQL APIs**, including **WebSocket** support for real‑time features.
 
 <div style="margin-bottom: 12px;">
 <img src = "docs/images/ts.png" style="margin-right: 15px;" /> 
@@ -11,95 +17,194 @@
 <img src = "docs/images/CI-CD.png" style="margin-right: 15px;" /> 
 </div>
 
-## Setup Test environment in Docker container
 
-### 1. Containerize backend 
+This project is designed as a **portfolio project** demonstrating real‑world full‑stack development and deployment practices.
 
-- Add Docker file to backend
-  - internal Port 8080
-- Add docker-compose.yml to backend 
-  - map Port 8084:8080 and specify DB details
-  - Override Port from application.yml with  --server.port=8080
-  - Build & run container on server
-      ```yaml
-      services:
-        games-backend-test:
-          build: .
-          container_name: games-backend-test
-          ports:
-            - "8084:8080"
-          environment:
-            SPRING_DATASOURCE_URL: jdbc:mysql://barryonweb.com:3306/games_test
-            SPRING_DATASOURCE_USERNAME: barry75
-            SPRING_DATASOURCE_PASSWORD: abc123
-            SPRING_PROFILES_ACTIVE: prod
-            JAVA_OPTS: "-Xms256m -Xmx512m"
-            SPRING_SERVER_PORT: 8080
-          command: ["java", "-jar", "app.jar", "--server.port=8080"]
-          restart: unless-stopped
-      ```
-  - Run
-    ```bash
-    docker compose -f docker-compose.test.yml up -d
-    ```
-  - Restart container
-    ```bash
-    docker compose -f docker-compose.test.yml down
-    docker compose -f docker-compose.test.yml build --no-cache
-    docker compose -f docker-compose.test.yml up -d
-    docker compose -f docker-compose.test.yml up -d --remove-orphans
-    ```
-  - Test
-    ```bash
-    curl http://localhost:8084/api/ping
-    curl http://localhost:8084/api/pingdb
-    ```
+---
 
-- Check environment variable within Docker container
-  ```bash
-  docker exec -it games-backend-test env | grep SPRING
-  ```
+## 📑 Table of Contents
 
-### 2. Backend routing setup - Nginx config for http
+- [🎯 Project Overview](#project-overview)
+- [🚀 Features](#features)
+- [🧰 Tech Stack](#tech-stack)
+- [📁 Repository Structure](#repository-structure)
+- [🛠️ Local Development](#local-development)
+- [🐳 Docker Test Environment](#docker-test-environment)
+- [⚙️ Environment Variables](#environment-variables)
+- [🌐 Deployment](#deployment)
+- [🧠 Skills demonstrated](#skills-demonstrated)
+- [📫 Contact](#contact)
+- [📄 License](#license)
 
-- update server name 
-- update Port to 8084
-- Enable Nginx config site
-- Test
-  ```bash
-  curl http://games-test.barryonweb.com/api/ping
-  curl http://games-test.barryonweb.com/api/pingdb
-  ```
+---
 
-- Enable HTTPS
-  ```bash
-  sudo certbot --nginx -d games-test.barryonweb.com
-  ```
+## Project Overview
 
-- Test
-  ```bash
-  curl https://games-test.barryonweb.com/api/ping
-  curl https://games-test.barryonweb.com/api/pingdb
-  ```
+The repository contains a complete, production‑style application stack:
 
+- Multiple browser‑playable games
+- Modular frontend applications
+- Backend APIs with REST and GraphQL
+- Persistent storage using MySQL
+- Docker‑based test environments
+- CI/CD automation and Nginx reverse proxy configuration
 
-### 3. Deployment environment control
+---
 
-- Create bash script to build Doker image and run docker container
-  ```bash
-  #!/bin/bash
-  set -e
+## Features
 
-  PROJECT_NAME="games-test"
-  COMPOSE_FILE="docker-compose.test.yml"
+- 🎲 Classic games: **Sudoku**, **Connect4**
+- ⚙️ Spring Boot backend with layered architecture
+- 🔗 **REST + GraphQL APIs**
+- 🧠 Game logic handled server‑side
+- 📡 **WebSocket** support for real‑time updates
+- 🗄️ **MySQL** persistence
+- 🐳 Docker & Docker Compose support
+- 🔄 GitHub Actions CI/CD pipelines
+- 🌍 Nginx configuration for production & test environments
 
-  echo "Stopping and removing container and network..."
-  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME down --remove-orphans
+---
 
-  echo "Building image from scratch..."
-  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build --no-cache
+## Tech Stack
 
-  echo "Starting container..."
-  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME up -d
-  ```
+### Frontend
+- React
+- TypeScript
+- Vite
 
+### Backend
+- Java 21
+- Spring Boot
+- Spring Web
+- Spring GraphQL
+- WebSocket support
+
+### APIs
+- REST
+- GraphQL
+
+### Database
+- MySQL
+
+### Infrastructure & DevOps
+- Docker & Docker Compose
+- Nginx (reverse proxy)
+- GitHub Actions
+- systemd service management
+
+---
+
+## Repository Structure
+
+```
+/
+├── backend/                          # Spring Boot backend
+├── frontend/                         # React frontend apps
+├── .github/workflows/                # CI/CD pipelines
+├── docker-compose.test.yml           # Docker test setup
+├── games-dev.barryonweb.com          # Nginx config (prod)
+├── games-test.barryonweb.com         # Nginx config (test)
+└── runTestContainer.sh               # Container rebuild script
+```
+
+---
+
+## Local Development
+
+### Backend
+
+```bash
+cd backend
+mvn clean package -DskipTests
+java -jar target/*.jar
+```
+
+The backend starts on port `8080` by default.
+
+---
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Each game is served as a separate frontend module during development.
+
+---
+
+## Docker Test Environment
+
+### Build Image
+
+```bash
+docker build -t games-backend-test .
+```
+
+### Run Container
+
+```bash
+docker compose -f docker-compose.test.yml up -d --remove-orphans
+```
+
+### Stop & Cleanup
+
+```bash
+docker compose -f docker-compose.test.yml down --remove-orphans
+```
+
+There is <a href="docs/Containerization.md">separate document</a> with detailed steps for Docker containerized Test environment setup.
+
+---
+
+## Environment variables
+
+Example backend configuration:
+
+```env
+SPRING_DATASOURCE_URL=jdbc:mysql://<host>:3306/games_test
+SPRING_DATASOURCE_USERNAME=<user>
+SPRING_DATASOURCE_PASSWORD=<password>
+SPRING_PROFILES_ACTIVE=prod
+JAVA_OPTS="-Xms256m -Xmx512m"
+SPRING_SERVER_PORT=8080
+```
+
+---
+
+## Deployment
+
+The project includes:
+- Nginx reverse proxy configurations
+- SSL‑ready setup
+- Dockerized test environments
+- GitHub Actions automated deployments
+
+---
+
+## Skills demonstrated
+
+- Full‑stack Java development
+- API design with REST and GraphQL
+- Real‑time WebSocket communication
+- Database modeling with MySQL
+- Containerization and DevOps workflows
+- Production‑style deployment setup
+
+---
+
+## Contact
+
+**Berislav Vidakovic**  
+- GitHub: https://github.com/berislav-vidakovic 
+- Blog: https://barrytheanalyst.eu 
+- LinkedIn: https://www.linkedin.com/in/berislav-vidakovic/
+- E-mail: berislav.vidakovic@gmail.com
+
+---
+
+## License
+
+MIT License
