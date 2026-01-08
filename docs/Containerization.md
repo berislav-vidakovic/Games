@@ -5,7 +5,14 @@
 ### 1. Containerize backend 
 
 - Add Docker file to backend
-  - internal Port 8080
+  ```docker
+  FROM eclipse-temurin:21-jre
+  WORKDIR /app
+  COPY ./gamesj-0.0.1-SNAPSHOT.jar app.jar
+  EXPOSE 8080
+  ENTRYPOINT ["java", "-jar", "app.jar"]
+  ```
+  
 - Add docker-compose.yml to backend 
   - map Port 8084:8080 and specify DB details
   - Override Port from application.yml with  --server.port=8080
@@ -75,6 +82,20 @@
 
 - Add Dockerfile
   ```docker
+  # Lightweight Nginx image for static files
+  FROM nginx:alpine
+
+  # Remove default Nginx static files
+  RUN rm -rf /usr/share/nginx/html/*
+
+  # Copy built frontend files into Nginx web root
+  COPY . /usr/share/nginx/html/
+
+  # Expose HTTP port
+  EXPOSE 80
+
+  # Run Nginx in foreground
+  CMD ["nginx", "-g", "daemon off;"]
   ```
 
 - Update Nginx config file 
@@ -83,24 +104,49 @@
     Nginx → filesystem (/var/www/chatapp/frontend)
     ```
     ```nginx
-    root /var/www/chatapp/frontend;
-      index index.html;
-      location / {
-          try_files $uri /index.html;
-      }
+    root /var/www/games/frontend;
+    index index.html;
+
+    # Main site redirect
+    location = / {
+        return 302 /panel/;
+    }
+
+    # Generic SPA fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Trailing slash redirects
+    location = /panel     { return 301 /panel/; }
+    location = /sudoku    { return 301 /sudoku/; }
+    location = /connect4  { return 301 /connect4/; }
+
+    # Per-app SPA entry points
+    location ~ ^/(panel|sudoku|connect4)/ {
+        try_files $uri $uri/ /$1/index.html;
+    }
     ```
   - New setup:
     ```
     Nginx → frontend-test Docker container
     ```
     ```nginx
-    location / {
-      proxy_pass http://127.0.0.1:8086;
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
+    location = / {
+        return 302 /panel/;
     }
+
+    location / {
+        proxy_pass http://127.0.0.1:8087;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location = /panel    { return 301 /panel/; }
+    location = /sudoku   { return 301 /sudoku/; }
+    location = /connect4 { return 301 /connect4/; }
     ```
 
 
@@ -109,7 +155,7 @@
 
 ### 4. Deployment environment control
 
-- Create bash script to build Doker image and run docker container
+- Backend - Bash script to build Docker image and run docker container
   ```bash
   #!/bin/bash
   set -e
@@ -125,5 +171,31 @@
 
   echo "Starting container..."
   docker compose -f $COMPOSE_FILE -p $PROJECT_NAME up -d
+  ```
+
+- Frontend - Bash script to build Docker image and run docker container
+  ```bash
+  #!/bin/bash
+  set -e
+
+  IMAGE_NAME=games-frontend-test
+  CONTAINER_NAME=games-frontend-test
+  HOST_PORT=8087
+  CONTAINER_PORT=80
+
+  echo "Stopping and removing existing frontend test container (if any)..."
+  docker rm -f $CONTAINER_NAME >/dev/null 2>&1 || true
+
+  echo "Building frontend test Docker image..."
+  docker build -t $IMAGE_NAME .
+
+  echo "Running frontend test container..."
+  docker run -d \
+    --name $CONTAINER_NAME \
+    -p $HOST_PORT:$CONTAINER_PORT \
+    --restart unless-stopped \
+    $IMAGE_NAME
+
+  echo "Frontend Test container is running on port $HOST_PORT"
   ```
 

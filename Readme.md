@@ -102,7 +102,7 @@ The repository contains a complete, production‑style application stack:
 ├── frontend/                         # React frontend apps
 ├── .github/workflows/                # CI/CD pipelines
 ├── docker-compose.test.yml           # Docker test setup
-├── games-dev.barryonweb.com          # Nginx config (prod)
+├── games-dev.barryonweb.com          # Nginx config (dev)
 ├── games-test.barryonweb.com         # Nginx config (test)
 └── runTestContainer.sh               # Container rebuild script
 ```

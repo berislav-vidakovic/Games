@@ -1,6 +1,8 @@
+version: "3.9"
+
 services:
   games-backend-test:
-    build: .
+    build: ./backend
     container_name: games-backend-test
     ports:
       - "8084:8080"
@@ -10,6 +12,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: abc123
       SPRING_PROFILES_ACTIVE: prod
       JAVA_OPTS: "-Xms256m -Xmx512m"
-      SPRING_SERVER_PORT: 8080
-    command: ["java", "-jar", "app.jar", "--server.port=8080"]
+    restart: unless-stopped
+
+  games-frontend-test:
+    build: ./frontend
+    container_name: games-frontend-test
+    ports:
+      - "8087:80"
     restart: unless-stopped

@@ -142,11 +142,13 @@ jobs:
           scp -r -P $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
           scp -r -P $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
       
-      # Copy Dockerfile and script to recreate Test environment container 
+      # Copy Dockerfiles, Docker compose and script to recreate containerized Test environment 
       - name: Containerize frontend Test environment 
         run: |
           scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
-          scp -P $SSH_PORT ./runFrontedTestCnt.sh barry75@barryonweb.com:/var/www/games/frontend/
+          scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
+          scp -P $SSH_PORT ./docker-compose.test.yml barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT ./runTechStack.sh barry75@barryonweb.com:/var/www/games/
 
  
 
