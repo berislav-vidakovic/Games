@@ -62,14 +62,23 @@ server {
       proxy_cache_bypass $http_upgrade;
     }
 
-    # -------------frontend config --------------------------------------------
-    location / {
-      proxy_pass http://127.0.0.1:8087;
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
+    # ---------------- frontend config (containerized) ----------------
+    location = / {
+        return 302 /panel/;
     }
+
+    location / {
+        proxy_pass http://127.0.0.1:8087;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location = /panel    { return 301 /panel/; }
+    location = /sudoku   { return 301 /sudoku/; }
+    location = /connect4 { return 301 /connect4/; }
+
 
     listen 443 ssl; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/games-test.barryonweb.com/fullchain.pem; # managed by Certbot

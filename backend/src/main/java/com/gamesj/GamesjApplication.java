@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class GamesjApplication {
-  private static String VERSION="v1.0.0";
+  private static String VERSION="v1.0.1";
   private static String VERSION_KEY="Version";
   private static String VERSION_DELIMITER="=";
 
