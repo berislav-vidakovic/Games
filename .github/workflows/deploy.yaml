@@ -94,6 +94,14 @@ jobs:
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "journalctl -u gamesj -n 50 --no-pager"
 
+      # Copy Dockerfiles, common Docker compose and script to recreate containerized Test environment 
+      - name: Containerize frontend Test environment 
+        run: |
+          scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
+          scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
+          scp -P $SSH_PORT ./docker-compose.test.yml barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT ./runTestStack.sh barry75@barryonweb.com:/var/www/games/
+
   frontend-build-and-deploy: # ----- frontend deployment ---------------------
     runs-on: ubuntu-latest
 
@@ -142,13 +150,7 @@ jobs:
           scp -r -P $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
           scp -r -P $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
       
-      # Copy Dockerfiles, Docker compose and script to recreate containerized Test environment 
-      - name: Containerize frontend Test environment 
-        run: |
-          scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
-          scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
-          scp -P $SSH_PORT ./docker-compose.test.yml barry75@barryonweb.com:/var/www/games/
-          scp -P $SSH_PORT ./runTestStack.sh barry75@barryonweb.com:/var/www/games/
+     
 
  
 

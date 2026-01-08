@@ -10,11 +10,12 @@ React frontend, **Java Spring Boot backend**, **MySQL database**, and both **RES
 <img src = "docs/images/ts.png" style="margin-right: 15px;" /> 
 <img src = "docs/images/react.png" style="margin-right: 15px;" /> 
 <img src = "docs/images/rest.png" style="margin-right: 15px;" /> 
-<img src = "docs/images/graphql.png" style="margin-right: 15px;" /> 
+<img src = "docs/images/GraphQL.png"  style="margin-right: 15px;" /> 
 <img src = "docs/images/java.png" style="margin-right: 15px;" /> 
 <img src = "docs/images/spring1.png" style="margin-right: 15px;" /> 
-<img src = "docs/images/mysql1.png" style="margin-right: 15px;" /> 
+<img src = "docs/images/mysql.png" style="margin-right: 15px;" /> 
 <img src = "docs/images/CI-CD.png" style="margin-right: 15px;" /> 
+<img src = "docs/images/docker.png" style="margin-right: 15px;" /> 
 </div>
 
 
@@ -101,10 +102,10 @@ The repository contains a complete, production‑style application stack:
 ├── backend/                          # Spring Boot backend
 ├── frontend/                         # React frontend apps
 ├── .github/workflows/                # CI/CD pipelines
-├── docker-compose.test.yml           # Docker test setup
 ├── games-dev.barryonweb.com          # Nginx config (dev)
 ├── games-test.barryonweb.com         # Nginx config (test)
-└── runTestContainer.sh               # Container rebuild script
+├── docker-compose.test.yml           # Docker test setup
+└── runTestStack.sh                   # Container rebuild script
 ```
 
 ---
@@ -119,7 +120,7 @@ mvn clean package -DskipTests
 java -jar target/*.jar
 ```
 
-The backend starts on port `8080` by default.
+The backend starts on port `8082` by configuration in application.yaml
 
 ---
 
@@ -141,6 +142,7 @@ Each game is served as a separate frontend module during development.
 
 ```bash
 docker build -t games-backend-test .
+docker build -t games-frontend-test .
 ```
 
 ### Run Container
@@ -152,7 +154,7 @@ docker compose -f docker-compose.test.yml up -d --remove-orphans
 ### Stop & Cleanup
 
 ```bash
-docker compose -f docker-compose.test.yml down --remove-orphans
+docker compose -f docker-compose.test.yml down 
 ```
 
 There is <a href="docs/Containerization.md">separate document</a> with detailed steps for Docker containerized Test environment setup.
@@ -169,7 +171,6 @@ SPRING_DATASOURCE_USERNAME=<user>
 SPRING_DATASOURCE_PASSWORD=<password>
 SPRING_PROFILES_ACTIVE=prod
 JAVA_OPTS="-Xms256m -Xmx512m"
-SPRING_SERVER_PORT=8080
 ```
 
 ---

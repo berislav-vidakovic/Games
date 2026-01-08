@@ -1,11 +1,9 @@
-version: "3.9"
-
 services:
   games-backend-test:
     build: ./backend
     container_name: games-backend-test
     ports:
-      - "8084:8080"
+      - "8084:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://barryonweb.com:3306/games_test
       SPRING_DATASOURCE_USERNAME: barry75

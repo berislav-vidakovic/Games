@@ -6,6 +6,9 @@
 4. [Add CI/CD yaml](#4-add-cicd-yaml)
 5. [Troubleshooting](#5-troubleshooting)  
 6. [Deployment topology](#6-deployment-topology)
+7. [GraphQL support](#7-graphql-support)
+
+
 
 ### 1. Create minimal Nginx config file
   ```nginx
@@ -350,8 +353,4 @@ This is common codebase, with runtime configuration-based switch to one of the f
       mutation ...
   ```
 
-
-### 8. Containerization using Docker 
-
-- Build and run image with no separate subdomain
 
