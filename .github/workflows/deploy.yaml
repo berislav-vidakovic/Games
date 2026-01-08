@@ -63,13 +63,23 @@ jobs:
           scp -P $SSH_PORT backend/src/main/resources/static/images/* barry75@barryonweb.com:/var/www/games/backend/images/    
 
       # Deploy Nginx config and reload
-      - name: Update Nginx config
+      - name: Update Dev Nginx config 
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
           scp -P $SSH_PORT games-dev.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
           ssh -p $SSH_PORT barry75@barryonweb.com "
             sudo cp /var/www/games/nginx/games-dev.barryonweb.com /etc/nginx/sites-available/ &&
             sudo ln -sf /etc/nginx/sites-available/games-dev.barryonweb.com /etc/nginx/sites-enabled/ &&
+            sudo nginx -t &&
+            sudo systemctl reload nginx"
+
+      - name: Update Test Nginx config 
+        run: |
+          ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
+          scp -P $SSH_PORT games-test.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
+          ssh -p $SSH_PORT barry75@barryonweb.com "
+            sudo cp /var/www/games/nginx/games-test.barryonweb.com /etc/nginx/sites-available/ &&
+            sudo ln -sf /etc/nginx/sites-available/games-test.barryonweb.com /etc/nginx/sites-enabled/ &&
             sudo nginx -t &&
             sudo systemctl reload nginx"
 
@@ -131,7 +141,12 @@ jobs:
           scp -r -P $SSH_PORT frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
           scp -r -P $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
           scp -r -P $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
-
+      
+      # Copy Dockerfile and script to recreate Test environment container 
+      - name: Containerize frontend Test environment 
+        run: |
+          scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
+          scp -P $SSH_PORT ./runFrontedTestCnt.sh barry75@barryonweb.com:/var/www/games/frontend/
 
  
 

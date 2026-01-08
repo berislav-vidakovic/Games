@@ -63,49 +63,27 @@ server {
     }
 
     # -------------frontend config --------------------------------------------
+    root /var/www/games/frontend;
+    index index.html;
+
     # Main site redirect
     location = / {
         return 302 /panel/;
     }
 
-    root /var/www/games/frontend;
-    index index.html;
-
+    # Generic SPA fallback
     location / {
-        try_files $uri /index.html;
+        try_files $uri $uri/ /index.html;
     }
 
-    # Redirect /panel → /panel/
-    location = /panel {
-        return 301 /panel/;
-    }
+    # Trailing slash redirects
+    location = /panel     { return 301 /panel/; }
+    location = /sudoku    { return 301 /sudoku/; }
+    location = /connect4  { return 301 /connect4/; }
 
-    location /panel/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /panel/index.html;
-    }
-
-    # Redirect /sudoku → /sudoku/
-    location = /sudoku {
-        return 301 /sudoku/;
-    }
-
-    location /sudoku/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /sudoku/index.html;
-    }
-
-    # Redirect /connect4 → /connect4/
-    location = /connect4 {
-        return 301 /connect4/;
-    }
-
-    location /connect4/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /connect4/index.html;
+    # Per-app SPA entry points
+    location ~ ^/(panel|sudoku|connect4)/ {
+        try_files $uri $uri/ /$1/index.html;
     }
 
 

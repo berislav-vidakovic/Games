@@ -1,11 +1,14 @@
-FROM alpine:3.20
+# Lightweight Nginx image for static files
+FROM nginx:alpine
 
-WORKDIR /frontend
+# Remove default Nginx static files
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy already-built files
-COPY panel/dist panel/
-COPY sudoku/dist sudoku/
-COPY connect4/dist connect4/
+# Copy built frontend files into Nginx web root
+COPY . /usr/share/nginx/html/
 
-# Container does NOTHING
-CMD ["sleep", "infinity"]
+# Expose HTTP port
+EXPOSE 80
+
+# Run Nginx in foreground
+CMD ["nginx", "-g", "daemon off;"]

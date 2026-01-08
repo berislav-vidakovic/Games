@@ -63,51 +63,13 @@ server {
     }
 
     # -------------frontend config --------------------------------------------
-    # Main site redirect
-    location = / {
-        return 302 /panel/;
-    }
-
-    root /var/www/games/frontend;
-    index index.html;
-
     location / {
-        try_files $uri /index.html;
+      proxy_pass http://127.0.0.1:8087;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
     }
-
-    # Redirect /panel → /panel/
-    location = /panel {
-        return 301 /panel/;
-    }
-
-    location /panel/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /panel/index.html;
-    }
-
-    # Redirect /sudoku → /sudoku/
-    location = /sudoku {
-        return 301 /sudoku/;
-    }
-
-    location /sudoku/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /sudoku/index.html;
-    }
-
-    # Redirect /connect4 → /connect4/
-    location = /connect4 {
-        return 301 /connect4/;
-    }
-
-    location /connect4/ {
-        root /var/www/games/frontend;
-        index index.html;
-        try_files $uri /connect4/index.html;
-    }
-
 
     listen 443 ssl; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/games-test.barryonweb.com/fullchain.pem; # managed by Certbot
