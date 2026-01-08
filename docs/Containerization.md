@@ -71,8 +71,43 @@
   curl https://games-test.barryonweb.com/api/pingdb
   ```
 
+### 3. Containerize frontend Test  environment
 
-### 3. Deployment environment control
+- Add Dockerfile
+  ```docker
+  ```
+
+- Update Nginx config file 
+  - Old setup (common  frontend section for dev and test):
+    ```
+    Nginx → filesystem (/var/www/chatapp/frontend)
+    ```
+    ```nginx
+    root /var/www/chatapp/frontend;
+      index index.html;
+      location / {
+          try_files $uri /index.html;
+      }
+    ```
+  - New setup:
+    ```
+    Nginx → frontend-test Docker container
+    ```
+    ```nginx
+    location / {
+      proxy_pass http://127.0.0.1:8086;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    ```
+
+
+
+
+
+### 4. Deployment environment control
 
 - Create bash script to build Doker image and run docker container
   ```bash
