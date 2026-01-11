@@ -157,7 +157,7 @@ docker compose -f docker-compose.test.yml up -d --remove-orphans
 docker compose -f docker-compose.test.yml down 
 ```
 
-There is <a href="docs/Containerization.md">separate document</a> with detailed steps for Docker containerized Test environment setup.
+There is <a href="docs/Containerization.md">separate document</a> with detailed steps for Docker containerization
 
 ---
 

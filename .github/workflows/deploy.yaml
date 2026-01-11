@@ -182,12 +182,8 @@ jobs:
           scp -P $SSH_PORT frontend/Dockerfile.prod barry75@barryonweb.com:/var/www/games/frontend/
           scp -P $SSH_PORT backend/Dockerfile.prod barry75@barryonweb.com:/var/www/games/backend/
           scp -P $SSH_PORT ./docker-compose.yml  barry75@barryonweb.com:/var/www/games/
-          scp -P $SSH_PORT ./dumpMySqlDb.sh  barry75@barryonweb.com:/var/www/games/
           scp -P $SSH_PORT ./rebuildAppContainer.sh  barry75@barryonweb.com:/var/www/games/
           scp -P $SSH_PORT nginx/games-docker.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
-
-          
-
 
       
      

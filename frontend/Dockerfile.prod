@@ -11,8 +11,13 @@ COPY panel ./panel
 COPY sudoku ./sudoku
 COPY connect4 ./connect4
 
-# Expose port for container
-EXPOSE 3000
+# Expose all ports
+EXPOSE 3001 3002 3003
 
-# Serve the static frontend
-CMD ["serve", "-s", ".", "-l", "3000"]
+# Run 3 SPA servers
+CMD sh -c "\
+  serve -s panel -l 3001 & \
+  serve -s sudoku -l 3002 & \
+  serve -s connect4 -l 3003 & \
+  wait"
+  

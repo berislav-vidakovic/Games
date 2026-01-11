@@ -1,3 +1,59 @@
+# Games Project – Docker Containerization
+
+## Goal 
+
+This project needs to be fully **externalized, containerized, and deployed** with production-grade configuration.
+
+### Tasks
+
+- **Containerized full-stack application**
+  - Java backend (Dockerized, no systemd dependency)
+  - Frontend monorepo with multiple SPAs:
+    - `panel`
+    - `sudoku`
+    - `connect4`
+  - MySQL database as a containerized service
+
+- **Externalized configuration**
+  - Environment variables via `.env` files
+  - Backend runs both:
+    - inside Docker
+    - outside Docker (systemd-compatible)
+  - systemd service updated to load environment variables from `.env`
+
+- **Database migration automation**
+  - MySQL dump & restore scripted
+  - Safe startup handling (waits for MySQL readiness)
+  - Repeatable rebuilds without data loss
+
+- **Reverse proxy & routing**
+  - Nginx configured for:
+    - REST API
+    - GraphQL
+    - WebSockets
+    - SPA routing with proper fallbacks
+  - Deployed on a **separate subdomain**
+
+- **TLS enabled**
+  - HTTPS configured and verified
+
+- **Verified end-to-end**
+  - Backend health endpoints
+  - Frontend SPA navigation
+  - Database connectivity via HikariCP
+
+### Outcome
+
+A clean, reproducible, production-ready deployment that is:
+
+- container-native  
+- environment-driven  
+- independent of host-level services  
+- safe to deploy alongside existing applications  
+
+---
+
+
 ## Testing before Nginx
 
 - Backend is connected to MySQL deined in .env.test, not MySQL container yet
@@ -83,3 +139,16 @@
 
 - Add and enable Nginx cfg file
 - Update backend allowed origins for CORS and WebSocket
+- Test if  containerized app is fully functional
+  ```bash
+  curl -v http://127.0.0.1:8091/api/ping
+  ```
+  ```bash
+  curl -v http://games-docker.barryonweb.com:8091/api/ping
+  ```
+- Final smoke test
+  ```
+  curl http://127.0.0.1:3001 → frontend
+  curl http://127.0.0.1:8091/api/ping → backend
+  curl http://games-docker.barryonweb.com:3001 → frontend via public IP
+  ```
