@@ -22,3 +22,4 @@ frontend/.vite/
 
 # ===== Environment files =====
 .env
+.env.dev

@@ -140,7 +140,7 @@
         environment:
           SPRING_DATASOURCE_URL: jdbc:mysql://barryonweb.com:3306/games_test
           SPRING_DATASOURCE_USERNAME: barry75
-          SPRING_DATASOURCE_PASSWORD: abc123
+          SPRING_DATASOURCE_PASSWORD: StrongPwd!
           SPRING_PROFILES_ACTIVE: prod
           JAVA_OPTS: "-Xms256m -Xmx512m"
         restart: unless-stopped

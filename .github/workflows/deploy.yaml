@@ -62,32 +62,12 @@ jobs:
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/backend/images"
           scp -P $SSH_PORT backend/src/main/resources/static/images/* barry75@barryonweb.com:/var/www/games/backend/images/    
 
-      # Deploy Nginx config and reload
-      - name: Update Dev Nginx config 
+      # Copy Nginx config files 
+      - name: Update Nginx config 
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
-          scp -P $SSH_PORT games-dev.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
-          ssh -p $SSH_PORT barry75@barryonweb.com "
-            sudo cp /var/www/games/nginx/games-dev.barryonweb.com /etc/nginx/sites-available/ &&
-            sudo ln -sf /etc/nginx/sites-available/games-dev.barryonweb.com /etc/nginx/sites-enabled/ &&
-            sudo nginx -t &&
-            sudo systemctl reload nginx"
-
-      - name: Update Test Nginx config 
-        run: |
-          ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
-          scp -P $SSH_PORT games-test.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
-          ssh -p $SSH_PORT barry75@barryonweb.com "
-            sudo cp /var/www/games/nginx/games-test.barryonweb.com /etc/nginx/sites-available/ &&
-            sudo ln -sf /etc/nginx/sites-available/games-test.barryonweb.com /etc/nginx/sites-enabled/ &&
-            sudo nginx -t &&
-            sudo systemctl reload nginx"
-
-      # Copy service script and Restart backend via systemd
-      - name: Copy backend service file and Restart backend service
-        run: |
-          scp -P $SSH_PORT backend/gamesj.service barry75@barryonweb.com:/etc/systemd/system/
-          ssh -p $SSH_PORT barry75@barryonweb.com "sudo systemctl restart gamesj"
+          scp -P $SSH_PORT nginx/games-dev.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
+          scp -P $SSH_PORT nginx/games-test.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
 
       # See logs after restart
       - name: Show backend logs
