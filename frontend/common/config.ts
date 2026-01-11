@@ -59,7 +59,8 @@ export async function loadCommonConfig(
   //let backend = 'backendJavaMySQL';  
   setApiOption(apiDesign);
   
-  if( !URL_PANEL.includes('localhost') ) {// Production
+  if( import.meta.env.PROD ) {// Production
+    console.log("***Production environment detected***");
     URL_PANEL = URL_BACKEND_HTTP + "/panel/";
     URL_SUDOKU = URL_BACKEND_HTTP + "/sudoku/"; 
     URL_CONNECT4 =  URL_BACKEND_HTTP + "/connect4/";
