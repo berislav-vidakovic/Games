@@ -2,9 +2,9 @@ spring:
   application:
     name: gamesj
   datasource:
-    url: ${DB_URL:jdbc:mysql://barryonweb.com:3306/games_dev}
-    username: ${DB_USER:barry75}
-    password: ${DB_PASSWORD:abc123}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   sql:
     init:
       mode: never
@@ -18,13 +18,14 @@ spring:
   graphql:
     path: /graphql
 server:
-  port: 8082
+  port: ${SERVER_PORT:8082}
 websocket:
-  timeout-mins: 10
-  check-interval-sec: 45
+  timeout-mins: ${WS_TIMEOUT_MINS:20}
+  check-interval-sec: ${WS_CHECK_INTERVAL_SEC:45}
 useridle:
-  timeout-mins: 10
-  check-interval-sec: 35
+  timeout-mins: ${USER_IDLE_TIMEOUT_MINS:10}
+  check-interval-sec: ${USER_IDLE_CHECK_INTERVAL_SEC:45}
 invitation:
-  timeout-sec: 15
+  timeout-sec: ${INVITAION_TIMEOUT_SEC:15}
+
 

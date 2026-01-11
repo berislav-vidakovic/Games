@@ -52,6 +52,12 @@ export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = nul
   return locale ? locale.paramValue : paramKey;
 }
 
+/*
+import.meta.env.DEV	true when running vite dev server (npm run dev)
+import.meta.env.PROD	true when running production build (npm run build = tsc -b && vite build)
+import.meta.env.MODE	the current mode, defaults to 'development' or 'production'
+- import.meta.env.PROD is true automatically when running vite build
+- import.meta.env.DEV is true automatically when running vite dev.*/ 
 export async function loadCommonConfig(
   setConfigLoaded:  Dispatch<SetStateAction<boolean>>  
 ): Promise<void> {
@@ -60,7 +66,7 @@ export async function loadCommonConfig(
   setApiOption(apiDesign);
   
   if( import.meta.env.PROD ) {// Production
-    console.log("***Production environment detected***");
+    //console.log("***Production environment detected***");
     URL_PANEL = URL_BACKEND_HTTP + "/panel/";
     URL_SUDOKU = URL_BACKEND_HTTP + "/sudoku/"; 
     URL_CONNECT4 =  URL_BACKEND_HTTP + "/connect4/";
