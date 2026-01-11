@@ -26,7 +26,8 @@ public class CorsConfig {
         configuration.setAllowedOriginPatterns(List.of(
             "http://localhost:*",
             "https://games-dev.barryonweb.com",
-            "https://games-test.barryonweb.com"
+            "https://games-test.barryonweb.com",
+            "https://games-docker.barryonweb.com"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

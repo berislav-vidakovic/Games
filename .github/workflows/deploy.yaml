@@ -176,7 +176,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p $SSH_PORT barryonweb.com >> ~/.ssh/known_hosts
 
-      # Copy Dockerfiles, Docker compose build script
+      # Copy Dockerfiles, Docker compose, build script and Nginx config
       - name: Containerize full stack App 
         run: |
           scp -P $SSH_PORT frontend/Dockerfile.prod barry75@barryonweb.com:/var/www/games/frontend/
@@ -184,6 +184,9 @@ jobs:
           scp -P $SSH_PORT ./docker-compose.yml  barry75@barryonweb.com:/var/www/games/
           scp -P $SSH_PORT ./dumpMySqlDb.sh  barry75@barryonweb.com:/var/www/games/
           scp -P $SSH_PORT ./rebuildAppContainer.sh  barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT nginx/games-docker.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
+
+          
 
 
       

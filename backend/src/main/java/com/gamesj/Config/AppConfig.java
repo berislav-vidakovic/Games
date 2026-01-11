@@ -24,7 +24,8 @@ public class AppConfig {
                       "http://localhost:5175", 
                       "http://localhost:5176", 
                       "https://games-dev.barryonweb.com",
-                      "https://games-test.barryonweb.com"
+                      "https://games-test.barryonweb.com",
+                      "https://games-docker.barryonweb.com"
                     )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*") // GraphQL required

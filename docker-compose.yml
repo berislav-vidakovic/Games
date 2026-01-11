@@ -15,20 +15,20 @@ services:
     container_name: games-backend
     restart: unless-stopped
     ports:
-      - "8091:8080"   # Host 8091 → container 8080
+      - "8091:8082"   # Host 8091 → container 8082
     depends_on:
       - mysql
     env_file:
-      - ./backend/.env.test
+      - ./backend/.env.docker
   mysql:
     image: mysql:8.0
     container_name: games-mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: games_test
+      MYSQL_DATABASE: games_test # create empty database
       MYSQL_USER: barry75
       MYSQL_PASSWORD: abc123
       MYSQL_ROOT_PASSWORD: root
-    ports:
+    ports: # Host-level access mysql -h 127.0.0.1 -P 3307 -u barry75 -p
       - "3307:3306"
 

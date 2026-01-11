@@ -20,6 +20,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("http://localhost:5174",
                   "http://localhost:5176",
                   "https://games-dev.barryonweb.com",
-                  "https://games-test.barryonweb.com" ); // frontend origin
+                  "https://games-test.barryonweb.com",
+                  "https://games-docker.barryonweb.com" ); // frontend origin
     }
 }

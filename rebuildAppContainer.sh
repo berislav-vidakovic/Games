@@ -1,51 +1,42 @@
 #!/bin/bash
 set -e
 
-# --- Config ---
-FRONTEND_CONTAINER=chatapp-frontend
-BACKEND_CONTAINER=chatapp-backend
-MONGO_CONTAINER=chatapp-mongo
-MONGO_DUMP_DIR=/var/www/chatapp/data/mongo-dump  # host path to mongodump
-MONGO_DUMP_DB=chatapp_dev  # Database to dump
-MONGO_CONTAINER_DUMP_PATH=/chatapp_dump      # path inside container
+CONTAINER_NAME="games-mysql"
+DUMP_FILE="data/mysql-dump/games_test.sql"
+DB_NAME="games_test"
 
-echo "Rebuilding full stack containers..."
-
-# --- Stop containers if running ---
-docker compose down
-
-# --- Build containers ---
-docker compose build
-
-# --- Start containers ---
-docker compose up -d
-
-echo "Waiting for Mongo to initialize..."
-# wait for Mongo to be ready (simple sleep, can be improved with a healthcheck)
-sleep 10
-
-# --- Dump MongoDB database
-./dumpMySqlDb.sh
-
-# --- Restore production DB into containerized Mongo ---
-if [ -d "$MONGO_DUMP_DIR/chatapp_dev" ]; then
-    echo "Restoring production DB into containerized Mongo..."
-    docker exec -i $MONGO_CONTAINER mongorestore \
-      --username dockeruser \
-      --password dockerpass \
-      --authenticationDatabase admin \
-      --drop \
-      --db chatapp_dev \
-      $MONGO_CONTAINER_DUMP_PATH/chatapp_dev
-    echo "DB restored successfully."
+# Load MySQL credentials
+if [ -f data/.env.mysql ]; then
+  set -a          # automatically export variables
+  source data/.env.mysql
+  set +a
 else
-    echo "Dump not found at $MONGO_DUMP_DIR/chatapp_dev. Skipping DB restore."
+  echo ".env.mysql file not found"
+  exit 1
 fi
 
+# Stop & rebuild containers
+docker compose down
+docker compose up -d --build
 
-# --- Done ---
-echo "Full stack App containers rebuilt and running!"
-echo "Frontend: http://localhost:3000"
-echo "Backend:  http://localhost:8090"
+# Wait for MySQL container to be fully ready
+echo "Waiting for MySQL to accept connections..."
+until docker exec -i $CONTAINER_NAME mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PWD --silent; do
+  echo "...MySQL not ready yet…"
+  sleep 3
+done
 
+
+# Dump MySQL database
+echo "Dumping MySQL database..."
+mysqldump --no-tablespaces -u $MYSQL_USER -p$MYSQL_PWD games_test > data/mysql-dump/games_test.sql
+echo "Dump completed"
+
+
+# Restore the dump into containerized MySQL
+echo "Restoring MySQL dump..."
+
+cat $DUMP_FILE | docker exec -i $CONTAINER_NAME mysql -h 127.0.0.1 -u $MYSQL_USER -p$MYSQL_PWD $DB_NAME
+
+echo "Database restore completed"
 
