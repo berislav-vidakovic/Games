@@ -156,7 +156,35 @@ jobs:
           scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
           scp -P $SSH_PORT ./runTestContainer.sh barry75@barryonweb.com:/var/www/games/
 
- 
+  app-containerization: # ----Full stack App- Docker container ---------
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Start SSH agent with GitHub secret key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Add server to known_hosts to avoid verification errors
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p $SSH_PORT barryonweb.com >> ~/.ssh/known_hosts
+
+      # Copy Dockerfiles, Docker compose build script
+      - name: Containerize full stack App 
+        run: |
+          scp -P $SSH_PORT frontend/Dockerfile.prod barry75@barryonweb.com:/var/www/games/frontend/
+          scp -P $SSH_PORT backend/Dockerfile.prod barry75@barryonweb.com:/var/www/games/backend/
+          scp -P $SSH_PORT ./docker-compose.yml  barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT ./dumpMySqlDb.sh  barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT ./rebuildAppContainer.sh  barry75@barryonweb.com:/var/www/games/
+
 
       
      

@@ -1,0 +1,18 @@
+# Use lightweight Node image to serve static files
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install lightweight server to serve static files
+RUN npm install -g serve
+
+# Copy all pre-built frontend files
+COPY panel ./panel
+COPY sudoku ./sudoku
+COPY connect4 ./connect4
+
+# Expose port for container
+EXPOSE 3000
+
+# Serve the static frontend
+CMD ["serve", "-s", ".", "-l", "3000"]
