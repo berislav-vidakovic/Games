@@ -6,8 +6,33 @@ import { getLocalizationAPI, setApiOption } from './hubAPI';
 
 import type { Locales } from './interfaces';
 
-export let URL_BACKEND_HTTP = '';
-export let URL_BACKEND_WS = '';
+export const URL_BACKEND_HTTP =
+  window.__ENV__?.BACKEND_HTTP_URL || getDefaultHttpUrl();
+
+export const URL_BACKEND_WS =
+  window.__ENV__?.BACKEND_WS_URL || getDefaultWsUrl();
+
+declare global {
+  interface Window {
+    __ENV__?: {
+      BACKEND_HTTP_URL?: string;
+      BACKEND_WS_URL?: string;
+    };
+  }
+}
+
+function getDefaultHttpUrl(): string {
+  const { protocol, host } = window.location;
+  return `${protocol}//${host}`;
+}
+
+function getDefaultWsUrl(): string {
+  const WS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${WS_PROTOCOL}://${window.location.host}/websocket`;  
+}
+
+
+
 export let URL_PANEL = '';
 export let URL_SUDOKU = '';
 export let URL_CONNECT4 = '';
@@ -21,15 +46,6 @@ function detectEnv(): 'Development' | 'Production' {
   return import.meta.env.MODE === 'production' ? 'Production' : 'Development';
 }
 
-function getHttpUrl(): string {
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}`;
-}
-
-function getWebSocketUrl(): string {
-  const WS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
-  return `${WS_PROTOCOL}://${window.location.host}/websocket`;  
-}
 
 export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = null): string => {
   //const currentLang = sessionStorage.getItem('currentLang') || 'en';
@@ -55,17 +71,9 @@ export async function loadCommonConfig(
   console.log("Config loaded:", config);
   console.log(`Loaded environment: ${currentEnv}`);
   
-  let backend = 'backendJavaMySQL';  
+  //let backend = 'backendJavaMySQL';  
   setApiOption(apiDesign);
-
-  if( currentEnv === 'Development' ) {
-    URL_BACKEND_HTTP = config.urlBackend[backend][currentEnv].HTTP;
-    URL_BACKEND_WS = config.urlBackend[backend][currentEnv].WS;
-  }
-  else { //Production
-    URL_BACKEND_HTTP = getHttpUrl();
-    URL_BACKEND_WS = getWebSocketUrl();
-  }
+ 
   
   console.log("Backend URLs:", URL_BACKEND_HTTP, URL_BACKEND_WS);
 

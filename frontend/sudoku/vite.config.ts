@@ -12,6 +12,22 @@ export default defineConfig({
       '@common': path.resolve(__dirname, '../common'),     
     },
   },
-  server: { port: 5175 },
+  server: { 
+    port: 5175, //frontend
+    proxy: { // backend
+      '/api': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+      },
+      '/websocket': {
+        target: 'ws://localhost:8082',
+        ws: true,
+      }, 
+      '/graphql': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+      },      
+    }, 
+  },
   base: '/sudoku/'
 });
