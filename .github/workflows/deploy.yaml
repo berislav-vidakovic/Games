@@ -73,15 +73,7 @@ jobs:
       - name: Show backend logs
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "journalctl -u gamesj -n 50 --no-pager"
-
-      # Copy Dockerfiles, common Docker compose and script to recreate containerized Test environment 
-      - name: Containerize frontend Test environment 
-        run: |
-          scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
-          scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
-          scp -P $SSH_PORT ./docker-compose.test.yml barry75@barryonweb.com:/var/www/games/
-          scp -P $SSH_PORT ./runTestStack.sh barry75@barryonweb.com:/var/www/games/
-
+      
   frontend-build-and-deploy: # ----- frontend deployment ---------------------
     runs-on: ubuntu-latest
 
@@ -129,6 +121,43 @@ jobs:
           scp -r -P $SSH_PORT frontend/panel/dist/* barry75@barryonweb.com:/var/www/games/frontend/panel/
           scp -r -P $SSH_PORT frontend/sudoku/dist/* barry75@barryonweb.com:/var/www/games/frontend/sudoku/
           scp -r -P $SSH_PORT frontend/connect4/dist/* barry75@barryonweb.com:/var/www/games/frontend/connect4/
+
+
+  test-env-containerization: # ----test environment Docker container ---------
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # Start SSH agent with GitHub secret key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Add server to known_hosts to avoid verification errors
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p $SSH_PORT barryonweb.com >> ~/.ssh/known_hosts
+     
+     # Copy Dockerfiles  and script to recreate containerized Test environment 
+      - name: Containerize frontend Test environment 
+        run: |
+          scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
+          scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
+          scp -P $SSH_PORT ./runTestContainer.sh barry75@barryonweb.com:/var/www/games/
+
+ 
+
       
      
 
