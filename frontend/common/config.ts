@@ -31,21 +31,14 @@ function getDefaultWsUrl(): string {
   return `${WS_PROTOCOL}://${window.location.host}/websocket`;  
 }
 
-
-
-export let URL_PANEL = '';
-export let URL_SUDOKU = '';
-export let URL_CONNECT4 = '';
-export let URL_MEMORY = '';
+export let URL_PANEL = 'http://localhost:5174/panel';
+export let URL_SUDOKU = 'http://localhost:5175/';
+export let URL_CONNECT4 = 'http://localhost:5176/';
+export let URL_MEMORY = 'http://localhost:5177/';
 
 const apiDesign : 'REST' | 'GraphQL' = 'REST';  
 
 let locales: Locales[] = [];
-
-function detectEnv(): 'Development' | 'Production' {
-  return import.meta.env.MODE === 'production' ? 'Production' : 'Development';
-}
-
 
 export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = null): string => {
   //const currentLang = sessionStorage.getItem('currentLang') || 'en';
@@ -62,36 +55,19 @@ export const getTitle = (paramKey: string, lang: 'en' | 'de' | 'hr' | null = nul
 export async function loadCommonConfig(
   setConfigLoaded:  Dispatch<SetStateAction<boolean>>  
 ): Promise<void> {
-  const currentEnv = detectEnv();
-  const response = await fetch('clientsettings.json');
-  if (!response.ok) {
-    throw new Error('Failed to load configuration clientsettings.json');
-  }
-  const config = await response.json();
-  console.log("Config loaded:", config);
-  console.log(`Loaded environment: ${currentEnv}`);
   
   //let backend = 'backendJavaMySQL';  
   setApiOption(apiDesign);
- 
   
-  console.log("Backend URLs:", URL_BACKEND_HTTP, URL_BACKEND_WS);
-
-  if( currentEnv === 'Development' ) {
-    URL_PANEL = config.urlFrontend[currentEnv].panel;
-    URL_SUDOKU = config.urlFrontend[currentEnv].sudoku;
-    URL_CONNECT4 = config.urlFrontend[currentEnv].connect4;
-    URL_MEMORY = config.urlFrontend[currentEnv].memory;
-  } else { // Production
-    //URL_PANEL = config.urlFrontend[currentEnv][backend].panel;
-    //URL_SUDOKU = config.urlFrontend[currentEnv][backend].sudoku;
-    //URL_CONNECT4 = config.urlFrontend[currentEnv][backend].connect4;
-    //URL_MEMORY = config.urlFrontend[currentEnv][backend].memory;
+  if( !URL_PANEL.includes('localhost') ) {// Production
     URL_PANEL = URL_BACKEND_HTTP + "/panel/";
     URL_SUDOKU = URL_BACKEND_HTTP + "/sudoku/"; 
     URL_CONNECT4 =  URL_BACKEND_HTTP + "/connect4/";
     URL_MEMORY =  URL_BACKEND_HTTP + "/memory/";
   }
+  console.log("URL_PANEL=", URL_PANEL);
+  console.log("URL_SUDOKU=", URL_SUDOKU);
+
 
   // GraphQL healthcheck 
   await queryPing();
