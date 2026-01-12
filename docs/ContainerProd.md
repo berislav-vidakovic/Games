@@ -146,7 +146,22 @@ A clean, reproducible, production-ready deployment that is:
 ## Introduce Nginx
 
 - Add and enable Nginx cfg file for HTTP only
-- Different Production setup than Test: requests to /api/ come from one of the SPA servers, not from a single Nginx process like in Test.
+
+- Production setup difference from Test: 
+  - requests to /api/ come from one of the SPA servers, not from a single Nginx process like in Test
+  - Dockerfile command frontend Production
+    ```docker
+    CMD sh -c "\
+      serve -s panel -l 3001 & \
+      serve -s sudoku -l 3002 & \
+      serve -s connect4 -l 3003 & \
+      wait"
+    ```
+  - Dockerfile command frontend Test
+    ```docker
+    CMD ["nginx", "-g", "daemon off;"]
+    ```
+
 - Test if  containerized app is fully functional
   ```bash
   curl -v http://127.0.0.1:8091/api/ping
