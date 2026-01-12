@@ -1,4 +1,12 @@
+<a href="../Readme.md">Home</a>
+
 # Games Project – Docker Containerization
+
+<div style="margin-bottom: 12px;">
+<img src = "images/docker.png" style="margin-right: 15px;" /> 
+<img src = "images/nginx.jpg" style="margin-right: 15px;" /> 
+<img src = "images/yaml.png" style="margin-right: 15px;" /> 
+</div>
 
 ## Goal 
 
@@ -54,7 +62,7 @@ A clean, reproducible, production-ready deployment that is:
 ---
 
 
-## Testing before Nginx
+## Testing before Nginx with backend connected to host MySql
 
 - Backend is connected to MySQL deined in .env.test, not MySQL container yet
 - Build and run containers
@@ -123,7 +131,7 @@ A clean, reproducible, production-ready deployment that is:
   ```
   - Expected: ping OK, pingDB fails since games_test is an empty database
 
-## Backup MySql database and restore it into MySql container 
+## Backup MySql DB and restore it into MySql container 
 
 - Dump database
   ```
@@ -137,8 +145,8 @@ A clean, reproducible, production-ready deployment that is:
 
 ## Introduce Nginx
 
-- Add and enable Nginx cfg file
-- Update backend allowed origins for CORS and WebSocket
+- Add and enable Nginx cfg file for HTTP only
+- Different Production setup than Test: requests to /api/ come from one of the SPA servers, not from a single Nginx process like in Test.
 - Test if  containerized app is fully functional
   ```bash
   curl -v http://127.0.0.1:8091/api/ping
@@ -152,3 +160,5 @@ A clean, reproducible, production-ready deployment that is:
   curl http://127.0.0.1:8091/api/ping → backend
   curl http://games-docker.barryonweb.com:3001 → frontend via public IP
   ```
+- Update backend allowed origins for CORS and WebSocket
+- Add TLS using certbot

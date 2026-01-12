@@ -62,12 +62,11 @@ jobs:
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/backend/images"
           scp -P $SSH_PORT backend/src/main/resources/static/images/* barry75@barryonweb.com:/var/www/games/backend/images/    
 
-      # Copy Nginx config files 
+      # Copy Nginx config file
       - name: Update Nginx config 
         run: |
           ssh -p $SSH_PORT barry75@barryonweb.com "mkdir -p /var/www/games/nginx"
           scp -P $SSH_PORT nginx/games-dev.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
-          scp -P $SSH_PORT nginx/games-test.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
 
       # See logs after restart
       - name: Show backend logs
@@ -155,6 +154,8 @@ jobs:
           scp -P $SSH_PORT frontend/Dockerfile barry75@barryonweb.com:/var/www/games/frontend/
           scp -P $SSH_PORT backend/Dockerfile barry75@barryonweb.com:/var/www/games/backend/
           scp -P $SSH_PORT ./runTestContainer.sh barry75@barryonweb.com:/var/www/games/
+          scp -P $SSH_PORT nginx/games-test.barryonweb.com barry75@barryonweb.com:/var/www/games/nginx/
+
 
   app-containerization: # ----Full stack App- Docker container ---------
     runs-on: ubuntu-latest
