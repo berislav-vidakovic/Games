@@ -1,7 +1,29 @@
+map $http_upgrade $connection_upgrade {
+  websocket upgrade;
+  default   keep-alive;
+}
+
 server {
     server_name games-test.barryonweb.com;
+    listen 443 ssl;
 
-    # -------------backend - Docker container on 8084 -------------------------------
+    # -------------- Common proxy headers --------
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_set_header X-Forwarded-Host $host;
+
+    # ------------------Security headers ---------
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy no-referrer-when-downgrade;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # -------------backend - Docker container on 8084 -------------------------
     # Serve images directly
     location /images/ {
         alias /var/www/games/backend/images/; 
@@ -13,35 +35,12 @@ server {
     # API proxy
     location /api/ {
         proxy_pass http://127.0.0.1:8084/api/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection keep-alive;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;   
-        proxy_set_header X-Forwarded-Port $server_port; 
-        proxy_set_header X-Forwarded-Host $host;       
         proxy_cache_bypass $http_upgrade;
-    }
-
-    # Health check endpoint
-    location /ping {
-      proxy_pass http://127.0.0.1:8084/api/ping;
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     # WebSocket proxy
     location /websocket {
       proxy_pass http://127.0.0.1:8084/websocket;
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "Upgrade";
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-Proto $scheme;   
-      proxy_set_header X-Forwarded-Port $server_port; 
-      proxy_set_header X-Forwarded-Host $host;       
 
     # Websocket timeout (default is 60s)
       proxy_read_timeout 3600;
@@ -52,50 +51,34 @@ server {
     # GraphQL endpoint
     location /graphql {
       proxy_pass http://127.0.0.1:8084/graphql;
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection keep-alive;
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header X-Forwarded-Port $server_port;
-      proxy_set_header X-Forwarded-Host $host;
       proxy_cache_bypass $http_upgrade;
     }
 
     # ---------------- frontend config (containerized) ----------------
-    location = / {
-        return 302 /panel/;
-    }
+    # Main site redirect
+    location = / { return 302 /panel/; }
 
     location / {
         proxy_pass http://127.0.0.1:8087;
-        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    # Trailing slash redirects
     location = /panel    { return 301 /panel/; }
     location = /sudoku   { return 301 /sudoku/; }
     location = /connect4 { return 301 /connect4/; }
 
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/games-test.barryonweb.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/games-test.barryonweb.com/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
+    # -------------SSL  -----------------------------------------------
+    ssl_certificate /etc/letsencrypt/live/games-test.barryonweb.com/fullchain.pem; 
+    ssl_certificate_key /etc/letsencrypt/live/games-test.barryonweb.com/privkey.pem; 
+    include /etc/letsencrypt/options-ssl-nginx.conf; 
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; 
 }
+
+# ------- Redirect all HTTP traffic to HTTPS ------------------------
 server {
-    if ($host = games-test.barryonweb.com) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-    server_name games-test.barryonweb.com;
     listen 80;
-    return 404; # managed by Certbot
-
-
+    server_name games-test.barryonweb.com;
+    return 301 https://$host$request_uri;
 }
