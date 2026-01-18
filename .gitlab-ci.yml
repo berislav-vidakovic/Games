@@ -1,0 +1,101 @@
+stages:
+  - backend
+  - frontend
+  - test-container
+  - app-container
+
+variables:
+  SSH_PORT: "2026"
+  DEPLOY_USER: "barry75"
+  DEPLOY_HOST: "barryonweb.com"
+
+.default_ssh:
+  before_script:
+    - apt-get update -y
+    - apt-get install -y openssh-client rsync curl
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/gitlab_cicd
+    - chmod 600 ~/.ssh/gitlab_cicd
+    - ssh-keyscan -p $SSH_PORT $DEPLOY_HOST >> ~/.ssh/known_hosts
+
+# ---------------- Backend build & deploy ----------------
+backend-build-and-deploy:
+  stage: backend
+  image: maven:3.9.6-eclipse-temurin-21
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  extends: .default_ssh
+  script:
+    - cd backend
+    - mvn clean package -DskipTests
+
+    - ssh -i ~/.ssh/gitlab_cicd -p $SSH_PORT $DEPLOY_USER@$DEPLOY_HOST "mkdir -p /var/www/games/backend"
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT target/gamesj-0.0.1-SNAPSHOT.jar $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/backend/
+
+    - ssh -i ~/.ssh/gitlab_cicd -p $SSH_PORT $DEPLOY_USER@$DEPLOY_HOST "mkdir -p /var/www/games/data"
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT src/main/resources/*.sql $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/data/
+
+    - ssh -i ~/.ssh/gitlab_cicd -p $SSH_PORT $DEPLOY_USER@$DEPLOY_HOST "mkdir -p /var/www/games/backend/images"
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT src/main/resources/static/images/* $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/backend/images/
+
+    - ssh -i ~/.ssh/gitlab_cicd -p $SSH_PORT $DEPLOY_USER@$DEPLOY_HOST "mkdir -p /var/www/games/nginx"
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT ../nginx/games-dev.barryonweb.com $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/nginx/
+
+    - ssh -i ~/.ssh/gitlab_cicd -p $SSH_PORT $DEPLOY_USER@$DEPLOY_HOST "journalctl -u gamesj -n 50 --no-pager"
+
+# ---------------- Frontend build & deploy ----------------
+frontend-build-and-deploy:
+  stage: frontend
+  image: node:20
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  extends: .default_ssh
+  script:
+    - cd frontend
+    - npm install
+
+    - cd panel
+    - npm install
+    - npm run build
+    - cd ..
+
+    - cd sudoku
+    - npm install
+    - npm run build
+    - cd ..
+
+    - cd connect4
+    - npm install
+    - npm run build
+    - cd ..
+
+    - scp -i ~/.ssh/gitlab_cicd -r -P $SSH_PORT panel/dist/* $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/frontend/panel/
+    - scp -i ~/.ssh/gitlab_cicd -r -P $SSH_PORT sudoku/dist/* $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/frontend/sudoku/
+    - scp -i ~/.ssh/gitlab_cicd -r -P $SSH_PORT connect4/dist/* $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/frontend/connect4/
+
+# -------- Test environment containerization -------------
+test-env-containerization:
+  stage: test-container
+  image: ubuntu:22.04
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  extends: .default_ssh
+  script:
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT frontend/Dockerfile $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/frontend/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT backend/Dockerfile $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/backend/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT runTestContainer.sh $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT nginx/games-test.barryonweb.com $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/nginx/
+
+# -------- Full stack app containerization ----------------
+app-containerization:
+  stage: app-container
+  image: ubuntu:22.04
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  extends: .default_ssh
+  script:
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT frontend/Dockerfile.prod $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/frontend/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT backend/Dockerfile.prod $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/backend/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT docker-compose.yml $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT rebuildAppContainer.sh $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/
+    - scp -i ~/.ssh/gitlab_cicd -P $SSH_PORT nginx/games-docker.barryonweb.com $DEPLOY_USER@$DEPLOY_HOST:/var/www/games/nginx/
