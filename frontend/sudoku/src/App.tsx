@@ -12,7 +12,7 @@ function App() {
   const [name, setName] = useState<string>("");
   const [level, setLevel] = useState<number>(0);
   const [testedOK, setTested] = useState<boolean>(false);
-  const [adminMode, setAdminMode] = useState<boolean>(true);
+  const [adminMode, setAdminMode] = useState<boolean>(false);
   const [selectedGameIdx, setSelectedGameIdx] = useState<number | null>(null);
   const [games, setGames] = useState<Game[]>([]);
   const [startTimer, setStartTimer] = useState(false);  
@@ -21,6 +21,8 @@ function App() {
     loadCommonConfig(setConfigLoaded);     
     const params = new URLSearchParams(window.location.search);
     console.log( "Params: userId=", params.get('userId') );
+    if( !import.meta.env.PROD ) 
+      setAdminMode(true);
   }, []);
 
   const doGetBoard = async() => {

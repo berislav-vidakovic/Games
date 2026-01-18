@@ -228,14 +228,16 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       {/* Name and level */}
       <div className={"sudokuinfobox"}  >
         <div>Game: {name}</div>
-        { (
-        <div>{
-          !testedOK  
-          ? <span style={{ color: "red"}}>❌ not tested</span>
-          : <span style={{ color: "green"}}>✅ Tested OK</span>          
-        }
-        </div>)
-        }
+        {adminMode && (
+          <div>
+            {!testedOK ? (
+              <span style={{ color: "red" }}>❌ not tested</span>
+            ) : (
+              <span style={{ color: "green" }}>✅ Tested OK</span>
+            )}
+          </div>
+        )}
+
         <div>Level: {level == 2 ? "Medium" : "Easy"}</div>
       </div>
       
