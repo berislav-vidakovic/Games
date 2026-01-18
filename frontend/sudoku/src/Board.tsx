@@ -245,7 +245,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       <div className={"sudokuinfobox"} style={{fontWeight:"600"}}>
         <div>Timer: {formatTime(time)}</div>
         <div>{message}</div>
-        <div>Mistakes: {mistakes}</div>
+        <div>Mistakes: {mistakes}/5</div>
       </div>
 
       <div

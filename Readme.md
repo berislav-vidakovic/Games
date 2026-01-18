@@ -26,7 +26,7 @@ This project is designed as a **portfolio project** demonstrating real‑world f
 ## 📑 Table of Contents
 
 - [🎯 Project Overview](#project-overview)
-- [🚀 Features](#features)
+- [🚀 Features / Live Demo](#features--live-demo)
 - [🧰 Tech Stack](#tech-stack)
 - [📁 Repository Structure](#repository-structure)
 - [🛠️ Local Development](#local-development)
@@ -52,7 +52,7 @@ The repository contains a complete, production‑style application stack:
 
 ---
 
-## Features
+## Features / Live Demo
 
 - 🎲 Classic games: **Sudoku**, **Connect4**
 - ⚙️ Spring Boot backend with layered architecture
@@ -63,6 +63,29 @@ The repository contains a complete, production‑style application stack:
 - 🐳 Docker & Docker Compose support
 - 🔄 GitHub Actions CI/CD pipelines
 - 🌍 Nginx configuration for production & test environments
+
+> 🔗 Demo: https://games-test.barryonweb.com/ 
+
+- Test instructions:
+  - Either register new users or use existing ones all having password abc  
+  - Select language on Game panel (English is default)
+  - Sudoku
+    - After login select Sudoku image and click Run top open Sudoku in new Browser tab
+    - Select particular game by moving with Next button
+    - Select Start to start game
+  - Connect4
+    - Open 2 browsers and login with 2 different users 
+    - User1 needs to invite User2, and invitation needs to be accepted to play game
+    - Both users need to select Connect4 image and click Run
+    - Before game start users can choose their color
+    - After one user clicks Start game is running
+
+
+📸 Screenshot of Games in action:
+
+![Games Screenshot](/docs/images/games.png "Games App in action")
+
+
 
 ---
 
@@ -101,7 +124,9 @@ The repository contains a complete, production‑style application stack:
 /
 ├── backend/                          # Spring Boot backend
 ├── frontend/                         # React frontend apps
-├── .github/workflows/                # CI/CD pipelines
+├── nginx/                            # Nginx configs for Dev, Test and Prod 
+├── .github/workflows/                # CI/CD pipelines GitHub
+├── .gitlab-ci.yaml                   # CI/CD pipeline GitLab
 ├── games-dev.barryonweb.com          # Nginx config (dev)
 ├── games-test.barryonweb.com         # Nginx config (test)
 ├── docker-compose.test.yml           # Docker test setup
