@@ -30,7 +30,7 @@ This project is designed as a **portfolio project** demonstrating real‑world f
 - [🧰 Tech Stack](#tech-stack)
 - [📁 Repository Structure](#repository-structure)
 - [🛠️ Local Development](#local-development)
-- [🐳 Docker Test Environment](#docker-test-environment)
+- [🐳 Docker Test and Production Environment](#docker-test-and-production-environment)
 - [⚙️ Environment Variables](#environment-variables)
 - [🌐 Deployment](#deployment)
 - [🧠 Skills demonstrated](#skills-demonstrated)
@@ -79,11 +79,15 @@ The repository contains a complete, production‑style application stack:
     - Both users need to select Connect4 image and click Run
     - Before game start users can choose their color
     - After one user clicks Start game is running
+  - Memory
+    - Currently not available (under construction)
 
 
 📸 Screenshot of Games in action:
 
 ![Games Screenshot](/docs/images/games.png "Games App in action")
+![Connect4 - Pairing](/docs/images/connect4-1.png "Connect 4 - Pairing")
+![Connect4 - Play](/docs/images/connect4-2.png "Connect 4 - Play")
 
 
 
@@ -113,7 +117,7 @@ The repository contains a complete, production‑style application stack:
 ### Infrastructure & DevOps
 - Docker & Docker Compose
 - Nginx (reverse proxy)
-- GitHub Actions
+- GitHub & GitLab Actions
 - systemd service management
 
 ---
@@ -127,10 +131,9 @@ The repository contains a complete, production‑style application stack:
 ├── nginx/                            # Nginx configs for Dev, Test and Prod 
 ├── .github/workflows/                # CI/CD pipelines GitHub
 ├── .gitlab-ci.yaml                   # CI/CD pipeline GitLab
-├── games-dev.barryonweb.com          # Nginx config (dev)
-├── games-test.barryonweb.com         # Nginx config (test)
-├── docker-compose.test.yml           # Docker test setup
-└── runTestStack.sh                   # Container rebuild script
+└── runTestContainer.sh               # Test Container rebuild bash script
+├── docker-compose.yml                # Docker for Prod env. setup
+└── rebuildAppContainer.sh            # Prod Container rebuild + DB restore bash script
 ```
 
 ---
@@ -140,12 +143,14 @@ The repository contains a complete, production‑style application stack:
 ### Backend
 
 ```bash
-cd backend
 mvn clean package -DskipTests
-java -jar target/*.jar
+set -a
+source .env
+set +a
+java -jar target/gamesj-0.0.1-SNAPSHOT.jar
 ```
 
-The backend starts on port `8082` by configuration in application.yaml
+The backend starts on port `8082` by configuration in .env file 
 
 ---
 
@@ -161,25 +166,18 @@ Each game is served as a separate frontend module during development.
 
 ---
 
-## Docker Test Environment
+## Docker Test and Production Environment
 
-### Build Image
+### Build Test Docker container (Host DB)
 
 ```bash
-docker build -t games-backend-test .
-docker build -t games-frontend-test .
+./runTestContainer.sh
 ```
 
-### Run Container
+### Build Prod Docker container (incl. Containerized DB)
 
 ```bash
-docker compose -f docker-compose.test.yml up -d --remove-orphans
-```
-
-### Stop & Cleanup
-
-```bash
-docker compose -f docker-compose.test.yml down 
+./rebuildAppContainer.sh
 ```
 
 There are separate documents with detailed steps on 
@@ -193,11 +191,11 @@ There are separate documents with detailed steps on
 Example backend configuration:
 
 ```env
-SPRING_DATASOURCE_URL=jdbc:mysql://<host>:3306/games_test
-SPRING_DATASOURCE_USERNAME=<user>
-SPRING_DATASOURCE_PASSWORD=<password>
-SPRING_PROFILES_ACTIVE=prod
-JAVA_OPTS="-Xms256m -Xmx512m"
+DB_URL=jdbc:mysql://barryonweb.com:3306/games_dev
+DB_USER=<user>
+DB_PASSWORD=<password>
+SERVER_PORT=8082
+JWT_SECRET=KeyForJWTauthenticationInGamesProjectWhichIsLongEnoughForHS256
 ```
 
 ---
@@ -207,8 +205,8 @@ JAVA_OPTS="-Xms256m -Xmx512m"
 The project includes:
 - Nginx reverse proxy configurations
 - SSL‑ready setup
-- Dockerized test environments
-- GitHub Actions automated deployments
+- Dockerized test and prod environments
+- GitHub & GitLab Actions automated deployments
 
 ---
 
@@ -227,6 +225,7 @@ The project includes:
 
 **Berislav Vidakovic**  
 - GitHub: https://github.com/berislav-vidakovic 
+- GitLab: https://gitlab.com/barry75 
 - Blog: https://barrytheanalyst.eu 
 - LinkedIn: https://www.linkedin.com/in/berislav-vidakovic/
 - E-mail: berislav.vidakovic@gmail.com
